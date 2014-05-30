@@ -1,0 +1,109 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler", "NanoProfiler\NanoProfiler.csproj", "{51C22469-3BE7-4BE1-807B-764683883605}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{99C8FFB7-E3B8-437C-9B4E-4786EAF6B7A1}"
+	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
+		Shared\NanoProfiler.snk = Shared\NanoProfiler.snk
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{42350FC1-FA72-41B7-B61B-4AB163ABE5F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Tests", "Tests\NanoProfiler.Tests\NanoProfiler.Tests.csproj", "{EDB5FF9D-1214-411A-B944-693DC32DAD78}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{64F273AC-B35D-40C3-9D8A-5B0B244FCBC5}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Data", "NanoProfiler.Data\NanoProfiler.Data.csproj", "{4EBB9A68-67EB-495D-8A4C-30F2C9F43A49}"
+	ProjectSection(ProjectDependencies) = postProject
+		{51C22469-3BE7-4BE1-807B-764683883605} = {51C22469-3BE7-4BE1-807B-764683883605}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Web", "NanoProfiler.Web\NanoProfiler.Web.csproj", "{A10A8047-26C3-41B4-A904-71B6548AAAFC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{51C22469-3BE7-4BE1-807B-764683883605} = {51C22469-3BE7-4BE1-807B-764683883605}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Unity", "NanoProfiler.Unity\NanoProfiler.Unity.csproj", "{85D9A8AB-8EE0-4286-866C-A21004613F48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Unity.Tests", "Tests\NanoProfiler.Unity.Tests\NanoProfiler.Unity.Tests.csproj", "{E8BECF97-D573-44DC-BF0D-D9EF75DFD1DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Wcf", "NanoProfiler.Wcf\NanoProfiler.Wcf.csproj", "{8004E5D2-3BBD-4909-8AFF-19F036BD6D6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Wcf.Tests", "Tests\NanoProfiler.Wcf.Tests\NanoProfiler.Wcf.Tests.csproj", "{BD6AB13B-6BD6-4000-9FFD-32C975AA266C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{A3666DAD-6BDA-4097-92B4-2E0242938532}"
+	ProjectSection(SolutionItems) = preProject
+		Build\Build.proj = Build\Build.proj
+		Build\Build.props = Build\Build.props
+		Build\Build.targets = Build\Build.targets
+		Build\Build.tasks = Build\Build.tasks
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{B0F7467C-E952-473A-9DE6-8B7D91D6DA23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Demos.SimpleDemo", "Demos\NanoProfiler.Demos.SimpleDemo\NanoProfiler.Demos.SimpleDemo.csproj", "{A7DC33A4-9531-4D2E-9379-C26153960BE9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51C22469-3BE7-4BE1-807B-764683883605}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51C22469-3BE7-4BE1-807B-764683883605}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51C22469-3BE7-4BE1-807B-764683883605}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51C22469-3BE7-4BE1-807B-764683883605}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDB5FF9D-1214-411A-B944-693DC32DAD78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDB5FF9D-1214-411A-B944-693DC32DAD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDB5FF9D-1214-411A-B944-693DC32DAD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDB5FF9D-1214-411A-B944-693DC32DAD78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EBB9A68-67EB-495D-8A4C-30F2C9F43A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EBB9A68-67EB-495D-8A4C-30F2C9F43A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EBB9A68-67EB-495D-8A4C-30F2C9F43A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EBB9A68-67EB-495D-8A4C-30F2C9F43A49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A10A8047-26C3-41B4-A904-71B6548AAAFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A10A8047-26C3-41B4-A904-71B6548AAAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A10A8047-26C3-41B4-A904-71B6548AAAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A10A8047-26C3-41B4-A904-71B6548AAAFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85D9A8AB-8EE0-4286-866C-A21004613F48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85D9A8AB-8EE0-4286-866C-A21004613F48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85D9A8AB-8EE0-4286-866C-A21004613F48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85D9A8AB-8EE0-4286-866C-A21004613F48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8BECF97-D573-44DC-BF0D-D9EF75DFD1DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8BECF97-D573-44DC-BF0D-D9EF75DFD1DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8BECF97-D573-44DC-BF0D-D9EF75DFD1DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8BECF97-D573-44DC-BF0D-D9EF75DFD1DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8004E5D2-3BBD-4909-8AFF-19F036BD6D6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8004E5D2-3BBD-4909-8AFF-19F036BD6D6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8004E5D2-3BBD-4909-8AFF-19F036BD6D6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8004E5D2-3BBD-4909-8AFF-19F036BD6D6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD6AB13B-6BD6-4000-9FFD-32C975AA266C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD6AB13B-6BD6-4000-9FFD-32C975AA266C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD6AB13B-6BD6-4000-9FFD-32C975AA266C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD6AB13B-6BD6-4000-9FFD-32C975AA266C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7DC33A4-9531-4D2E-9379-C26153960BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7DC33A4-9531-4D2E-9379-C26153960BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7DC33A4-9531-4D2E-9379-C26153960BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7DC33A4-9531-4D2E-9379-C26153960BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EDB5FF9D-1214-411A-B944-693DC32DAD78} = {42350FC1-FA72-41B7-B61B-4AB163ABE5F6}
+		{E8BECF97-D573-44DC-BF0D-D9EF75DFD1DA} = {42350FC1-FA72-41B7-B61B-4AB163ABE5F6}
+		{BD6AB13B-6BD6-4000-9FFD-32C975AA266C} = {42350FC1-FA72-41B7-B61B-4AB163ABE5F6}
+		{A7DC33A4-9531-4D2E-9379-C26153960BE9} = {B0F7467C-E952-473A-9DE6-8B7D91D6DA23}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35;packages\Unity.Interception.2.1.505.2\lib\NET35;packages\Unity.2.1.505.0\lib\NET35
+	EndGlobalSection
+EndGlobal

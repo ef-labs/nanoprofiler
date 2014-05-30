@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Go" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildProjectDirectory)\Build.targets" />
+
+  <!--NuGet Feed Sources-->
+  <ItemGroup>
+    <NuGetSources Include="$(NuGetDropDirectory)"/>
+    <NuGetSources Include="https://nuget.org/api/v2/"/>
+  </ItemGroup>
+  
+  <!--Main entry target-->
+  <Target Name="Go"
+      DependsOnTargets="
+      Start;
+      CleanNuGetCache;
+      CreateDropDirectories;
+      CleanPackages;
+      UpdateVsixVersion; 
+      InstallNanoProfilerPackages;
+      BuildNanoProfiler;
+      PackageNanoProfiler;
+      InstallNanoProfilerDataPackages;
+      BuildNanoProfilerData;
+      PackageNanoProfilerData;
+      InstallNanoProfilerUnityPackages;
+      BuildNanoProfilerUnity;
+      PackageNanoProfilerUnity;
+      InstallNanoProfilerWebPackages;
+      BuildNanoProfilerWeb;
+      PackageNanoProfilerWeb;
+      InstallNanoProfilerWcfPackages;
+      BuildNanoProfilerWcf;
+      PackageNanoProfilerWcf;
+      BuildNanoProfilerTests;
+      RunNanoProfilerTests;
+      End;
+      ">
+  </Target>
+
+  <Target Name="InstallNanoProfilerPackages">
+    <!--List of packages.config to install-->
+    <ItemGroup>
+      <NuGetPackageConfigs Include="$(ProjectRoot)\NanoProfiler\packages.config">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuGetPackageConfigs>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Installing NanoProfiler packages..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuGetPackageConfigs.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="NuGetPackagesConfigPath=%(NuGetPackageConfigs.Identity);NuGetBasePath=%(NuGetPackageConfigs.NuGetBasePath)"
+             Targets="NuGetInstall"
+             ContinueOnError="true" />
+  </Target>
+
+  <Target Name="BuildNanoProfiler">
+    <ItemGroup>
+      <CoreProjects Include="$(ProjectRoot)\NanoProfiler\NanoProfiler.csproj"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building NanoProfiler.csproj..."/>
+    <Message Importance="$(LogLevel)" Text="%(CoreProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(CoreProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=true;Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+
+  <Target Name="PackageNanoProfiler">
+    <ItemGroup>
+      <NuSpecFiles Include="$(ProjectRoot)\NanoProfiler\NanoProfiler.csproj">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuSpecFiles>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Packing NanoProfiler package..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuSpecFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+       Properties="NuGetSpecOrProjectPath=%(NuSpecFiles.Identity);NuGetBasePath=%(NuSpecFiles.NuGetBasePath)"
+       Targets="NuGetPack" />
+  </Target>
+
+  <Target Name="InstallNanoProfilerDataPackages">
+    <!--List of packages.config to install-->
+    <ItemGroup>
+      <NuGetPackageConfigs Include="$(ProjectRoot)\NanoProfiler.Data\packages.config">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuGetPackageConfigs>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Installing NanoProfiler.Data packages..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuGetPackageConfigs.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="NuGetPackagesConfigPath=%(NuGetPackageConfigs.Identity);NuGetBasePath=%(NuGetPackageConfigs.NuGetBasePath)"
+             Targets="NuGetInstall"
+             ContinueOnError="true" />
+  </Target>
+
+  <Target Name="BuildNanoProfilerData">
+    <ItemGroup>
+      <CoreProjects Include="$(ProjectRoot)\NanoProfiler.Data\NanoProfiler.Data.csproj"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building NanoProfiler.Data.csproj..."/>
+    <Message Importance="$(LogLevel)" Text="%(CoreProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(CoreProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=true;Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+  
+  <Target Name="PackageNanoProfilerData">
+    <ItemGroup>
+      <NuSpecFiles Include="$(ProjectRoot)\NanoProfiler.Data\NanoProfiler.Data.csproj">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuSpecFiles>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Packing NanoProfiler.Data package..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuSpecFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+       Properties="NuGetSpecOrProjectPath=%(NuSpecFiles.Identity);NuGetBasePath=%(NuSpecFiles.NuGetBasePath)"
+       Targets="NuGetPack" />
+  </Target>
+
+  <Target Name="InstallNanoProfilerUnityPackages">
+    <!--List of packages.config to install-->
+    <ItemGroup>
+      <NuGetPackageConfigs Include="$(ProjectRoot)\NanoProfiler.Unity\packages.config">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuGetPackageConfigs>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Installing NanoProfiler.Unity packages..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuGetPackageConfigs.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="NuGetPackagesConfigPath=%(NuGetPackageConfigs.Identity);NuGetBasePath=%(NuGetPackageConfigs.NuGetBasePath)"
+             Targets="NuGetInstall"
+             ContinueOnError="true" />
+  </Target>
+
+  <Target Name="BuildNanoProfilerUnity">
+    <ItemGroup>
+      <CoreProjects Include="$(ProjectRoot)\NanoProfiler.Unity\NanoProfiler.Unity.csproj"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building NanoProfiler.Unity.csproj..."/>
+    <Message Importance="$(LogLevel)" Text="%(CoreProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(CoreProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=true;Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+  
+  <Target Name="PackageNanoProfilerUnity">
+    <ItemGroup>
+      <NuSpecFiles Include="$(ProjectRoot)\NanoProfiler.Unity\NanoProfiler.Unity.csproj">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuSpecFiles>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Packing NanoProfiler.Unity package..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuSpecFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+       Properties="NuGetSpecOrProjectPath=%(NuSpecFiles.Identity);NuGetBasePath=%(NuSpecFiles.NuGetBasePath)"
+       Targets="NuGetPack" />
+  </Target>
+
+  <Target Name="InstallNanoProfilerWebPackages">
+    <!--List of packages.config to install-->
+    <ItemGroup>
+      <NuGetPackageConfigs Include="$(ProjectRoot)\NanoProfiler.Web\packages.config">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuGetPackageConfigs>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Installing NanoProfiler.Web packages..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuGetPackageConfigs.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="NuGetPackagesConfigPath=%(NuGetPackageConfigs.Identity);NuGetBasePath=%(NuGetPackageConfigs.NuGetBasePath)"
+             Targets="NuGetInstall"
+             ContinueOnError="true" />
+  </Target>
+
+  <Target Name="BuildNanoProfilerWeb">
+    <ItemGroup>
+      <CoreProjects Include="$(ProjectRoot)\NanoProfiler.Web\NanoProfiler.Web.csproj"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building NanoProfiler.Web.csproj..."/>
+    <Message Importance="$(LogLevel)" Text="%(CoreProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(CoreProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=true;Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+  
+  <Target Name="PackageNanoProfilerWeb">
+    <ItemGroup>
+      <NuSpecFiles Include="$(ProjectRoot)\NanoProfiler.Web\NanoProfiler.Web.csproj">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuSpecFiles>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Packing NanoProfiler.Web package..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuSpecFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+       Properties="NuGetSpecOrProjectPath=%(NuSpecFiles.Identity);NuGetBasePath=%(NuSpecFiles.NuGetBasePath)"
+       Targets="NuGetPack" />
+  </Target>
+ 
+  <Target Name="InstallNanoProfilerWcfPackages">
+    <!--List of packages.config to install-->
+    <ItemGroup>
+      <NuGetPackageConfigs Include="$(ProjectRoot)\NanoProfiler.Wcf\packages.config">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuGetPackageConfigs>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Installing NanoProfiler.Wcf packages..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuGetPackageConfigs.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="NuGetPackagesConfigPath=%(NuGetPackageConfigs.Identity);NuGetBasePath=%(NuGetPackageConfigs.NuGetBasePath)"
+             Targets="NuGetInstall"
+             ContinueOnError="true" />
+  </Target>
+  
+  <Target Name="BuildNanoProfilerWcf">
+    <ItemGroup>
+      <CoreProjects Include="$(ProjectRoot)\NanoProfiler.Wcf\NanoProfiler.Wcf.csproj"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building NanoProfiler.Wcf.csproj..."/>
+    <Message Importance="$(LogLevel)" Text="%(CoreProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(CoreProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=true;Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+
+  <Target Name="PackageNanoProfilerWcf">
+    <ItemGroup>
+      <NuSpecFiles Include="$(ProjectRoot)\NanoProfiler.Wcf\NanoProfiler.Wcf.csproj">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuSpecFiles>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Packing NanoProfiler.Wcf package..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuSpecFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+       Properties="NuGetSpecOrProjectPath=%(NuSpecFiles.Identity);NuGetBasePath=%(NuSpecFiles.NuGetBasePath)"
+       Targets="NuGetPack" />
+  </Target>
+
+  <Target Name="BuildNanoProfilerTests">
+    <ItemGroup>
+      <CoreProjects Include="$(ProjectRoot)\Tests\NanoProfiler.Tests\NanoProfiler.Tests.csproj;$(ProjectRoot)\Tests\NanoProfiler.Unity.Tests\NanoProfiler.Unity.Tests.csproj;$(ProjectRoot)\Tests\NanoProfiler.Wcf.Tests\NanoProfiler.Wcf.Tests.csproj"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building Tests..."/>
+    <Message Importance="$(LogLevel)" Text="%(CoreProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(CoreProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=false;Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+
+  <!--Run unit tests for the NanoProfiler solution-->
+  <Target Name="RunNanoProfilerTests">
+    <ItemGroup>
+      <TestAssemblies Include="$(ProjectRoot)\**\bin\$(Configuration)\*.Tests.dll"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Running NanoProfiler tests..."/>
+    <Message Importance="$(LogLevel)" Text="%(TestAssemblies.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+    			 Properties="TestContainer=%(TestAssemblies.Identity)"
+    			 Targets="RunUnitTestContainer" />
+  </Target>  
+
+</Project>

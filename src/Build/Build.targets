@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Go" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildProjectDirectory)\Build.props"/>
+  <Import Project="$(MSBuildProjectDirectory)\Build.tasks"/>
+
+  <Target Name="Start">
+    <Message Importance="$(LogLevel)" Text="Build v$(Version) started at $(BuildStartDate)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+  </Target>
+
+  <!--Remove cached nuget packages-->
+  <Target Name="CleanNuGetCache">
+    <ItemGroup>
+      <NuGetCacheFiles Include="$(AppData)\..\Local\NuGet\Cache\*$(Version).nupkg"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Removing nuget cached packages $(Version)."/>
+    <Message Importance="$(LogLevel)" Text="%(NuGetCacheFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <Delete Files="%(NuGetCacheFiles.Identity)"/>
+  </Target>
+
+  <!--Create the drop folders for artifacts and nuget packages-->
+  <Target Name="CreateDropDirectories">
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Creating drop directories at '$(DropDirectory)'." />
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <RemoveDir Directories="$(DropDirectory)" Condition="Exists('$(DropDirectory)')" ContinueOnError="True" />
+    <MakeDir Directories="$(DropDirectory)" Condition="!Exists('$(DropDirectory)')" />
+    <MakeDir Directories="$(NuGetDropDirectory)" Condition="!Exists('$(NuGetDropDirectory)')" />
+  </Target>
+
+  <!--Remove all packages\ directories-->
+  <Target Name="CleanPackages">
+    <ItemGroup>
+      <AllPackages Include="$(ProjectRoot)\**\packages\**"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Cleaning package directories..."/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <RemoveDir Directories="%(AllPackages.RelativeDir)" Condition="Exists(%(AllPackages.RelativeDir))" ContinueOnError="true"/>
+  </Target>
+
+  <!--Update global assembly info version numbers-->
+  <Target Name="UpdateVsixVersion" Condition="'$(BUILD_NUMBER)' != ''">
+    <ItemGroup>
+      <RegexTransform Include="$(ProjectRoot)\**\*AssemblyInfo.cs">
+        <Find>AssemblyVersion\("\d+\.\d+\.\d+\.\d+"\)</Find>
+        <ReplaceWith>AssemblyVersion("$(Version)")</ReplaceWith>
+      </RegexTransform>
+      <RegexTransform Include="$(ProjectRoot)\**\*AssemblyInfo.cs">
+        <Find>AssemblyInformationalVersion\("\d+\.\d+\.\d+"\)</Find>
+        <ReplaceWith>AssemblyInformationalVersion("$(PackageVersion)")</ReplaceWith>
+      </RegexTransform>
+      <!--TODO: Replace version in nuspec files-->
+      <!--
+      <RegexTransform Include="$(ProjectSrcRoot)\**\*.nuspec">
+        <Find><![CDATA[<version>\d+\.\d+\.\d+\.\d+</version>]]></Find>
+        <ReplaceWith><![CDATA[<version>$(Version)</version>]]></ReplaceWith>
+      </RegexTransform>
+      -->
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Setting assembly version to $(Version)..."/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <RegexTransform Items="@(RegexTransform)" />
+  </Target>
+
+  <!--Update nuget packages to newly compiled versions-->
+  <Target Name="UpdateMainPackages">
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Updating main nuget packages"/>
+    <Message Importance="$(LogLevel)" Text="%(MainNuGetPackageConfigs.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <!--Update newly built packages-->
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="NuGetPackagesConfigPath=%(MainNuGetPackageConfigs.Identity);NuGetBasePath=%(MainNuGetPackageConfigs.NuGetBasePath);NuGetSources=$(NuGetDropDirectory)"
+             Targets="NuGetUpdate" />
+
+    <!--Now install updated packages-->
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="NuGetPackagesConfigPath=%(MainNuGetPackageConfigs.Identity);NuGetBasePath=%(MainNuGetPackageConfigs.NuGetBasePath);NuGetSources=$(NuGetDropDirectory)"
+             Targets="NuGetInstall" />
+  </Target>
+
+  <!--Build main solutions that depend on core-->
+  <Target Name="BuildMain">
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building main solutions"/>
+    <Message Importance="$(LogLevel)" Text="%(MainProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(MainProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=true" />
+  </Target>
+
+  <!--Run unit tests for the main solutions-->
+  <Target Name="RunMainTests">
+    <ItemGroup>
+      <MainTestAssemblies Include="$(ProjectRoot)\**\bin\$(Configuration)\*.Tests.dll" Exclude="$(ProjectRoot)\Core\**;$(ProjectRoot)\Web.Unity\**"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Running main tests..."/>
+    <Message Importance="$(LogLevel)" Text="%(MainTestAssemblies.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+    			 Properties="TestContainer=%(MainTestAssemblies.Identity)"
+    			 Targets="RunUnitTestContainer" />
+  </Target>
+
+  <!--Pack the main nuget packages and ouput to the nuget drop directory-->
+  <Target Name="PackageMain">
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Packing main nuget packages..."/>
+    <Message Importance="$(LogLevel)" Text="%(MainNuSpecFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+       Properties="NuGetSpecOrProjectPath=%(MainNuSpecFiles.Identity);NuGetBasePath=%(MainNuSpecFiles.NuGetBasePath)"
+       Targets="NuGetPack" />
+  </Target>
+
+  <Target Name="MoveNuGetSymbols">
+    <ItemGroup>
+      <Symbols Include="$(NuGetDropDirectory)\*.symbols.nupkg"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Moving nuget symbol packages..."/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MakeDir Condition="!Exists('$(NuGetSymbolsDropDirectory)')" Directories="$(NuGetSymbolsDropDirectory)"/>
+    <Move SourceFiles="%(Symbols.Identity)" DestinationFolder="$(NuGetSymbolsDropDirectory)"/>
+  </Target>
+
+  <Target Name="End">
+    <PropertyGroup>
+      <BuildDuration>$([System.DateTime]::Now.Subtract($([System.DateTime]::Parse($(BuildStartDate)))).TotalSeconds)</BuildDuration>
+    </PropertyGroup>
+
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+    <Message Importance="$(LogLevel)" Text="Build completed in $(BuildDuration) seconds."/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+  </Target>
+
+
+  <!--Inner target to run MSTest for a test assembly $(TestContainer)-->
+  <Target Name="RunUnitTestContainer" Condition="'$(RunTests)' == 'true'">
+    <PropertyGroup>
+      <TestResult>1</TestResult>
+      <TestSolutionDirectory></TestSolutionDirectory>
+    </PropertyGroup>
+
+    <!--Find the test container's solution directory-->
+    <ItemGroup>
+      <TestContainerItem Include="$(TestContainer)"/>
+    </ItemGroup>
+    <SetSolutionDirectory Items="@(TestContainerItem)">
+      <Output PropertyName="TestSolutionDirectory" TaskParameter="SolutionDirectory"/>
+    </SetSolutionDirectory>
+
+    <!--<Message Importance="$(LogLevel)" Text="Starting: $(MsTestExePath) /testcontainer:$(TestContainer)"/>-->
+    <Exec Command="$(MsTestExePath) /testcontainer:$(TestContainer)" WorkingDirectory="$(TestSolutionDirectory)">
+      <Output TaskParameter="ExitCode" PropertyName="TestResult"/>
+    </Exec>
+
+    <!--Check test result exit code is 0-->
+    <Error Condition="$(TestResult) != 0" Text="Test returned ExitCode $(TestResult)"/>
+  </Target>
+
+  <!--Inner targt to install missing nuget packages $(NuGetPackagesConfigPath) and $(NuGetBasePath)-->
+  <Target Name="NuGetInstall">
+    <PropertyGroup>
+      <Cmd>&quot;$(NuGetExePath)&quot; install &quot;$(NuGetPackagesConfigPath)&quot; -Source "@(NuGetSources)" -OutputDirectory $(NuGetBasePath)packages -Verbosity $(NuGetVerbosity) -NonInteractive</Cmd>
+    </PropertyGroup>
+
+    <!--<Message Importance="$(LogLevel)" Text="Installing nuget packages..."/>
+    <Message Importance="$(LogLevel)" Text="Starting: $(Cmd)"/>-->
+    <Exec Command="$(Cmd)"/>
+  </Target>
+
+  <!--Inner targt to install missing nuget packages $(NuGetPackagesConfigPath) and $(NuGetBasePath)-->
+  <Target Name="NuGetUpdate">
+    <PropertyGroup>
+      <Cmd>&quot;$(NuGetExePath)&quot; update &quot;$(NuGetPackagesConfigPath)&quot; -Source "$(NuGetSources)" -RepositoryPath $(NuGetBasePath)packages -Verbosity $(NuGetVerbosity) -NonInteractive</Cmd>
+    </PropertyGroup>
+
+    <!--<Message Importance="$(LogLevel)" Text="Updating nuget packages..."/>
+    <Message Importance="$(LogLevel)" Text="Starting: $(Cmd)"/>-->
+    <MakeDir Condition="!Exists('$(NuGetBasePath)packages')" Directories="$(NuGetBasePath)packages"/>
+    <Exec Command="$(Cmd)"/>
+  </Target>
+
+  <!--Inner target to pack a nuget package using $(NuGetSpecOrProjectPath) and $(NuGetBasePath)-->
+  <Target Name="NuGetPack">
+    <PropertyGroup>
+      <Cmd>&quot;$(NuGetExePath)&quot; pack $(NuGetSpecOrProjectPath) -OutputDirectory $(NuGetDropDirectory) -BasePath $(NuGetBasePath) -Version $(PackageVersion) -Symbols -Verbosity $(NuGetVerbosity) -NonInteractive -Properties Configuration=$(Configuration)</Cmd>
+    </PropertyGroup>
+
+    <!--<Message Importance="$(LogLevel)" Text="Packaging $(NuGetSpecOrProjectPath)..."/>
+    <Message Importance="$(LogLevel)" Text="Starting: $(Cmd)"/>-->
+    <Exec Command="$(Cmd)"/>
+  </Target>
+
+</Project>
