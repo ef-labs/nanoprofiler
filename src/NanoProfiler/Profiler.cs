@@ -169,7 +169,7 @@ namespace EF.Diagnostics.Profiling
         /// <param name="stepTiming">The step timing to be added.</param>
         public virtual void AddStepTiming(StepTiming stepTiming)
         {
-            if (stepTiming != null)
+            if (stepTiming != null && _stopwatch.IsRunning)
             {
                 _stepTimings.Enqueue(stepTiming);
             }
@@ -189,7 +189,7 @@ namespace EF.Diagnostics.Profiling
         /// <param name="customTiming"></param>
         public virtual void AddCustomTiming(CustomTiming customTiming)
         {
-            if (customTiming != null)
+            if (customTiming != null && _stopwatch.IsRunning)
             {
                 _customTimings.Enqueue(customTiming);
             }
