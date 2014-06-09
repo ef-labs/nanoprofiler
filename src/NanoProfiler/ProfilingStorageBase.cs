@@ -206,6 +206,9 @@ namespace EF.Diagnostics.Profiling
                 // Upgrade to foreground thread
                 Thread.CurrentThread.IsBackground = false;
 
+                // set null the current profiling session bound to the running thread to release the memory
+                ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
+
                 // Save all the queued profilers
                 IProfiler profiler;
                 while (TryDequeue(out profiler))
