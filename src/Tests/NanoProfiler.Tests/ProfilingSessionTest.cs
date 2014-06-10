@@ -143,7 +143,7 @@ namespace EF.Diagnostics.Profiling.Tests
 
             Assert.AreEqual(mockProfiler.Object, ProfilingSession.Current.Profiler);
             Assert.AreEqual(mockProfiler.Object, (mockHttpContext.Object.Items["nano_profiler::current_profiling_session"] as ProfilingSession).Profiler);
-            Assert.AreEqual(mockProfiler.Object, (CallContext.LogicalGetData("nano_profiler::current_profiling_session") as ProfilingSession).Profiler);
+            Assert.AreEqual(mockProfiler.Object, ((CallContext.LogicalGetData("nano_profiler::current_profiling_session") as WeakReference).Target as ProfilingSession).Profiler);
         }
 
         [TestMethod]

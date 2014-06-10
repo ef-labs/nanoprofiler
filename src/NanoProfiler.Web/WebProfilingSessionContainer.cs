@@ -38,7 +38,7 @@ namespace EF.Diagnostics.Profiling.Web
         private const string WebProfilingSessionType = "web";
 
         private readonly IProfilingSessionContainer _callContextProfilingSessionContainer
-             = new CallContextProfilingSessionContainer();
+             = new CallContextProfilingSessionContainer(true);
 
         #region IProfilingSessionContainer Members
 

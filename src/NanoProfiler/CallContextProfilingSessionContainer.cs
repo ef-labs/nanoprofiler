@@ -31,8 +31,23 @@ namespace EF.Diagnostics.Profiling
     /// </summary>
     public class CallContextProfilingSessionContainer : IProfilingSessionContainer
     {
+        private readonly bool _useWeakReference;
+
         private const string CurrentProfilingSessionCacheKey = "nano_profiler::current_profiling_session";
         private const string CurrentProfilingStepIdCacheKey = "nano_profiler::current_profiling_step_id";
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a <see cref="CallContextProfilingSessionContainer"/>.
+        /// </summary>
+        /// <param name="useWeakReference">Whether or not to use WeakReference to wrap <see cref="ProfilingSession"/>.</param>
+        public CallContextProfilingSessionContainer(bool useWeakReference = false)
+        {
+            _useWeakReference = useWeakReference;
+        }
+
+        #endregion
 
         #region Public Methods
 
@@ -41,8 +56,36 @@ namespace EF.Diagnostics.Profiling
         /// </summary>
         public ProfilingSession CurrentSession
         {
-            get { return CallContext.GetData(CurrentProfilingSessionCacheKey) as ProfilingSession; }
-            set { CallContext.LogicalSetData(CurrentProfilingSessionCacheKey, value); }
+            get
+            {
+                var obj = CallContext.GetData(CurrentProfilingSessionCacheKey);
+                if (obj == null)
+                {
+                    return null;
+                }
+
+                // try to cast as WeakReference first
+                var weakProfilingSession = obj as WeakReference;
+                if (weakProfilingSession != null)
+                {
+                    if (weakProfilingSession.IsAlive)
+                    {
+                        return weakProfilingSession.Target as ProfilingSession;
+                    }
+
+                    // set null CurrentSession and return null if weak reference is no longer alive
+                    CurrentSession = null;
+                    return null;
+                }
+
+                // try to cast as ProfilingSession directly
+                return obj as ProfilingSession;
+            }
+            set
+            {
+                var obj = (value != null && _useWeakReference ? new WeakReference(value) : (object)value);
+                CallContext.LogicalSetData(CurrentProfilingSessionCacheKey, obj);
+            }
         }
 
         /// <summary>
