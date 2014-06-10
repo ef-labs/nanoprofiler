@@ -66,7 +66,7 @@ namespace EF.Diagnostics.Profiling.Tests
             var mockProfiler = new Mock<IProfiler>();
             var expected = new ProfilingSession(mockProfiler.Object);
             var mockHttpContext = new HttpContextMock();
-            mockHttpContext.Object.Items["tiny_profiler::current_profiling_session"] = expected;
+            mockHttpContext.Object.Items["nano_profiler::current_profiling_session"] = expected;
             HttpContext.Current = mockHttpContext.Object;
 
             Assert.AreEqual(expected, ProfilingSession.Current);
@@ -77,7 +77,7 @@ namespace EF.Diagnostics.Profiling.Tests
         {
             var mockProfiler = new Mock<IProfiler>();
             var expected = new ProfilingSession(mockProfiler.Object);
-            CallContext.LogicalSetData("tiny_profiler::current_profiling_session", expected);
+            CallContext.LogicalSetData("nano_profiler::current_profiling_session", expected);
 
             Assert.AreEqual(expected, ProfilingSession.Current);
         }
@@ -95,7 +95,7 @@ namespace EF.Diagnostics.Profiling.Tests
         public void TestProfilingSession_getCurrentStepId()
         {
             var expected = Guid.NewGuid();
-            CallContext.LogicalSetData("tiny_profiler::current_profiling_step_id", expected);
+            CallContext.LogicalSetData("nano_profiler::current_profiling_step_id", expected);
 
             Assert.AreEqual(expected, ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId);
         }
@@ -106,7 +106,7 @@ namespace EF.Diagnostics.Profiling.Tests
             var expected = Guid.NewGuid();
             ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = expected;
 
-            Assert.AreEqual(expected, CallContext.LogicalGetData("tiny_profiler::current_profiling_step_id"));
+            Assert.AreEqual(expected, CallContext.LogicalGetData("nano_profiler::current_profiling_step_id"));
         }
 
         [TestMethod]
@@ -142,8 +142,8 @@ namespace EF.Diagnostics.Profiling.Tests
             ProfilingSession.Start("test");
 
             Assert.AreEqual(mockProfiler.Object, ProfilingSession.Current.Profiler);
-            Assert.AreEqual(mockProfiler.Object, (mockHttpContext.Object.Items["tiny_profiler::current_profiling_session"] as ProfilingSession).Profiler);
-            Assert.AreEqual(mockProfiler.Object, (CallContext.LogicalGetData("tiny_profiler::current_profiling_session") as ProfilingSession).Profiler);
+            Assert.AreEqual(mockProfiler.Object, (mockHttpContext.Object.Items["nano_profiler::current_profiling_session"] as ProfilingSession).Profiler);
+            Assert.AreEqual(mockProfiler.Object, (CallContext.LogicalGetData("nano_profiler::current_profiling_session") as ProfilingSession).Profiler);
         }
 
         [TestMethod]
@@ -190,7 +190,7 @@ namespace EF.Diagnostics.Profiling.Tests
                         stopOfProfilerCalled = true;
                     });
             var expected = new ProfilingSession(mockProfiler.Object);
-            CallContext.LogicalSetData("tiny_profiler::current_profiling_session", expected);
+            CallContext.LogicalSetData("nano_profiler::current_profiling_session", expected);
 
             // execute
             ProfilingSession.Stop(discardResults);
@@ -209,7 +209,7 @@ namespace EF.Diagnostics.Profiling.Tests
             var mockProfiler = new Mock<IProfiler>();
             mockProfiler.Setup(profiler => profiler.Stop(It.IsAny<bool>())).Throws(expectedException);
             var expected = new ProfilingSession(mockProfiler.Object);
-            CallContext.LogicalSetData("tiny_profiler::current_profiling_session", expected);
+            CallContext.LogicalSetData("nano_profiler::current_profiling_session", expected);
 
             // mock provider
             var mockProflingProvider = new Mock<IProfilerProvider>();

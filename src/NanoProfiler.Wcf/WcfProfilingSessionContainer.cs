@@ -34,8 +34,8 @@ namespace EF.Diagnostics.Profiling.ServiceModel
     /// </summary>
     public class WcfProfilingSessionContainer: IProfilingSessionContainer
     {
-        private const string CurrentProfilingSessionCacheKey = "tiny_profiler::current_profiling_session";
-        private const string CurrentProfilingStepIdCacheKey = "tiny_profiler::current_profiling_step_id";
+        private const string CurrentProfilingSessionCacheKey = "nano_profiler::current_profiling_session";
+        private const string CurrentProfilingStepIdCacheKey = "nano_profiler::current_profiling_step_id";
         private const string WcfProfilingSessionType = "wcf";
 
         private readonly IProfilingSessionContainer _webProfilingSessionContainer
