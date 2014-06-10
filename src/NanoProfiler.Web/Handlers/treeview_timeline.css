@@ -1,0 +1,208 @@
+/*
+ * CSS3 Treeview Timeline. No JavaScript
+ * This solution works with all modern browsers and Internet Explorer 9+.
+ * @version 1.0
+ **/
+
+/* CSS for Treeview Timeline */ 
+.css-treeview a { color: #00f; text-decoration: none; }
+.css-treeview a:hover { text-decoration: underline; }
+.css-treeview ul, .css-treeview li { padding: 0; margin: 0; list-style: none; white-space:nowrap; }
+.css-treeview input { position: absolute; opacity: 0; }
+.css-treeview { font: normal 12px "Courier New"; -moz-user-select: none; -webkit-user-select: none;	user-select: none; }
+.css-treeview input + label + ul { margin: 0 0 0 16px; }
+.css-treeview input + label { position: relative; }
+.css-treeview input ~ ul { display: none; }
+.css-treeview label, .css-treeview label::before { cursor: pointer; }
+.css-treeview input:disabled + label { cursor: default;	opacity: .6; }
+.css-treeview input:checked:not(:disabled) ~ ul	{ display: block; }
+.css-treeview label, .css-treeview label::before { background: url("icons.png") no-repeat; }
+.css-treeview label, .css-treeview a, .css-treeview label::before { display: inline-block; height: 16px; line-height: 16px; ,vertical-align: middle; }
+.css-treeview label { background-position: -18px 0; }
+.css-treeview label::before	{ content: ""; width: 16px; margin: 0; vertical-align: middle; background-position: 0 -32px; }
+.css-treeview input:checked + label::before { background-position: 0 -16px; }
+
+.css-treeview li.summary { margin-bottom: 10px !important; }
+.css-treeview li.ruler { border-bottom: dashed 1px #999 !important; }
+.css-treeview li.ruler span { display:inline-block !important; }
+
+.css-treeview span.bar { display:inline-block !important; height: 7px !important; position: relative; top: 3px; }
+.css-treeview span.step { background-color:blue !important; }
+.css-treeview span.db { background-color:red !important; }
+.css-treeview span.wcf { background-color:green !important; }
+.css-treeview ul.timing { padding-left: 538px; }
+.css-treeview span.timing { display:inline-block !important; position: absolute; left: 8px; }
+.css-treeview span.start { display:inline-block !important; position: absolute; left:400px }
+.css-treeview span.duration { display:inline-block !important; position: absolute; left: 460px }
+.css-treeview span.leaf { margin-left: 16px; }
+
+/* webkit adjacent element selector bugfix */
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+	.css-treeview {	-webkit-animation: webkit-adjacent-element-selector-bugfix infinite 1s;	}
+	@-webkit-keyframes webkit-adjacent-element-selector-bugfix { from { padding: 0; } to { padding: 0; } }
+}
+
+/* CSS for Modal Dialog */
+.modal {
+	/* Font */
+	font-family: "Courier New";
+
+	/* Overlay page content */
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.5);
+	z-index: 10000;
+
+	/* Transition opacity on open */
+	-webkit-transition: opacity 500ms ease-in;
+	-moz-transition: opacity 500ms ease-in;
+	transition: opacity 500ms ease-in;
+
+	/* Hide for now */
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Show modal */
+.modal:target {
+	opacity: 1;
+	pointer-events: auto;
+	/* at time of writing (Feb 2012), pointer-events not supported by Opera or IE */
+}
+
+/* Content */
+.modal > div {
+	width: 500px;
+	background: #fff;
+	position: relative;
+	margin: 10% auto;
+
+	/* Default minimise animation */
+	-webkit-animation: minimise 500ms linear;
+	-moz-animation: minimise 500ms linear;
+
+	/* Prettify */
+	padding: 10px 30px 25px 25px;
+	border-radius: 7px;
+	box-shadow: 0 3px 20px rgba(0,0,0,0.9);
+	background: #fff;
+	background: -moz-linear-gradient(#fff, #ccc);
+	background: -webkit-linear-gradient(#fff, #ccc);
+	background: -o-linear-gradient(#fff, #ccc);
+	text-shadow: 0 1px 0 #fff;
+}
+
+/* Override animation on modal open */
+.modal:target > div {
+	-webkit-animation-name: bounce;
+	-moz-animation-name: bounce;
+}
+
+@-webkit-keyframes bounce {
+  0% {
+	-webkit-transform: scale3d(0.1,0.1,1);
+	box-shadow: 0 3px 20px rgba(0,0,0,0.9);
+  }
+  55% {
+	-webkit-transform: scale3d(1.08,1.08,1);
+	box-shadow: 0 10px 20px rgba(0,0,0,0);
+  }
+  75% {
+	-webkit-transform: scale3d(0.95,0.95,1);
+	box-shadow: 0 0 20px rgba(0,0,0,0.9);
+  }
+  100% {
+	-webkit-transform: scale3d(1,1,1);
+	box-shadow: 0 3px 20px rgba(0,0,0,0.9);
+  }
+}
+
+@-webkit-keyframes minimise {
+  0% {
+	-webkit-transform: scale3d(1,1,1);
+  }
+  100% {
+	-webkit-transform: scale3d(0.1,0.1,1);
+  }
+}
+
+@-moz-keyframes bounce {
+  0% {
+	-moz-transform: scale3d(0.1,0.1,1);
+	box-shadow: 0 3px 20px rgba(0,0,0,0.9);
+  }
+  55% {
+	-moz-transform: scale3d(1.08,1.08,1);
+	box-shadow: 0 10px 20px rgba(0,0,0,0);
+  }
+  75% {
+	-moz-transform: scale3d(0.95,0.95,1);
+	box-shadow: 0 0 20px rgba(0,0,0,0.9);
+  }
+  100% {
+	-moz-transform: scale3d(1,1,1);
+	box-shadow: 0 3px 20px rgba(0,0,0,0.9);
+  }
+}
+
+@-moz-keyframes minimise {
+  0% {
+	-moz-transform: scale3d(1,1,1);
+  }
+  100% {
+	-moz-transform: scale3d(0.1,0.1,1);
+  }
+}
+
+/* Modal close link */
+.modal a[href="#close"] {
+	position: absolute;
+	right: 0;
+	top: 0;
+	color: transparent;
+}
+
+/* Reset native styles */
+.modal a[href="#close"]:focus {
+	outline: none;
+}
+
+/* Create close button */
+.modal a[href="#close"]:after {
+	content: 'X';
+	display: block;
+
+	/* Position */
+	position: absolute;
+	right: -10px;
+	top: -10px;
+	width: 1.5em;
+	padding: 1px 1px 1px 2px;
+
+	/* Style */
+	text-decoration: none;
+	text-shadow: none;
+	text-align: center;
+	font-weight: bold;
+	background: #000;
+	color: #fff;
+	border: 3px solid #fff;
+	border-radius: 20px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	}
+
+	.modal a[href="#close"]:focus:after,
+	.modal a[href="#close"]:hover:after {
+	-webkit-transform: scale(1.1,1.1);
+	-moz-transform: scale(1.1,1.1);
+}
+
+.modal a[href="#close"]:focus:after {
+	outline: 1px solid #000;
+}
+
+textarea { width: 100%; height: 500px; }

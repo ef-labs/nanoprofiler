@@ -21,6 +21,12 @@
     THE SOFTWARE.
 */
 
+using EF.Diagnostics.Profiling.ProfilingFilters;
+using EF.Diagnostics.Profiling.Storages;
+using EF.Diagnostics.Profiling.Web.Handlers;
+using EF.Diagnostics.Profiling.Web.Storages;
+using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+
 namespace EF.Diagnostics.Profiling.Web
 {
     /// <summary>
@@ -41,6 +47,15 @@ namespace EF.Diagnostics.Profiling.Web
             {
                 ProfilingSession.ProfilingSessionContainer = new WebProfilingSessionContainer();
             }
+
+            // register NanoProfilerModule
+            DynamicModuleUtility.RegisterModule(typeof(NanoProfilerModule));
+
+            // by default, use CircularBufferedProfilingStorage and enables view-result feature
+            ProfilingSession.ProfilingStorage = new CircularBufferedProfilingStorage(100, profiler => false, new JsonProfilingStorage());
+
+            // ignore nanoprofiler view-result requests from profiling
+            ProfilingSession.ProfilingFilters.Add(new NameContainsProfilingFilter("/nanoprofiler"));
         }
     }
 }

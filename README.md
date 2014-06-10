@@ -3,7 +3,9 @@ NanoProfiler
 
 NanoProfiler is a light weight profiling library written in C# which requires .NET 4.0+. It is designed for high performance and easy to use for both sync & async programming model. It has been used in EF (Education First) projects generating billions of profiling events per day with trivial performance penalty.
 
-NanoProfiler itself only implements the core profiling feature and a simple implementation for persisting results via slf4net. If you want better profiling result management feature, you could implement the IProfilingStorage interface by yourself.
+NanoProfiler itself implements the core profiling feature and a simple implementation for persisting results via slf4net. If you want better profiling result management feature, you could implement the IProfilingStorage interface by yourself.
+
+NanoProfiler also provides a wonderful view-result Web UI supports view latest profiling results in a tree-timeline view (simply visit ~/nanoprofiler/view in your web application). 
 
 Installing NanoProfiler
 -----------------------
@@ -139,8 +141,15 @@ Your code of GetConnection() method need to be changed to as below:
 
 How to view profiling results?
 ---------------------------------
-NanoProfiler itself persists results as JSON via slf4net by default, so that, you could persist & view results in any format that slf4net could support. For details about slf4net configuration, please check:
-https://github.com/englishtown/slf4net/wiki/Configuration
+If you are referencing NanoProfiler.Web, the view-result UI is enabled by default, which lists the latest 100 profiling results in a wonderful tree-timeline view (simply visit ~/nanoprofiler/view in your web application).
+
+If you want to change number of results to be listed or if you want to disable this feature in your production environment, you could add code like below in your application_start event handler to change its default settings:
+
+    ProfilingSession.ProfilingStorage = new CircularBufferedProfilingStorage(100, profiler => false, new JsonProfilingStorage());
+
+* The first parameter of CircularBufferedProfilingStorage specified the max number of latest profiling results to be kept;
+* The second parameter is of type Func<IProfiler, bool>, which is a delegate by which you could filter specified profiling results in the view-result page;
+* The third parameter is optional, which should be the underlying storage for real persisting of profiling results;
 
 How to enable Unity container based deep profiling?
 ----------------------------------------------------------

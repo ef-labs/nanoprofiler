@@ -28,8 +28,10 @@ using System.Text.RegularExpressions;
 
 using EF.Diagnostics.Profiling;
 using EF.Diagnostics.Profiling.ProfilingFilters;
+using EF.Diagnostics.Profiling.Storages;
 using EF.Diagnostics.Profiling.Unity;
 using EF.Diagnostics.Profiling.Web.ProfilingFilters;
+using EF.Diagnostics.Profiling.Web.Storages;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -50,7 +52,7 @@ namespace NanoProfiler.Demos.SimpleDemo
 
             // register profiling filters to exclude some URLs from profiling
             ProfilingSession.ProfilingFilters.Add(new NameContainsProfilingFilter("_tools/"));
-            ProfilingSession.ProfilingFilters.Add(new FileExtensionProfilingFilter("jpg", "js", "css"));
+            ProfilingSession.ProfilingFilters.Add(new FileExtensionProfilingFilter("ico", "jpg", "js", "css"));
 
             #region Optional bootstrap code for unity based deep profiling and policy injection based profiling only
 
