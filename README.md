@@ -250,8 +250,11 @@ Since we have much better performance and is designed to consume minimal server 
 
 How to compile the source code?
 -------------------------------------
+Do the following steps before opening NanoProfiler.sln in Visual Studio 2012 Pro+
+
 - git clone
-- run build.cmd
+- cd src
+- run .\build.cmd
 
 License terms
 -------------
