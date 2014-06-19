@@ -39,7 +39,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
     /// </summary>
     public class NanoProfilerModule : IHttpModule
     {
-        private string _viewUrl = "/nanoprofiler/view";
+        private const string ViewUrl = "/nanoprofiler/view";
 
         /// <summary>
         /// The default Html of the view-result index page: ~/nanoprofiler/view
@@ -103,7 +103,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
 
             var path = context.Request.Path.TrimEnd('/');
 
-            if (path.EndsWith("/nanoprofiler-resources/icons.png"))
+            if (path.EndsWith("/nanoprofiler-resources/icons"))
             {
                 context.Response.ContentType = "image/png";
                 var iconsStream = GetType().Assembly.GetManifestResourceStream("EF.Diagnostics.Profiling.Web.Handlers.icons.png");
@@ -115,7 +115,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                 return;
             }
 
-            if (path.EndsWith("/nanoprofiler-resources/treeview_timeline.css"))
+            if (path.EndsWith("/nanoprofiler-resources/css"))
             {
                 context.Response.ContentType = "text/css";
                 var cssStream = GetType().Assembly.GetManifestResourceStream("EF.Diagnostics.Profiling.Web.Handlers.treeview_timeline.css");
@@ -128,26 +128,32 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             }
 
             // view index of all latest results: ~/nanoprofiler/view
-            if (path.EndsWith(_viewUrl, StringComparison.OrdinalIgnoreCase))
+            if (path.EndsWith(ViewUrl, StringComparison.OrdinalIgnoreCase))
             {
                 context.Response.ContentType = "text/html";
 
                 var sb = new StringBuilder();
                 sb.Append("<head>");
                 sb.Append("<title>NanoProfiler Latest Profiling Results</title>");
-                sb.Append("<style>th { width: 200px; text-align: left; }</style>");
+                sb.Append("<style>th { width: 200px; text-align: left; } .gray { background-color: #eee; } .nowrap { white-space: nowrap;padding-right: 20px; vertical-align:top; } </style>");
                 sb.Append("</head");
                 sb.Append("<body>");
                 sb.Append(ViewResultIndexHeaderHtml);
                 
                 sb.Append("<table>");
-                sb.Append("<tr><th>Time (UTC)</th><th>Duration (ms)</th><th>Url</th></tr>");
+                sb.Append("<tr><th class=\"nowrap\">Time (UTC)</th><th class=\"nowrap\">Duration (ms)</th><th>Url</th></tr>");
                 var latestResults = CircularBufferedProfilingStorage.Instance.LatestResults.OrderByDescending(r => r.Started);
+                var i = 0;
                 foreach (var result in latestResults)
                 {
-                    sb.Append("<tr><td>");
+                    sb.Append("<tr");
+                    if ((i++) % 2 == 1)
+                    {
+                        sb.Append(" class=\"gray\"");
+                    }
+                    sb.Append("><td class=\"nowrap\">");
                     sb.Append(result.Started.ToString("s"));
-                    sb.Append("</td><td>");
+                    sb.Append("</td><td class=\"nowrap\">");
                     sb.Append(result.DurationMilliseconds);
                     sb.Append("</td><td><a href=\"view/");
                     sb.Append(result.Id.ToString());
@@ -165,14 +171,14 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             }
 
             // view specific result by uuid: ~/nanoprofiler/view/{uuid}
-            if (path.IndexOf(_viewUrl, StringComparison.OrdinalIgnoreCase) >= 0)
+            if (path.IndexOf(ViewUrl, StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 var sb = new StringBuilder();
                 sb.Append("<head>");
                 sb.Append("<meta charset=\"utf-8\" />");
                 sb.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />");
                 sb.Append("<title>NanoProfiler Profiling Result</title>");
-                sb.Append("<link rel=\"stylesheet\" href=\"./nanoprofiler-resources/treeview_timeline.css\" />");
+                sb.Append("<link rel=\"stylesheet\" href=\"./nanoprofiler-resources/css\" />");
                 sb.Append("</head");
                 sb.Append("<body>");
                 sb.Append("<h1>NanoProfiler Profiling Result</h1>");
