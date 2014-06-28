@@ -49,7 +49,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             var tags = GetRequestProfilingTags(request, channel);
 
             // fix properties for WCF profiling session
-            var profilingSession = ProfilingSession.Current;
+            var profilingSession = GetCurrentProfilingSession();
             if (profilingSession == null)
             {
                 // start the profiling session if not started
@@ -90,6 +90,25 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
         #endregion
 
         #region Private Methods
+
+        private static ProfilingSession GetCurrentProfilingSession()
+        {
+            var profilingSession = ProfilingSession.Current;
+            if (profilingSession == null)
+            {
+                return null;
+            }
+
+            // set null current profiling session if the current session has already been stopped
+            var isProfilingSessionStopped = (profilingSession.Profiler.Id == ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId);
+            if (isProfilingSessionStopped)
+            {
+                ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
+                return null;
+            }
+
+            return profilingSession;
+        }
 
         private static string GetRequestProfilingTags(Message request, IClientChannel channel)
         {

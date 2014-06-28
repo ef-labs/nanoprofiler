@@ -44,8 +44,8 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 return;
             }
 
-            var profilingSession = ProfilingSession.Current;
-            if (profilingSession == null || profilingSession.Profiler == null)
+            var profilingSession = GetCurrentProfilingSession();
+            if (profilingSession == null)
             {
                 return;
             }
@@ -55,15 +55,15 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
 
             if (reply != null)
             {
+                // only if using HTTP binding, try to get content-length header value (if exists) as output size
                 if (reply.Properties.ContainsKey(HttpResponseMessageProperty.Name))
                 {
                     var property = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
-                    wcfTiming.OutputSize = int.Parse(property.Headers[HttpResponseHeader.ContentLength]);
-                }
-                else
-                {
-                    var replyData = reply.ToString();
-                    wcfTiming.OutputSize = replyData == null ? 0 : replyData.Length;
+                    int contentLength;
+                    if (int.TryParse(property.Headers[HttpResponseHeader.ContentLength], out contentLength) && contentLength > 0)
+                    {
+                        wcfTiming.OutputSize = contentLength;
+                    }
                 }
             }
             wcfTiming.Stop();
@@ -71,8 +71,8 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
 
         object IClientMessageInspector.BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var profilingSession = ProfilingSession.Current;
-            if (profilingSession == null || profilingSession.Profiler == null)
+            var profilingSession = GetCurrentProfilingSession();
+            if (profilingSession == null)
             {
                 return null;
             }
@@ -112,6 +112,29 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
 
             // return wcfTiming as correlationState of AfterReceiveReply() to stop the WCF timing in AfterReceiveReply()
             return wcfTiming;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private static ProfilingSession GetCurrentProfilingSession()
+        {
+            var profilingSession = ProfilingSession.Current;
+            if (profilingSession == null)
+            {
+                return null;
+            }
+
+            // set null current profiling session if the current session has already been stopped
+            var isProfilingSessionStopped = (profilingSession.Profiler.Id == ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId);
+            if (isProfilingSessionStopped)
+            {
+                ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
+                return null;
+            }
+
+            return profilingSession;
         }
 
         #endregion
