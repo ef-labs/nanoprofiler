@@ -21,6 +21,7 @@
     THE SOFTWARE.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -58,7 +59,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 //   and if there is already a profiling session started in begin request event when working with HTTP bindings,
                 //   since HttpContext.Current is not accessible from WCF context, there will be two profiling sessions
                 //   be saved, one for the web request wrapping the WCF call and the other for the WCF call.
-                ProfilingSession.Start(request.Headers.Action, tags == null ? null : TagCollection.FromString(tags).ToArray());
+                ProfilingSession.Start(request.Headers.Action, tags);
             }
             else
             {
@@ -110,9 +111,9 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             return profilingSession;
         }
 
-        private static string GetRequestProfilingTags(Message request, IClientChannel channel)
+        private static string[] GetRequestProfilingTags(Message request, IClientChannel channel)
         {
-            string tags = null;
+            string tagsString = null;
 
             // try to get tags from headers for soap messages
             if (!Equals(request.Headers.MessageVersion, MessageVersion.None))
@@ -124,7 +125,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
 
                 if (headerIndex >= 0)
                 {
-                    tags = request.Headers.GetHeader<string>(headerIndex);
+                    tagsString = request.Headers.GetHeader<string>(headerIndex);
                 }
             }
             // else try to get tags from properties for web operation messages
@@ -133,24 +134,25 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
                 {
                     var property = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
-                    tags = property.Headers[WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags];
+                    tagsString = property.Headers[WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags];
                 }
             }
-            return tags;
+
+            var tags = string.IsNullOrWhiteSpace(tagsString) ? null : TagCollection.FromString(tagsString);
+            return tags == null || !tags.Any() ? null : tags.ToArray();
         }
 
-        private static void MergeRequestTags(ProfilingSession profilingSession, string tags)
+        private static void MergeRequestTags(ProfilingSession profilingSession, IEnumerable<string> tags)
         {
             if (tags != null)
             {
-                var tagCollection = TagCollection.FromString(tags);
                 if (profilingSession.Profiler.Tags == null)
                 {
-                    profilingSession.Profiler.Tags = tagCollection;
+                    profilingSession.Profiler.Tags = new TagCollection(tags);
                 }
                 else
                 {
-                    foreach (var tag in tagCollection)
+                    foreach (var tag in tags)
                     {
                         profilingSession.Profiler.Tags.Add(tag);
                     }

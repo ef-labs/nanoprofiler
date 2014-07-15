@@ -36,10 +36,22 @@ namespace EF.Diagnostics.Profiling.Data
         private readonly IDbCommand _command;
         private readonly DbCommand _dbCommand;
         private readonly IDbProfiler _dbProfiler;
-        private readonly IEnumerable<string> _tags;
+        private List<string> _tags;
         private DbConnection _dbConnection;
         private DbParameterCollection _dbParameterCollection;
         private DbTransaction _dbTransaction;
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the tags of the <see cref="DbTiming"/> which will be created internally.
+        /// </summary>
+        public ICollection<string> Tags
+        {
+            get { return _tags ?? (_tags = new List<string>()); }
+        }
+
+        #endregion
 
         #region Constructors
 
@@ -64,7 +76,11 @@ namespace EF.Diagnostics.Profiling.Data
             _command = command;
             _dbCommand = command as DbCommand;
             _dbProfiler = dbProfiler;
-            _tags = tags;
+
+            if (tags != null)
+            {
+                _tags = new List<string>(tags);
+            }
         }
 
         #endregion
