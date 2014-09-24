@@ -77,7 +77,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 return null;
             }
 
-            var wcfTiming = new WcfTiming(profilingSession.Profiler, request) { ExecuteType = channel.Via.Scheme };
+            var wcfTiming = new WcfTiming(profilingSession.Profiler, ref request) { ExecuteType = channel.Via.Scheme };
 
             // we copies tags from the current profiling session to the remote WCF profiling session
             // so that we could group/wire client and server profiling session by tags in the future

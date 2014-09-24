@@ -22,7 +22,7 @@
 */
 
 using System.ServiceModel.Description;
-
+using System.ServiceModel.Dispatcher;
 using EF.Diagnostics.Profiling.ServiceModel.Dispatcher;
 using EF.Diagnostics.Profiling.Web;
 
@@ -55,16 +55,19 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Description
         {
         }
 
-        void IEndpointBehavior.ApplyClientBehavior(ServiceEndpoint endpoint, System.ServiceModel.Dispatcher.ClientRuntime clientRuntime)
+        void IEndpointBehavior.ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             var inspector = new WcfTimingClientMessageInspector();
             clientRuntime.MessageInspectors.Add(inspector);
         }
 
-        void IEndpointBehavior.ApplyDispatchBehavior(ServiceEndpoint endpoint, System.ServiceModel.Dispatcher.EndpointDispatcher endpointDispatcher)
+        void IEndpointBehavior.ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
             var inspector = new WcfProfilingDispatchMessageInspector();
             endpointDispatcher.DispatchRuntime.MessageInspectors.Add(inspector);
+
+            var errorHandler = new WcfProfilingErrorHandler();
+            endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add(errorHandler);
         }
 
         void IEndpointBehavior.Validate(ServiceEndpoint endpoint)

@@ -56,6 +56,7 @@
     </Compile>
     <Compile Include="Configuration\WcfProfilingBehaviorElement.cs" />
     <Compile Include="Description\WcfProfilingBehavior.cs" />
+    <Compile Include="Dispatcher\WcfProfilingErrorHandler.cs" />
     <Compile Include="Dispatcher\WcfProfilingMessageHeaderConstants.cs" />
     <Compile Include="Dispatcher\WcfProfilingDispatchMessageInspector.cs" />
     <Compile Include="Dispatcher\WcfTimingClientMessageInspector.cs" />

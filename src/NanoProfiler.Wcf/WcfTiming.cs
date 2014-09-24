@@ -47,7 +47,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel
         /// <param name="requestMessage">
         ///     The request message of the WCF service method being called &amp; profiled.
         /// </param>
-        public WcfTiming(IProfiler profiler, Message requestMessage)
+        public WcfTiming(IProfiler profiler, ref Message requestMessage)
             : base(profiler, "wcf", requestMessage.Headers.Action)
         {
             if (requestMessage == null)
@@ -56,7 +56,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel
             }
 
             _profiler = profiler;
-            InputData = ToXml(requestMessage);
+            InputData = ToXml(ref requestMessage);
             InputSize = InputData.Length;
         }
 
@@ -78,14 +78,23 @@ namespace EF.Diagnostics.Profiling.ServiceModel
 
         #region Private Methods
 
-        private static string ToXml(Message message)
+        private static string ToXml(ref Message message)
         {
             if (message == null)
             {
                 return null;
             }
 
-            return message.ToString();
+            using (var buffer = message.CreateBufferedCopy(int.MaxValue))
+            {
+                message = buffer.CreateMessage();
+
+                using (var messageCopy = buffer.CreateMessage())
+                using (var reader = messageCopy.GetReaderAtBodyContents())
+                {
+                    return reader.ReadOuterXml();
+                }
+            }
         }
 
         #endregion
