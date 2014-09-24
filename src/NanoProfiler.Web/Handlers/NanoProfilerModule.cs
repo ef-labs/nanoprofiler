@@ -67,6 +67,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
         public void Init(HttpApplication application)
         {
             application.BeginRequest += ApplicationOnBeginRequest;
+            application.Error += ApplicationOnError;
         }
 
         #endregion
@@ -384,6 +385,12 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                 sb.Append("</span>");
             }
             sb.Append("</li>");
+        }
+
+        private void ApplicationOnError(object sender, EventArgs eventArgs)
+        {
+            // stop and ignore profiling results on error
+            ProfilingSession.Stop(discardResults: true);
         }
     }
 }
