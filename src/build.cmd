@@ -7,7 +7,7 @@ if "%Config%" == "" (
    set Config=Release
 )
 if "%Version%" == "" (
-   set Version=1.1.1.0
+   set Version=1.2.0.0
 )
 
 set EnableNuGetPackageRestore=true 
