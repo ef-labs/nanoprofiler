@@ -1,4 +1,4 @@
-﻿/*
+/*
     The MIT License (MIT)
     Copyright © 2014 Englishtown <opensource@englishtown.com>
 
