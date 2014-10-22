@@ -65,7 +65,7 @@ namespace EF.Diagnostics.Profiling.Data
         {
             _profiler = profiler;
             DbExecuteType = executeType;
-            ExecuteType = executeType.ToString();
+            ExecuteType = executeType.ToString().ToLowerInvariant();
             if (command != null)
             {
                 Parameters = new DbTimingParameterCollection(command.Parameters);

@@ -284,7 +284,7 @@ namespace EF.Diagnostics.Profiling.Storages
             }
 
             timingData.DurationMilliseconds = timing.DurationMilliseconds;
-            timingData.ExecuteType = timing.ExecuteType;
+            timingData.ExecuteType = timing.ExecuteType == null ? null : timing.ExecuteType.ToLowerInvariant();
             timingData.Id = timing.Id;
             timingData.MachineName = timing.MachineName;
             timingData.Name = timing.Name;
