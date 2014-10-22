@@ -199,7 +199,8 @@ namespace EF.Diagnostics.Profiling
 
         #region IProfiler Members
 
-        string IProfiler.Client {
+        string IProfiler.Client
+        {
             get { return Client; }
             set { Client = value; }
         }

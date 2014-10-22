@@ -217,7 +217,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                     sb.Append(result.ExecuteType);
                     sb.Append(" &nbsp; ");
                     sb.Append("<b>client: </b>");
-                    sb.Append(result.Client);
+                    sb.Append(result.Client == "::1" ? "127.0.0.1" : result.Client);
                     sb.Append(" &nbsp; ");
                     if (result.Tags != null && result.Tags.Any())
                     {
