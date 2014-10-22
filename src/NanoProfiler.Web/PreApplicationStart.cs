@@ -24,8 +24,9 @@
 using EF.Diagnostics.Profiling.ProfilingFilters;
 using EF.Diagnostics.Profiling.Storages;
 using EF.Diagnostics.Profiling.Web.Handlers;
-using EF.Diagnostics.Profiling.Web.Storages;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+
+using CircularBufferedProfilingStorage = EF.Diagnostics.Profiling.Storages.CircularBufferedProfilingStorage;
 
 namespace EF.Diagnostics.Profiling.Web
 {

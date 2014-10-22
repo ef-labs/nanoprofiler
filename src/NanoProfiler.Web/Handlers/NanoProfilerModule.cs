@@ -29,7 +29,8 @@ using System.Web;
 using System.Xml;
 
 using EF.Diagnostics.Profiling.Timing;
-using EF.Diagnostics.Profiling.Web.Storages;
+
+using CircularBufferedProfilingStorage = EF.Diagnostics.Profiling.Storages.CircularBufferedProfilingStorage;
 
 namespace EF.Diagnostics.Profiling.Web.Handlers
 {

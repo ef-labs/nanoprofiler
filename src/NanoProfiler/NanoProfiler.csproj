@@ -60,6 +60,7 @@
     <Compile Include="IProfilingSessionContainer.cs" />
     <Compile Include="ProfilingFilters\RegexProfilingFilter.cs" />
     <Compile Include="ProfilingFilters\NameContainsProfilingFilter.cs" />
+    <Compile Include="Storages\CircularBufferedProfilingStorage.cs" />
     <Compile Include="Storages\CustomTimingData.cs" />
     <Compile Include="Storages\JsonProfilingStorage.cs" />
     <Compile Include="Storages\SessionTimingData.cs" />
