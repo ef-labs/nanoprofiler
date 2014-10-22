@@ -26,6 +26,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
+using EF.Diagnostics.Profiling.Timing;
 
 namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
 {
@@ -82,31 +83,37 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             // we copies tags from the current profiling session to the remote WCF profiling session
             // so that we could group/wire client and server profiling session by tags in the future
             var tags = profilingSession.Profiler.Tags;
-            if (tags != null)
+            if (tags == null)
             {
-                if (!Equals(request.Headers.MessageVersion, MessageVersion.None))
+                tags = new TagCollection(null);
+            }
+
+            // add profiler.Id as a tag of sub WCF call session tags
+            // so that we could build the full snapshot of parent profiling session
+            tags.Add(profilingSession.Profiler.Id.ToString());
+
+            if (!Equals(request.Headers.MessageVersion, MessageVersion.None))
+            {
+                var untypedHeader = new MessageHeader<string>(tags.ToString()).GetUntypedHeader(
+                    WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
+                    , WcfProfilingMessageHeaderConstants.HeaderNamespace);
+                request.Headers.Add(untypedHeader);
+            }
+            else if (WebOperationContext.Current != null || channel.Via.Scheme == "http" || channel.Via.Scheme == "https")
+            {
+                if (!request.Properties.ContainsKey(WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags))
                 {
-                    var untypedHeader = new MessageHeader<string>(tags.ToString()).GetUntypedHeader(
+                    request.Properties.Add(
+                        WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
+                        , new HttpRequestMessageProperty());
+                }
+
+                if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
+                {
+                    var httpRequestProperty = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+                    httpRequestProperty.Headers.Add(
                         WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
                         , WcfProfilingMessageHeaderConstants.HeaderNamespace);
-                    request.Headers.Add(untypedHeader);
-                }
-                else if (WebOperationContext.Current != null || channel.Via.Scheme == "http" || channel.Via.Scheme == "https")
-                {
-                    if (!request.Properties.ContainsKey(WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags))
-                    {
-                        request.Properties.Add(
-                            WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
-                            , new HttpRequestMessageProperty());
-                    }
-
-                    if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
-                    {
-                        var httpRequestProperty = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
-                        httpRequestProperty.Headers.Add(
-                            WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
-                            , WcfProfilingMessageHeaderConstants.HeaderNamespace);
-                    }
                 }
             }
 
