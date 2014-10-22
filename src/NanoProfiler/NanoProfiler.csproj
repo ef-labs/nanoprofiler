@@ -66,6 +66,7 @@
     <Compile Include="Storages\SessionTimingData.cs" />
     <Compile Include="Storages\StepTimingData.cs" />
     <Compile Include="Storages\TimingDataBase.cs" />
+    <Compile Include="Timing\RpcTimingBase.cs" />
     <Compile Include="Timing\TimingAggregation.cs" />
     <Compile Include="Profiler.cs" />
     <Compile Include="ProfilerProvider.cs" />

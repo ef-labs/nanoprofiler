@@ -31,9 +31,10 @@ namespace EF.Diagnostics.Profiling.ServiceModel
     /// <summary>
     /// Represents the WCF timing of a WCF service call.
     /// </summary>
-    public class WcfTiming : CustomTiming
+    public class WcfTiming : RpcTimingBase
     {
         private readonly IProfiler _profiler;
+        private const string WcfTimingType = "wcf";
         
         #region Constructors
 
@@ -48,7 +49,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel
         ///     The request message of the WCF service method being called &amp; profiled.
         /// </param>
         public WcfTiming(IProfiler profiler, ref Message requestMessage)
-            : base(profiler, "wcf", requestMessage.Headers.Action)
+            : base(profiler, WcfTimingType, requestMessage.Headers.Action)
         {
             if (requestMessage == null)
             {

@@ -29,7 +29,7 @@
 .css-treeview span.bar { display:inline-block !important; height: 7px !important; position: relative; top: 3px; }
 .css-treeview span.step { background-color:blue !important; }
 .css-treeview span.db { background-color:red !important; }
-.css-treeview span.wcf { background-color:green !important; }
+.css-treeview span.wcf, .css-treeview span.rpc_wcf { background-color:green !important; }
 .css-treeview ul.timing { padding-left: 538px; }
 .css-treeview span.timing { display:inline-block !important; position: absolute; left: 8px; }
 .css-treeview span.start { display:inline-block !important; position: absolute; left:400px }
