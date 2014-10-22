@@ -300,7 +300,7 @@ namespace EF.Diagnostics.Profiling.Storages
 
         private static string ToSortableDateTimeString(DateTime dt)
         {
-            return dt.ToString("s");
+            return dt.ToString("yyyy-MM-ddTHH:mm:ss.FFF");
         }
 
         #endregion

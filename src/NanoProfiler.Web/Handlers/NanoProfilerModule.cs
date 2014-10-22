@@ -164,7 +164,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                         sb.Append(" class=\"gray\"");
                     }
                     sb.Append("><td class=\"nowrap\">");
-                    sb.Append(result.Started.ToString("s"));
+                    sb.Append(result.Started.ToString("yyyy-MM-ddTHH:mm:ss.FFF"));
                     sb.Append("</td><td class=\"nowrap\">");
                     sb.Append(result.DurationMilliseconds);
                     sb.Append("</td><td><a href=\"view/");
