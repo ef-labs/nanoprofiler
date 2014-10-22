@@ -9,7 +9,7 @@
 .css-treeview a:hover { text-decoration: underline; }
 .css-treeview ul, .css-treeview li { padding: 0; margin: 0; list-style: none; white-space:nowrap; }
 .css-treeview input { position: absolute; opacity: 0; }
-.css-treeview { font: normal 12px "Courier New"; -moz-user-select: none; -webkit-user-select: none;	user-select: none; }
+.css-treeview { font: normal 12px "Courier New"; }
 .css-treeview input + label + ul { margin: 0 0 0 16px; }
 .css-treeview input + label { position: relative; }
 .css-treeview input ~ ul { display: none; }
