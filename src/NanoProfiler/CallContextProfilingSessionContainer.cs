@@ -75,6 +75,7 @@ namespace EF.Diagnostics.Profiling
 
                     // set null CurrentSession and return null if weak reference is no longer alive
                     CurrentSession = null;
+                    CurrentSessionStepId = null;
                     return null;
                 }
 

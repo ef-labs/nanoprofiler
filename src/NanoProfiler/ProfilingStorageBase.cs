@@ -208,6 +208,7 @@ namespace EF.Diagnostics.Profiling
 
                 // set null the current profiling session bound to the running thread to release the memory
                 ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
+                ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = null;
 
                 // Save all the queued profilers
                 IProfiler profiler;

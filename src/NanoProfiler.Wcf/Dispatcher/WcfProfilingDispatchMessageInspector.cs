@@ -105,6 +105,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             if (isProfilingSessionStopped)
             {
                 ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
+                ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = null;
                 return null;
             }
 

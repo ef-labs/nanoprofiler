@@ -87,6 +87,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             if (isProfilingSessionStopped)
             {
                 ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
+                ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = null;
             }
         }
 

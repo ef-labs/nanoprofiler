@@ -164,6 +164,10 @@ namespace EF.Diagnostics.Profiling
                 throw new ArgumentNullException("name");
             }
 
+            // set null the current profiling session if exists
+            ProfilingSessionContainer.CurrentSession = null;
+            ProfilingSessionContainer.CurrentSessionStepId = null;
+
             if (ProfilingFilters.Count > 0)
             {
                 foreach (var filter in ProfilingFilters)
@@ -222,6 +226,7 @@ namespace EF.Diagnostics.Profiling
 
             // Clear the current profiling session on stopping
             _profilingSessionContainer.CurrentSession = null;
+            _profilingSessionContainer.CurrentSessionStepId = null;
         }
 
         #endregion
