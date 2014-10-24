@@ -33,7 +33,6 @@ namespace EF.Diagnostics.Profiling.Web.Storages
     /// A circular buffered <see cref="IProfilingStorage"/> implementation.
     /// Used with <see cref="NanoProfilerModule"/> to view latest profiling results.
     /// </summary>
-    [Obsolete("Moved to EF.Diagnostics.Profiling.Storages namespace", true)]
     public class CircularBufferedProfilingStorage : IProfilingStorage
     {
         private readonly int _size;
@@ -80,11 +79,18 @@ namespace EF.Diagnostics.Profiling.Web.Storages
 
         #endregion
 
-        #region IProfilingStorage Members
+        #region Public Methods
 
-        void IProfilingStorage.SaveResult(IProfiler profiler)
+        /// <summary>
+        /// Saves a the result of a <see cref="IProfiler"/>.
+        /// </summary>
+        /// <param name="profiler">
+        ///     The <see cref="IProfiler"/> whose results to be saved.
+        /// </param>
+        /// <param name="inMemoryOnly">Whether or not only save result to memory.</param>
+        public void SaveResult(IProfiler profiler, bool inMemoryOnly)
         {
-            if (_wrappedStorage != null)
+            if (_wrappedStorage != null && !inMemoryOnly)
             {
                 _wrappedStorage.SaveResult(profiler);
             }
@@ -97,6 +103,15 @@ namespace EF.Diagnostics.Profiling.Web.Storages
                     _circularBuffer.TryDequeue(out profiler);
                 }
             }
+        }
+
+        #endregion
+
+        #region IProfilingStorage Members
+
+        void IProfilingStorage.SaveResult(IProfiler profiler)
+        {
+            SaveResult(profiler, false);
         }
 
         #endregion
