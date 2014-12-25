@@ -22,7 +22,12 @@
 */
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
+using System.Linq;
 
 namespace EF.Diagnostics.Profiling
 {
@@ -31,25 +36,47 @@ namespace EF.Diagnostics.Profiling
     /// </summary>
     public class CallContextProfilingSessionContainer : IProfilingSessionContainer
     {
-        private readonly bool _useWeakReference;
-
-        private const string CurrentProfilingSessionCacheKey = "nano_profiler::current_profiling_session";
+        private static readonly ConcurrentDictionary<Guid, WeakReference> ProfilingSessionStore
+            = new ConcurrentDictionary<Guid, WeakReference>();
+        private const string CurrentProfilingSessionIdCacheKey = "nano_profiler::current_profiling_session_id";
         private const string CurrentProfilingStepIdCacheKey = "nano_profiler::current_profiling_step_id";
+        private static readonly Timer CleanUpProfilingSessionStoreTimer
+            = new Timer(CleanUpProfilingSessionStoreTimerCallback, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a <see cref="CallContextProfilingSessionContainer"/>.
+        /// Initializes a new <see cref="CallContextProfilingSessionContainer"/>.
         /// </summary>
-        /// <param name="useWeakReference">Whether or not to use WeakReference to wrap <see cref="ProfilingSession"/>.</param>
-        public CallContextProfilingSessionContainer(bool useWeakReference = false)
-        {
-            _useWeakReference = useWeakReference;
-        }
+        public CallContextProfilingSessionContainer() { }
+
+        /// <summary>
+        /// for backward compatible only, don't use.
+        /// </summary>
+        /// <param name="useWeakReference"></param>
+        [Obsolete("for backward compatible only", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public CallContextProfilingSessionContainer(bool useWeakReference) { }
 
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Sets the periodically clean-up profiling session store period in milliseconds.
+        /// </summary>
+        public static int CleanUpProfilingSessionStorePeriod
+        {
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentException("value should > 0");
+                }
+
+                CleanUpProfilingSessionStoreTimer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(value));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the current ProfilingSession.
@@ -58,34 +85,49 @@ namespace EF.Diagnostics.Profiling
         {
             get
             {
-                var obj = CallContext.GetData(CurrentProfilingSessionCacheKey);
+                var obj = CallContext.GetData(CurrentProfilingSessionIdCacheKey);
                 if (obj == null)
                 {
                     return null;
                 }
 
-                // try to cast as WeakReference first
-                var weakProfilingSession = obj as WeakReference;
-                if (weakProfilingSession != null)
+                var sessionId = (Guid?)obj;
+                WeakReference wrapper;
+                if (!ProfilingSessionStore.TryGetValue(sessionId.Value, out wrapper) || wrapper == null)
                 {
-                    if (weakProfilingSession.IsAlive)
-                    {
-                        return weakProfilingSession.Target as ProfilingSession;
-                    }
+                    return null;
+                }
 
+                if (!wrapper.IsAlive)
+                {
                     // set null CurrentSession and return null if weak reference is no longer alive
+                    ProfilingSessionStore.TryRemove(sessionId.Value, out wrapper);
                     CurrentSession = null;
                     CurrentSessionStepId = null;
                     return null;
                 }
 
-                // try to cast as ProfilingSession directly
-                return obj as ProfilingSession;
+                return wrapper.Target as ProfilingSession;
             }
             set
             {
-                var obj = (value != null && _useWeakReference ? new WeakReference(value) : (object)value);
-                CallContext.LogicalSetData(CurrentProfilingSessionCacheKey, obj);
+                if (value == null)
+                {
+                    var currentSession = CurrentSession;
+
+                    // if current session id not null, try to remove it from ProfilingSessionStore
+                    if (currentSession != null)
+                    {
+                        WeakReference temp;
+                        ProfilingSessionStore.TryRemove(currentSession.Profiler.Id, out temp);
+                    }
+
+                    CallContext.LogicalSetData(CurrentProfilingSessionIdCacheKey, null);
+                    return;
+                }
+
+                ProfilingSessionStore.TryAdd(value.Profiler.Id, new WeakReference(value));
+                CallContext.LogicalSetData(CurrentProfilingSessionIdCacheKey, (Guid?)value.Profiler.Id);
             }
         }
 
@@ -112,6 +154,31 @@ namespace EF.Diagnostics.Profiling
         {
             get { return CurrentSessionStepId; }
             set { CurrentSessionStepId = value; }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private static void CleanUpProfilingSessionStoreTimerCallback(object state)
+        {
+            WeakReference wrapper;
+
+            // search for keys to remove
+            var keysToRemove = new List<Guid>();
+            foreach (var key in ProfilingSessionStore.Keys.ToList())
+            {
+                if (ProfilingSessionStore.TryGetValue(key, out wrapper) && !wrapper.IsAlive)
+                {
+                    keysToRemove.Add(key);
+                }
+            }
+
+            // remove
+            foreach (var key in keysToRemove)
+            {
+                ProfilingSessionStore.TryRemove(key, out wrapper);
+            }
         }
 
         #endregion

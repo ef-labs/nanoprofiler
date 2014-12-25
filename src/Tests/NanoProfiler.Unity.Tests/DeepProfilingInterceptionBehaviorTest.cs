@@ -39,7 +39,9 @@ namespace NanoProfiler.Unity.Tests
         [TestMethod]
         public void TestDeepProfilingInterceptionBehavior()
         {
+            var profilerId = Guid.NewGuid();
             var mockProfiler = new Mock<IProfiler>();
+            mockProfiler.Setup(p => p.Id).Returns(profilerId);
             var mockProfilerProvider = new Mock<IProfilerProvider>();
             mockProfilerProvider.Setup(provider => provider.Start(It.IsAny<string>(), It.IsAny<IProfilingStorage>(), It.IsAny<string[]>())).Returns(mockProfiler.Object);
             ProfilingSession.ProfilerProvider = mockProfilerProvider.Object;

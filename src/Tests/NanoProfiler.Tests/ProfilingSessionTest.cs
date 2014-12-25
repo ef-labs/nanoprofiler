@@ -77,7 +77,7 @@ namespace EF.Diagnostics.Profiling.Tests
         {
             var mockProfiler = new Mock<IProfiler>();
             var expected = new ProfilingSession(mockProfiler.Object);
-            CallContext.LogicalSetData("nano_profiler::current_profiling_session", expected);
+            ProfilingSession.ProfilingSessionContainer.CurrentSession = expected;
 
             Assert.AreEqual(expected, ProfilingSession.Current);
         }
@@ -127,7 +127,9 @@ namespace EF.Diagnostics.Profiling.Tests
             Assert.IsTrue(ProfilingSession.ProfilingSessionContainer is WebProfilingSessionContainer);
 
             // mock profiler and provider
+            var profilerId = Guid.NewGuid();
             var mockProfiler = new Mock<IProfiler>();
+            mockProfiler.Setup(p => p.Id).Returns(profilerId);
             var mockProfilerProvider = new Mock<IProfilerProvider>();
             mockProfilerProvider.Setup(provider => provider.Start(It.IsAny<string>(), It.IsAny<IProfilingStorage>(), It.IsAny<string[]>())).Returns(mockProfiler.Object);
             ProfilingSession.ProfilerProvider = mockProfilerProvider.Object;
@@ -143,7 +145,7 @@ namespace EF.Diagnostics.Profiling.Tests
 
             Assert.AreEqual(mockProfiler.Object, ProfilingSession.Current.Profiler);
             Assert.AreEqual(mockProfiler.Object, (mockHttpContext.Object.Items["nano_profiler::current_profiling_session"] as ProfilingSession).Profiler);
-            Assert.AreEqual(mockProfiler.Object, ((CallContext.LogicalGetData("nano_profiler::current_profiling_session") as WeakReference).Target as ProfilingSession).Profiler);
+            Assert.AreEqual(mockProfiler.Object.Id, CallContext.LogicalGetData("nano_profiler::current_profiling_session_id"));
         }
 
         [TestMethod]
@@ -182,7 +184,9 @@ namespace EF.Diagnostics.Profiling.Tests
             var stopOfProfilerCalled = false;
 
             // mock profiler
+            var profilerId = Guid.NewGuid();
             var mockProfiler = new Mock<IProfiler>();
+            mockProfiler.Setup(p => p.Id).Returns(profilerId);
             mockProfiler.Setup(profiler => profiler.Stop(It.IsAny<bool>()))
                 .Callback<bool>(a =>
                     {
@@ -190,7 +194,7 @@ namespace EF.Diagnostics.Profiling.Tests
                         stopOfProfilerCalled = true;
                     });
             var expected = new ProfilingSession(mockProfiler.Object);
-            CallContext.LogicalSetData("nano_profiler::current_profiling_session", expected);
+            ProfilingSession.ProfilingSessionContainer.CurrentSession = expected;
 
             // execute
             ProfilingSession.Stop(discardResults);
@@ -206,10 +210,12 @@ namespace EF.Diagnostics.Profiling.Tests
             var expectedException = new Exception();
 
             // mock profiler
+            var profilerId = Guid.NewGuid();
             var mockProfiler = new Mock<IProfiler>();
+            mockProfiler.Setup(p => p.Id).Returns(profilerId);
             mockProfiler.Setup(profiler => profiler.Stop(It.IsAny<bool>())).Throws(expectedException);
             var expected = new ProfilingSession(mockProfiler.Object);
-            CallContext.LogicalSetData("nano_profiler::current_profiling_session", expected);
+            ProfilingSession.ProfilingSessionContainer.CurrentSession = expected;
 
             // mock provider
             var mockProflingProvider = new Mock<IProfilerProvider>();
