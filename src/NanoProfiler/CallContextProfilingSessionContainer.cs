@@ -166,7 +166,7 @@ namespace EF.Diagnostics.Profiling
 
             // search for keys to remove
             var keysToRemove = new List<Guid>();
-            foreach (var key in ProfilingSessionStore.Keys.ToList())
+            foreach (var key in ProfilingSessionStore.Select(item => item.Key).ToList())
             {
                 if (ProfilingSessionStore.TryGetValue(key, out wrapper) && !wrapper.IsAlive)
                 {
