@@ -40,9 +40,12 @@ namespace EF.Diagnostics.Profiling.Web
         private readonly IProfilingSessionContainer _callContextProfilingSessionContainer
              = new CallContextProfilingSessionContainer();
 
-        #region IProfilingSessionContainer Members
+        #region Public Methods
 
-        ProfilingSession IProfilingSessionContainer.CurrentSession
+        /// <summary>
+        /// Gets or sets the current ProfilingSession.
+        /// </summary>
+        public ProfilingSession CurrentSession
         {
             get
             {
@@ -55,7 +58,6 @@ namespace EF.Diagnostics.Profiling.Web
 
                 return profilingSession
                     ?? _callContextProfilingSessionContainer.CurrentSession;
-
             }
             set
             {
@@ -86,7 +88,10 @@ namespace EF.Diagnostics.Profiling.Web
             }
         }
 
-        Guid? IProfilingSessionContainer.CurrentSessionStepId
+        /// <summary>
+        /// Gets or sets the current profiling step id.
+        /// </summary>
+        public Guid? CurrentSessionStepId
         {
             get
             {
@@ -109,6 +114,42 @@ namespace EF.Diagnostics.Profiling.Web
                     HttpContext.Current.Items[CurrentProfilingStepIdCacheKey] = value;
                 }
             }
+        }
+
+        /// <summary>
+        /// Clears the current profiling session &amp; step id.
+        /// </summary>
+        public void Clear()
+        {
+            // clear callcontext container
+            _callContextProfilingSessionContainer.Clear();
+
+            // clear current session
+            CurrentSession = null;
+
+            // clear step id
+            CurrentSessionStepId = null;
+        }
+
+        #endregion
+
+        #region IProfilingSessionContainer Members
+
+        ProfilingSession IProfilingSessionContainer.CurrentSession
+        {
+            get { return CurrentSession; }
+            set { CurrentSession = value; }
+        }
+
+        Guid? IProfilingSessionContainer.CurrentSessionStepId
+        {
+            get { return CurrentSessionStepId; }
+            set { CurrentSessionStepId = value; }
+        }
+
+        void IProfilingSessionContainer.Clear()
+        {
+            Clear();
         }
 
         #endregion

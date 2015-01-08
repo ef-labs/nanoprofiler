@@ -93,17 +93,8 @@ namespace EF.Diagnostics.Profiling
 
                 var sessionId = (Guid?)obj;
                 WeakReference wrapper;
-                if (!ProfilingSessionStore.TryGetValue(sessionId.Value, out wrapper) || wrapper == null)
+                if (!ProfilingSessionStore.TryGetValue(sessionId.Value, out wrapper) || wrapper == null || !wrapper.IsAlive)
                 {
-                    return null;
-                }
-
-                if (!wrapper.IsAlive)
-                {
-                    // set null CurrentSession and return null if weak reference is no longer alive
-                    ProfilingSessionStore.TryRemove(sessionId.Value, out wrapper);
-                    CurrentSession = null;
-                    CurrentSessionStepId = null;
                     return null;
                 }
 
@@ -113,15 +104,6 @@ namespace EF.Diagnostics.Profiling
             {
                 if (value == null)
                 {
-                    var currentSession = CurrentSession;
-
-                    // if current session id not null, try to remove it from ProfilingSessionStore
-                    if (currentSession != null)
-                    {
-                        WeakReference temp;
-                        ProfilingSessionStore.TryRemove(currentSession.Profiler.Id, out temp);
-                    }
-
                     CallContext.LogicalSetData(CurrentProfilingSessionIdCacheKey, null);
                     return;
                 }
@@ -140,6 +122,25 @@ namespace EF.Diagnostics.Profiling
             set { CallContext.LogicalSetData(CurrentProfilingStepIdCacheKey, value); }
         }
 
+        /// <summary>
+        /// Clears the current profiling session &amp; step id.
+        /// </summary>
+        public void Clear()
+        {
+            // clear current session
+            var obj = CallContext.GetData(CurrentProfilingSessionIdCacheKey);
+            if (obj != null)
+            {
+                var sessionId = (Guid?)obj;
+                WeakReference temp;
+                ProfilingSessionStore.TryRemove(sessionId.Value, out temp);
+            }
+            CurrentSession = null;
+
+            // clear step id
+            CurrentSessionStepId = null;
+        }
+
         #endregion
 
         #region ICurrentProfilingSessionContainer Members
@@ -154,6 +155,11 @@ namespace EF.Diagnostics.Profiling
         {
             get { return CurrentSessionStepId; }
             set { CurrentSessionStepId = value; }
+        }
+
+        void IProfilingSessionContainer.Clear()
+        {
+            Clear();
         }
 
         #endregion

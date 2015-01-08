@@ -225,8 +225,7 @@ namespace EF.Diagnostics.Profiling
             }
 
             // Clear the current profiling session on stopping
-            _profilingSessionContainer.CurrentSession = null;
-            _profilingSessionContainer.CurrentSessionStepId = null;
+            _profilingSessionContainer.Clear();
         }
 
         #endregion

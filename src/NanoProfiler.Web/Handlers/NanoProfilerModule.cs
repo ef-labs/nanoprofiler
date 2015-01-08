@@ -74,7 +74,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
 
         #region Private Methods
 
-        private static void SetNullIfCurrentProfilingSessionStopped()
+        private static void ClearIfCurrentProfilingSessionStopped()
         {
             var profilingSession = ProfilingSession.Current;
             if (profilingSession == null)
@@ -82,12 +82,11 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                 return;
             }
 
-            // set null current profiling session if the current session has already been stopped
+            // clear current profiling session if the current session has already been stopped
             var isProfilingSessionStopped = (profilingSession.Profiler.Id == ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId);
             if (isProfilingSessionStopped)
             {
-                ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
-                ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = null;
+                ProfilingSession.ProfilingSessionContainer.Clear();
             }
         }
 
@@ -99,7 +98,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                 return;
             }
 
-            SetNullIfCurrentProfilingSessionStopped();
+            ClearIfCurrentProfilingSessionStopped();
 
             // only supports GET method for view results
             if (context.Request.HttpMethod != "GET")

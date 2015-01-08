@@ -41,9 +41,12 @@ namespace EF.Diagnostics.Profiling.ServiceModel
         private readonly IProfilingSessionContainer _webProfilingSessionContainer
              = new WebProfilingSessionContainer();
 
-        #region IProfilingSessionContainer Members
+        #region Public Methods
 
-        ProfilingSession IProfilingSessionContainer.CurrentSession
+        /// <summary>
+        /// Gets or sets the current ProfilingSession.
+        /// </summary>
+        public ProfilingSession CurrentSession
         {
             get
             {
@@ -82,7 +85,10 @@ namespace EF.Diagnostics.Profiling.ServiceModel
             }
         }
 
-        Guid? IProfilingSessionContainer.CurrentSessionStepId
+        /// <summary>
+        /// Gets or sets the current profiling step id.
+        /// </summary>
+        public Guid? CurrentSessionStepId
         {
             get
             {
@@ -107,6 +113,42 @@ namespace EF.Diagnostics.Profiling.ServiceModel
                     WcfContext.Current.Items[CurrentProfilingStepIdCacheKey] = value;
                 }
             }
+        }
+
+        /// <summary>
+        /// Clears the current profiling session &amp; step id.
+        /// </summary>
+        public void Clear()
+        {
+            // clear web container
+            _webProfilingSessionContainer.Clear();
+
+            // clear current session
+            CurrentSession = null;
+
+            // clear step id
+            CurrentSessionStepId = null;
+        }
+
+        #endregion
+
+        #region IProfilingSessionContainer Members
+
+        ProfilingSession IProfilingSessionContainer.CurrentSession
+        {
+            get { return CurrentSession; }
+            set { CurrentSession = value; }
+        }
+
+        Guid? IProfilingSessionContainer.CurrentSessionStepId
+        {
+            get { return CurrentSessionStepId; }
+            set { CurrentSessionStepId = value; }
+        }
+
+        void IProfilingSessionContainer.Clear()
+        {
+            Clear();
         }
 
         #endregion

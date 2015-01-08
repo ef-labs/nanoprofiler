@@ -100,12 +100,11 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 return null;
             }
 
-            // set null current profiling session if the current session has already been stopped
+            // clear current profiling session if the current session has already been stopped
             var isProfilingSessionStopped = (profilingSession.Profiler.Id == ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId);
             if (isProfilingSessionStopped)
             {
-                ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
-                ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = null;
+                ProfilingSession.ProfilingSessionContainer.Clear();
                 return null;
             }
 

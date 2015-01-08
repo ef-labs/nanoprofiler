@@ -39,5 +39,10 @@ namespace EF.Diagnostics.Profiling
         /// Gets or sets the current profiling step id.
         /// </summary>
         Guid? CurrentSessionStepId { get; set; }
+
+        /// <summary>
+        /// Clears the current profiling session &amp; step id.
+        /// </summary>
+        void Clear();
     }
 }
