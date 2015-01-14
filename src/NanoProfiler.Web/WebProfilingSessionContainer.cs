@@ -56,6 +56,15 @@ namespace EF.Diagnostics.Profiling.Web
                     profilingSession = HttpContext.Current.Items[CurrentProfilingSessionCacheKey] as ProfilingSession;
                 }
 
+                // when ProfilingSession.Start() executes in begin request event handler in a different thread
+                // the callcontext might not contain the current profiling session correctly
+                // so on reading of the current session from WebProfilingSessionContainer
+                // double check to ensure current session stored in callcontext
+                if (profilingSession != null && _callContextProfilingSessionContainer.CurrentSession == null)
+                {
+                    _callContextProfilingSessionContainer.CurrentSession = profilingSession;
+                }
+
                 return profilingSession
                     ?? _callContextProfilingSessionContainer.CurrentSession;
             }
@@ -101,6 +110,16 @@ namespace EF.Diagnostics.Profiling.Web
                     // Try to get current step id from HttpContext.Items first
                     stepId = HttpContext.Current.Items[CurrentProfilingStepIdCacheKey] as Guid?;
                 }
+
+                // when ProfilingSession.Start() executes in begin request event handler in a different thread
+                // the callcontext might not contain the current profiling session step id correctly
+                // so on reading of the step id from WebProfilingSessionContainer
+                // double check to ensure step id stored in callcontext
+                if (stepId != null && _callContextProfilingSessionContainer.CurrentSessionStepId == null)
+                {
+                    _callContextProfilingSessionContainer.CurrentSessionStepId = stepId;
+                }
+
                 return stepId ?? _callContextProfilingSessionContainer.CurrentSessionStepId;
             }
             set
