@@ -31,6 +31,8 @@
       InstallNanoProfilerWcfPackages;
       BuildNanoProfilerWcf;
       PackageNanoProfilerWcf;
+      BuildNanoProfilerWebExtensions;
+      PackageNanoProfilerWebExtensions;
       BuildNanoProfilerTests;
       RunNanoProfilerTests;
       End;
@@ -284,6 +286,38 @@
 
     <Message Importance="$(LogLevel)" Text=""/>
     <Message Importance="$(LogLevel)" Text="Packing NanoProfiler.Wcf package..."/>
+    <Message Importance="$(LogLevel)" Text="%(NuSpecFiles.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+       Properties="NuGetSpecOrProjectPath=%(NuSpecFiles.Identity);NuGetBasePath=%(NuSpecFiles.NuGetBasePath)"
+       Targets="NuGetPack" />
+  </Target>
+
+  <Target Name="BuildNanoProfilerWebExtensions">
+    <ItemGroup>
+      <CoreProjects Include="$(ProjectRoot)\Extensions\NanoProfiler.Web.Extensions\NanoProfiler.Web.Extensions.csproj"/>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Building NanoProfiler.Web.Extensions.csproj..."/>
+    <Message Importance="$(LogLevel)" Text="%(CoreProjects.Identity)"/>
+    <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
+
+    <MSBuild Projects="%(CoreProjects.Identity)"
+             Targets="Clean;Build"
+             Properties="EnableCodeAnalysis=true;Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+
+  <Target Name="PackageNanoProfilerWebExtensions">
+    <ItemGroup>
+      <NuSpecFiles Include="$(ProjectRoot)\Extensions\NanoProfiler.Web.Extensions\NanoProfiler.Web.Extensions.csproj">
+        <NuGetBasePath>$(ProjectRoot)\</NuGetBasePath>
+      </NuSpecFiles>
+    </ItemGroup>
+
+    <Message Importance="$(LogLevel)" Text=""/>
+    <Message Importance="$(LogLevel)" Text="Packing NanoProfiler.Web.Extensions package..."/>
     <Message Importance="$(LogLevel)" Text="%(NuSpecFiles.Identity)"/>
     <Message Importance="$(LogLevel)" Text="----------------------------------------------"/>
 

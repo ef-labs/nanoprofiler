@@ -1,4 +1,4 @@
-/*
+﻿/*
     The MIT License (MIT)
     Copyright © 2014 Englishtown <opensource@englishtown.com>
 
@@ -24,13 +24,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyCompany("EF Education First")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCopyright("Copyright © EF Education First 2014")]
-[assembly: AssemblyProduct("NanoProfiler")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTitle("NanoProfiler.Web.Extensions")]
+[assembly: AssemblyDescription("NanoProfiler Web Application Profiling Support Extensions")]
 
-[assembly: ComVisible(false)]
-
-[assembly: AssemblyVersion("1.3.2.1")]
+[assembly: Guid("c345605a-7d82-4731-a451-b885c486e84a")]

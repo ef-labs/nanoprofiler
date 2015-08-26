@@ -161,6 +161,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Extensions\NanoProfiler.Web.Extensions\NanoProfiler.Web.Extensions.csproj">
+      <Project>{9a23ea8d-90f4-46ef-93d8-7e47d86e0501}</Project>
+      <Name>NanoProfiler.Web.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\NanoProfiler.Data\NanoProfiler.Data.csproj">
       <Project>{4ebb9a68-67eb-495d-8a4c-30f2c9f43a49}</Project>
       <Name>NanoProfiler.Data</Name>

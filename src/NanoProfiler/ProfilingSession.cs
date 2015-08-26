@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Text.RegularExpressions;
 using EF.Diagnostics.Profiling.Configuration;
 using EF.Diagnostics.Profiling.ProfilingFilters;
@@ -56,11 +57,35 @@ namespace EF.Diagnostics.Profiling
         }
 
         /// <summary>
-        /// Gets the current profiling session if exists.
+        /// Gets the current profiling session.
         /// </summary>
         public static ProfilingSession Current
         {
             get { return _profilingSessionContainer.CurrentSession; }
+        }
+
+        /// <summary>
+        /// Sets current profiling session as specified session and sets the parent step as specified.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="parentStepId">if parentStepId not specified, use the root step of session as parent step by default.</param>
+        public static void SetCurrentProfilingSession(
+            ProfilingSession session, Guid? parentStepId = null)
+        {
+            ProfilingSessionContainer.CurrentSession = null;
+            ProfilingSessionContainer.CurrentSessionStepId = null;
+            if (session != null && session.Profiler != null)
+            {
+                ProfilingSessionContainer.CurrentSession = session;
+                if (parentStepId.HasValue && session.Profiler.StepTimings.Any(step => step.Id == parentStepId.Value))
+                {
+                    ProfilingSessionContainer.CurrentSessionStepId = parentStepId.Value;
+                }
+                else // if parentStepId not specified, use the root step of session as parent step by default
+                {
+                    ProfilingSessionContainer.CurrentSessionStepId = session.Profiler.StepTimings.First().Id;
+                }
+            }
         }
 
         /// <summary>

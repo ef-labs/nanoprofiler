@@ -389,8 +389,11 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
 
         private void ApplicationOnError(object sender, EventArgs eventArgs)
         {
-            // stop and ignore profiling results on error
-            ProfilingSession.Stop(discardResults: true);
+            // stop and save profiling results on error
+
+            using (ProfilingSession.Current.Step("Stop on Error")) { }
+
+            ProfilingSession.Stop();
         }
     }
 }
