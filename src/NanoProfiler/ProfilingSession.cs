@@ -23,6 +23,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Text.RegularExpressions;
+using EF.Diagnostics.Profiling.Configuration;
+using EF.Diagnostics.Profiling.ProfilingFilters;
 using EF.Diagnostics.Profiling.Storages;
 
 namespace EF.Diagnostics.Profiling
@@ -114,7 +118,7 @@ namespace EF.Diagnostics.Profiling
         /// Gets the <see cref="IProfilingFilter"/>s globally registered.
         /// Adds or removes items of this property to control the filtering of profiling sessions.
         /// </summary>
-        public static List<IProfilingFilter> ProfilingFilters { get; private set; }
+        public static ICollection<IProfilingFilter> ProfilingFilters { get; private set; }
 
         #endregion
 
@@ -131,7 +135,10 @@ namespace EF.Diagnostics.Profiling
             // by default, use JsonProfilingStorage
             _profilingStorage = new JsonProfilingStorage();
 
-            ProfilingFilters = new List<IProfilingFilter>();
+            // intialize filters
+            ProfilingFilters = new ProfilingFilterList(new List<IProfilingFilter>());
+
+            InitializeConfigurationFromAppConfig();
         }
 
         /// <summary>
@@ -231,6 +238,57 @@ namespace EF.Diagnostics.Profiling
         #endregion
 
         #region Private Methods
+
+        private static void InitializeConfigurationFromAppConfig()
+        {
+            // intialize configurations from app config
+            var configSection = ConfigurationManager.GetSection("nanoprofiler");
+            if (configSection != null && !(configSection is NanoProfilerConfigurationSection))
+            {
+                throw new ConfigurationErrorsException("Invalid configuration, check the 'nanoprofiler' configuration section.");
+                
+            }
+            if (configSection != null)
+            {
+                var filters = (configSection as NanoProfilerConfigurationSection).Filters;
+                if (filters != null)
+                {
+                    foreach (ProfilingFilterElement filter in filters)
+                    {
+                        if (string.IsNullOrWhiteSpace(filter.Type) ||
+                            string.Equals(filter.Type, "contain", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ProfilingFilters.Add(new NameContainsProfilingFilter(filter.Value));
+                        }
+                        else if (string.Equals(filter.Type, "regex", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ProfilingFilters.Add(new RegexProfilingFilter(new Regex(filter.Value, RegexOptions.Compiled | RegexOptions.IgnoreCase)));
+                        }
+                        else if (string.Equals(filter.Type, "fileext", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ProfilingFilters.Add(new FileExtensionProfilingFilter(filter.Value.Split("|,;".ToCharArray())));
+                        }
+                        else
+                        {
+                            var filterType = Type.GetType(filter.Type);
+                            if (filterType == null || !typeof (IProfilingFilter).IsAssignableFrom(filterType))
+                            {
+                                throw new ConfigurationErrorsException("Invalid type name: " + filter.Type);
+                            }
+
+                            try
+                            {
+                                ProfilingFilters.Add((IProfilingFilter) Activator.CreateInstance(filterType, new object[] {filter.Value}));
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new ConfigurationErrorsException("Invalid type name: " + filter.Type, ex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Creates an <see cref="IProfilingStep"/> that will time the code between its creation and disposal.

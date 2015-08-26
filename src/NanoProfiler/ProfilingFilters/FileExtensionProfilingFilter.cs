@@ -24,9 +24,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-using EF.Diagnostics.Profiling.ProfilingFilters;
-
-namespace EF.Diagnostics.Profiling.Web.ProfilingFilters
+namespace EF.Diagnostics.Profiling.ProfilingFilters
 {
     /// <summary>
     /// An <see cref="IProfilingFilter"/> implement for ignoring file requests by extension.
@@ -41,6 +39,15 @@ namespace EF.Diagnostics.Profiling.Web.ProfilingFilters
         /// <param name="extensions">One or many file extensions</param>
         public FileExtensionProfilingFilter(params string[] extensions)
             : base(CreateRegex(extensions))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="FileExtensionProfilingFilter"/>.
+        /// </summary>
+        /// <param name="fileExts">Separated file extentions.</param>
+        public FileExtensionProfilingFilter(string fileExts)
+            : this(fileExts.Split("|,;".ToCharArray()))
         {
         }
 

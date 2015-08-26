@@ -33,6 +33,11 @@ namespace EF.Diagnostics.Profiling.ProfilingFilters
     {
         private readonly string _substr;
 
+        /// <summary>
+        /// The sub string to be checked for contains.
+        /// </summary>
+        public string SubString { get { return _substr; } }
+
         #region Constructors
 
         /// <summary>

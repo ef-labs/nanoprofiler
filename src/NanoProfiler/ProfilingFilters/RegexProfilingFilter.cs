@@ -33,6 +33,11 @@ namespace EF.Diagnostics.Profiling.ProfilingFilters
     {
         private readonly Regex _regex;
 
+        /// <summary>
+        /// The regex string to be checked.
+        /// </summary>
+        public string RegexString { get { return _regex.ToString(); } }
+
         #region Constructors
 
         /// <summary>
@@ -42,6 +47,15 @@ namespace EF.Diagnostics.Profiling.ProfilingFilters
         public RegexProfilingFilter(Regex regex)
         {
             _regex = regex;
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="RegexProfilingFilter"/>.
+        /// </summary>
+        /// <param name="regexString">The regex string.</param>
+        public RegexProfilingFilter(string regexString)
+        {
+            _regex = new Regex(regexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         }
 
         #endregion

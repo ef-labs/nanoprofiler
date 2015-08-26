@@ -22,22 +22,15 @@
 */
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Text.RegularExpressions;
 
 using EF.Diagnostics.Profiling;
-using EF.Diagnostics.Profiling.ProfilingFilters;
-using EF.Diagnostics.Profiling.Storages;
 using EF.Diagnostics.Profiling.Unity;
-using EF.Diagnostics.Profiling.Web.ProfilingFilters;
-using EF.Diagnostics.Profiling.Web.Storages;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 using NanoProfiler.Demos.SimpleDemo.Code.Biz;
 using NanoProfiler.Demos.SimpleDemo.Code.Data;
-using slf4net.Resolvers;
 
 namespace NanoProfiler.Demos.SimpleDemo
 {
@@ -47,14 +40,12 @@ namespace NanoProfiler.Demos.SimpleDemo
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            // print profiling logs to debug output
-            slf4net.LoggerFactory.SetFactoryResolver(new SimpleFactoryResolver(item => Debug.WriteLine(item.Message)));
-
+            // !!MOVED hardcoded filter configuration to web.config in latest version
             // register profiling filters to exclude some URLs from profiling
-            ProfilingSession.ProfilingFilters.Add(new NameContainsProfilingFilter("_tools/"));
-            ProfilingSession.ProfilingFilters.Add(new FileExtensionProfilingFilter("ico", "jpg", "js", "css"));
+            //ProfilingSession.ProfilingFilters.Add(new NameContainsProfilingFilter("_tools/"));
+            //ProfilingSession.ProfilingFilters.Add(new FileExtensionProfilingFilter("ico", "jpg", "js", "css"));
 
-            #region Optional bootstrap code for unity based deep profiling and policy injection based profiling only
+            #region Optional bootstrap code for unity based deep profiling and policy injection based profiling
 
             // Register types to unity container to demo unity based deep profiling & policy injection based profiling.
             Container.RegisterType<IDemoDBDataService, DemoDBDataService>(
