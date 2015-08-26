@@ -26,6 +26,8 @@ using System.Text.RegularExpressions;
 
 using EF.Diagnostics.Profiling;
 using EF.Diagnostics.Profiling.Unity;
+using EF.Diagnostics.Profiling.Web.Extensions.Storages;
+using EF.Diagnostics.Profiling.Web.Storages;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -44,6 +46,9 @@ namespace NanoProfiler.Demos.SimpleDemo
             // register profiling filters to exclude some URLs from profiling
             //ProfilingSession.ProfilingFilters.Add(new NameContainsProfilingFilter("_tools/"));
             //ProfilingSession.ProfilingFilters.Add(new FileExtensionProfilingFilter("ico", "jpg", "js", "css"));
+
+            // use ServiceStackJsonProfilingStorage for better JSON serialization performance
+            ProfilingSession.ProfilingStorage = new CircularBufferedProfilingStorage(100, profiler => false, new ServiceStackJsonProfilingStorage());
 
             #region Optional bootstrap code for unity based deep profiling and policy injection based profiling
 

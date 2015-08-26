@@ -44,6 +44,9 @@ namespace NanoProfiler.Demos.SimpleDemo
             
             using (ProfilingSession.Current.Step("ProcessRequest"))
             {
+                context.Response.Write("<a href=\"nanoprofiler/view\">View Profiling Results</a><br /><br />");
+                context.Response.Write("<a href=\"nanoprofiler/view?export\">View Profiling Results as JSON</a><br /><br />");
+
                 var demoData = Global.Container.Resolve<IDemoDBService>().LoadActiveDemoData2();
                 foreach (var item in demoData)
                 {
