@@ -21,19 +21,14 @@
     THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using EF.Diagnostics.Profiling.Web.Extensions.Timing;
-using ServiceStack.Text;
 
-namespace EF.Diagnostics.Profiling.Web.Extensions.Handlers
+namespace EF.Diagnostics.Profiling.Web.Extensions.LogParsers
 {
-    internal static class ImportProfilingResultsHelper
+    public interface IProfilingLogParser
     {
-        public static List<IProfiler> Parse(string jsonArrayString)
-        {
-            var profilers = JsonSerializer.DeserializeFromString<List<SerializableProfiler>>(jsonArrayString);
-            return profilers.Select(profiler => profiler as IProfiler).ToList();
-        }
+        IEnumerable<IProfiler> LoadLatestProfilingSessionSummaries(uint? top = 100, uint? minDuration = 0);
+        IProfiler LoadProfilingSession(Guid sessionId);
     }
 }

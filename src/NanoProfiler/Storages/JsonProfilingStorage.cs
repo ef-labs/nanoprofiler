@@ -291,6 +291,7 @@ namespace EF.Diagnostics.Profiling.Storages
             timingData.Name = timing.Name;
             timingData.ParentId = timing.ParentId;
             timingData.StartMilliseconds = timing.StartMilliseconds;
+            timingData.Sort = timing.Sort;
             timingData.Started = ToSortableDateTimeString(timing.Started);
             if (timing.Tags != null && timing.Tags.Any())
             {

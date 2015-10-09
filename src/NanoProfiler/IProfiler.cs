@@ -87,5 +87,11 @@ namespace EF.Diagnostics.Profiling
         /// </summary>
         /// <param name="customTiming"></param>
         void AddCustomTiming(CustomTiming customTiming);
+
+        /// <summary>
+        /// Gets the duration ticks.
+        /// </summary>
+        /// <returns></returns>
+        long GetDurationTicks();
     }
 }

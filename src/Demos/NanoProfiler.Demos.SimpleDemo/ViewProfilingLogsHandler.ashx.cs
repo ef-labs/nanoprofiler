@@ -22,44 +22,42 @@
 */
 
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
-using EF.Diagnostics.Profiling;
-using Microsoft.Practices.Unity;
-using NanoProfiler.Demos.SimpleDemo.Code.Biz;
-using NanoProfiler.Demos.SimpleDemo.DemoService;
+using EF.Diagnostics.Profiling.Web.Extensions.LogParsers;
+using EF.Diagnostics.Profiling.Web.Storages;
 
 namespace NanoProfiler.Demos.SimpleDemo
 {
     /// <summary>
-    /// Summary description for SyncHandler
+    /// Summary description for ViewProfilingLogsHandler
     /// </summary>
-    public class SyncHandler : IHttpHandler
+    public class ViewProfilingLogsHandler : IHttpHandler
     {
 
         public void ProcessRequest(HttpContext context)
         {
             context.Response.ContentType = "text/html";
 
-            using (ProfilingSession.Current.Step("ProcessRequest"))
+            context.Response.Write("<h2>Latest Profiling Results From Log Files</h2><hr />");
+
+            var logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+            var logFile = Directory.GetFiles(logDir, "*.log").ToList().OrderByDescending(f => f).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(logFile))
             {
-                context.Response.Write("<a href=\"nanoprofiler/view\">View Profiling Results</a><br /><br />");
-                context.Response.Write("<a href=\"nanoprofiler/view?export\">View Profiling Results as JSON</a><br /><br />");
+                return;
+            }
 
-                var demoData = Global.Container.Resolve<IDemoDBService>().LoadActiveDemoData2();
-                foreach (var item in demoData)
-                {
-                    using (ProfilingSession.Current.Step(() => "Print item: " + item.Id))
-                    {
-                        context.Response.Write(string.Format(@"Id={0}, Name={1}<br />", item.Id, item.Name));
-                    }
-                }
+            var logParser = new FileProfilingLogParser(logFile);
+            var sessions = logParser.LoadLatestProfilingSessionSummaries();
+            foreach (var item in sessions)
+            {
+                var session = logParser.LoadProfilingSession(item.Id);
+                CircularBufferedProfilingStorage.Instance.SaveResult(session, true);
 
-                using (var client = new WcfDemoServiceClient())
-                {
-                    client.DoWork("somework");
-                }
+                context.Response.Write("<a target=\"_blank\" href=\"./nanoprofiler/view/" + session.Id + "\">" + session.Name + "</a>, " + session.DurationMilliseconds + "ms @" + session.Started.ToString("s") + "<br />");
             }
         }
 

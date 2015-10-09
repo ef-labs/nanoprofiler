@@ -23,8 +23,8 @@
   <!--Test properties-->
   <PropertyGroup>
     <RunTests Condition="'$(RunTests)' == ''">true</RunTests>
-    <VS100COMNTOOLS Condition="'$(VS100COMNTOOLS)' == ''">C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools\</VS100COMNTOOLS>
-    <MsTestExePath Condition="'$(MSTestExePath)' == ''">&quot;$(VS100COMNTOOLS.Substring(0, $(VS100COMNTOOLS.IndexOf('\Tools\'))))\IDE\MSTest.exe&quot;</MsTestExePath>
+    <VS110COMNTOOLS Condition="'$(VS110COMNTOOLS)' == ''">C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\Tools\</VS110COMNTOOLS>
+    <MsTestExePath Condition="'$(MSTestExePath)' == ''">&quot;$(VS110COMNTOOLS.Substring(0, $(VS110COMNTOOLS.IndexOf('\Tools\'))))\IDE\MSTest.exe&quot;</MsTestExePath>
   </PropertyGroup>
 
   <!--Build version properties-->

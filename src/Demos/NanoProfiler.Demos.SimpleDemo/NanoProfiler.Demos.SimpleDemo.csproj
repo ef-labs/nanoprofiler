@@ -97,6 +97,7 @@
       <DependentUpon>SimpleDemoDB.mdf</DependentUpon>
     </Content>
     <Content Include="Global.asax" />
+    <Content Include="ViewProfilingLogsHandler.ashx" />
     <None Include="Service References\DemoService\configuration91.svcinfo" />
     <None Include="Service References\DemoService\configuration.svcinfo" />
     <None Include="Service References\DemoService\Reference.svcmap">
@@ -118,6 +119,9 @@
     <Compile Include="Code\Biz\DemoDBService.cs" />
     <Compile Include="AsyncHandler.ashx.cs">
       <DependentUpon>AsyncHandler.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewProfilingLogsHandler.ashx.cs">
+      <DependentUpon>ViewProfilingLogsHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

@@ -98,5 +98,11 @@ namespace EF.Diagnostics.Profiling.Storages
         /// </summary>
         [DataMember(Name = "tags")]
         public List<string> Tags { get; set; }
+
+        /// <summary>
+        /// The ticks of this timing for sorting.
+        /// </summary>
+        [DataMember(Name = "sort")]
+        public long Sort { get; set; }
     }
 }

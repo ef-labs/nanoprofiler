@@ -195,6 +195,15 @@ namespace EF.Diagnostics.Profiling
             }
         }
 
+        /// <summary>
+        /// Gets the duration ticks.
+        /// </summary>
+        /// <returns></returns>
+        public long GetDurationTicks()
+        {
+            return _stopwatch.ElapsedTicks;
+        }
+
         #endregion
 
         #region IProfiler Members
@@ -244,6 +253,11 @@ namespace EF.Diagnostics.Profiling
         void IProfiler.AddCustomTiming(CustomTiming customTiming)
         {
             AddCustomTiming(customTiming);
+        }
+
+        long IProfiler.GetDurationTicks()
+        {
+            return GetDurationTicks();
         }
 
         #endregion

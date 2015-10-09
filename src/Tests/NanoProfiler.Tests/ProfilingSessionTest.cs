@@ -75,11 +75,14 @@ namespace EF.Diagnostics.Profiling.Tests
         [TestMethod]
         public void TestProfilingSession_getCurrent_FromCallContext()
         {
-            var mockProfiler = new Mock<IProfiler>();
-            var expected = new ProfilingSession(mockProfiler.Object);
-            ProfilingSession.ProfilingSessionContainer.CurrentSession = expected;
+            lock (typeof (CallContextProfilingSessionContainer))
+            {
+                var mockProfiler = new Mock<IProfiler>();
+                var expected = new ProfilingSession(mockProfiler.Object);
+                ProfilingSession.ProfilingSessionContainer.CurrentSession = expected;
 
-            Assert.AreEqual(expected, ProfilingSession.Current);
+                Assert.AreEqual(expected, ProfilingSession.Current);
+            }
         }
 
         [TestMethod]

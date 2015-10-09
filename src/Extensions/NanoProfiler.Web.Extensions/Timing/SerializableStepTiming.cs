@@ -21,19 +21,9 @@
     THE SOFTWARE.
 */
 
-using System.Collections.Generic;
-using System.Linq;
-using EF.Diagnostics.Profiling.Web.Extensions.Timing;
-using ServiceStack.Text;
-
-namespace EF.Diagnostics.Profiling.Web.Extensions.Handlers
+namespace EF.Diagnostics.Profiling.Web.Extensions.Timing
 {
-    internal static class ImportProfilingResultsHelper
+    internal class SerializableStepTiming : SerializableTimingBase
     {
-        public static List<IProfiler> Parse(string jsonArrayString)
-        {
-            var profilers = JsonSerializer.DeserializeFromString<List<SerializableProfiler>>(jsonArrayString);
-            return profilers.Select(profiler => profiler as IProfiler).ToList();
-        }
     }
 }

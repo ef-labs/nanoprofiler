@@ -328,7 +328,7 @@
 
   <Target Name="BuildNanoProfilerTests">
     <ItemGroup>
-      <CoreProjects Include="$(ProjectRoot)\Tests\NanoProfiler.Tests\NanoProfiler.Tests.csproj;$(ProjectRoot)\Tests\NanoProfiler.Unity.Tests\NanoProfiler.Unity.Tests.csproj;$(ProjectRoot)\Tests\NanoProfiler.Wcf.Tests\NanoProfiler.Wcf.Tests.csproj"/>
+      <CoreProjects Include="$(ProjectRoot)\Tests\NanoProfiler.Tests\NanoProfiler.Tests.csproj;$(ProjectRoot)\Tests\NanoProfiler.Unity.Tests\NanoProfiler.Unity.Tests.csproj;$(ProjectRoot)\Tests\NanoProfiler.Wcf.Tests\NanoProfiler.Wcf.Tests.csproj;$(ProjectRoot)\Tests\NanoProfiler.Web.Extensions.Tests\NanoProfiler.Web.Extensions.Tests.csproj"/>
     </ItemGroup>
 
     <Message Importance="$(LogLevel)" Text=""/>

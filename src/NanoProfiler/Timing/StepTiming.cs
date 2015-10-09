@@ -58,6 +58,7 @@ namespace EF.Diagnostics.Profiling.Timing
 
             _profiler = profiler;
             StartMilliseconds = _profiler.DurationMilliseconds;
+            Sort = profiler.GetDurationTicks();
             ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = Id;
         }
 

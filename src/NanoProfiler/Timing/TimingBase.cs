@@ -95,6 +95,11 @@ namespace EF.Diagnostics.Profiling.Timing
         /// </summary>
         public TagCollection Tags { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ticks of this timing for sorting.
+        /// </summary>
+        public long Sort { get; set; }
+
         #endregion
 
         #region Constructors

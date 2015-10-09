@@ -55,6 +55,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Web.Extensions", "Extensions\NanoProfiler.Web.Extensions\NanoProfiler.Web.Extensions.csproj", "{9A23EA8D-90F4-46EF-93D8-7E47D86E0501}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Web.Extensions.Tests", "Tests\NanoProfiler.Web.Extensions.Tests\NanoProfiler.Web.Extensions.Tests.csproj", "{D481A689-6D70-425D-BA41-CB0398D3890F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{9A23EA8D-90F4-46EF-93D8-7E47D86E0501}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A23EA8D-90F4-46EF-93D8-7E47D86E0501}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A23EA8D-90F4-46EF-93D8-7E47D86E0501}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D481A689-6D70-425D-BA41-CB0398D3890F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D481A689-6D70-425D-BA41-CB0398D3890F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D481A689-6D70-425D-BA41-CB0398D3890F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D481A689-6D70-425D-BA41-CB0398D3890F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{EDB5FF9D-1214-411A-B944-693DC32DAD78} = {42350FC1-FA72-41B7-B61B-4AB163ABE5F6}
 		{E8BECF97-D573-44DC-BF0D-D9EF75DFD1DA} = {42350FC1-FA72-41B7-B61B-4AB163ABE5F6}
 		{BD6AB13B-6BD6-4000-9FFD-32C975AA266C} = {42350FC1-FA72-41B7-B61B-4AB163ABE5F6}
+		{D481A689-6D70-425D-BA41-CB0398D3890F} = {42350FC1-FA72-41B7-B61B-4AB163ABE5F6}
 		{A7DC33A4-9531-4D2E-9379-C26153960BE9} = {B0F7467C-E952-473A-9DE6-8B7D91D6DA23}
 		{9A23EA8D-90F4-46EF-93D8-7E47D86E0501} = {A3353713-0E71-42DF-BC2E-D7CA253F122E}
 	EndGlobalSection
