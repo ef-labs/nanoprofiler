@@ -227,7 +227,7 @@ namespace EF.Diagnostics.Profiling.Web.Extensions.Timing
 
         long IProfiler.GetDurationTicks()
         {
-            throw new NotImplementedException();
+            return DurationMilliseconds;
         }
 
         #endregion
