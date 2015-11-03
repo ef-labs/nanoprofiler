@@ -1,7 +1,7 @@
 NanoProfiler
 ============
 
-NanoProfiler is a light weight profiling library written in C# which requires .NET 4.0+. It is designed for high performance and easy to use for both sync & async programming model. It has been used in EF (Education First) projects generating billions of profiling events per day with trivial performance penalty.
+NanoProfiler is a light weight profiling library written in C# which requires .NET 4.0+. It was inspired by the MiniProfiler project, but is designed for high performance, big-data analytics, and is easy to be used for both sync & async programming model. It has been used in EF (Education First) projects generating billions of profiling events per day with trivial performance penalty.
 
 NanoProfiler itself implements the core profiling feature and a simple implementation for persisting results via slf4net. If you want better profiling result management feature, you could implement the IProfilingStorage interface by yourself.
 
@@ -11,13 +11,14 @@ Installing NanoProfiler
 -----------------------
 Find NanoProfiler on nuget.org: http://nuget.org/packages?q=NanoProfiler
 
-You will find at least 5 nuget packages:
+You will find at least 6 nuget packages:
 
 * NanoProfiler - The core profiling feature which works for non-web applications without DB profiling support;
 * NanoProfiler.Data - Depends on NanoProfiler package, provides additional DB profiling support;
 * NanoProfiler.Web - Depends on NanoProfiler package, provides additional web application profiling support;
 * NanoProfiler.Unity - Depends on NanoProfiler package, NanoProfiler's Unity extension for Unity IoC container based deep profiling support;
 * NanoProfiler.Wcf - Depends on NanoProfiler.Web package, provides additional WCF profiling support;
+* NanoProfiler.Web.Extensions - Depends on NanoProfiler.Web package, provides additional web components for log parsing, export & import;
 
 Which packages should I add reference to my project?
 
@@ -246,7 +247,7 @@ Performance is one of the important focus of NanoProfiler, even when working in 
 
 The magic is, unlike some of the other profiling tools (e.g. MiniProfiler), which constructs/maintains the entire profiling result tree on stepping, the philosophy of NanoProfiler is different. NanoProfiler's stepping simply stores the raw profiling results of each step, db or wcf timing into a flat list and saves all the results in an async queue worker thread.
 
-Since we have much better performance and is designed to consume minimal server resources (memory, cpu, io, etc) in application process, we prefer to enable profiling in production environments, centralize profiling results in e.g. elasticsearch indexes, and monitor & analyze the results with tools like http://kibana.org.
+Since it has much better performance and is designed to consume minimal server resources (memory, cpu, io, etc) in application process, we prefer to enable profiling in production environments, centralize profiling results in e.g. elasticsearch indexes, and monitor & analyze the results with tools like http://kibana.org.
 
 How to compile the source code?
 -------------------------------------
