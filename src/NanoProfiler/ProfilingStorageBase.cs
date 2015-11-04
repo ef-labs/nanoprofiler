@@ -68,7 +68,7 @@ namespace EF.Diagnostics.Profiling
         /// </param>
         /// <param name="threadSleepMilliseconds">The time the worker thread sleeps. A long sleep period or infinite can cause the process to live longer than necessary.</param>
         /// <remarks></remarks>
-        protected ProfilingStorageBase(int maxQueueLength = 1000, int threadSleepMilliseconds = 100)
+        protected ProfilingStorageBase(int maxQueueLength = 10000, int threadSleepMilliseconds = 100)
         {
             if (maxQueueLength < -1)
             {

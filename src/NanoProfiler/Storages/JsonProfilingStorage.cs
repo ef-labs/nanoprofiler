@@ -48,7 +48,7 @@ namespace EF.Diagnostics.Profiling.Storages
         /// Initializes a <see cref="JsonProfilingStorage"/>.
         /// </summary>
         /// <param name="maxQueueLength">The max queue length of the internal worker queue.</param>
-        public JsonProfilingStorage(int maxQueueLength = 1000)
+        public JsonProfilingStorage(int maxQueueLength = 10000)
             : base(maxQueueLength)
         {
         }
