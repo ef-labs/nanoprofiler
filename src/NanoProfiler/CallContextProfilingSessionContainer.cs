@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Linq;
@@ -42,23 +41,6 @@ namespace EF.Diagnostics.Profiling
         private const string CurrentProfilingStepIdCacheKey = "nano_profiler::current_profiling_step_id";
         private static readonly Timer CleanUpProfilingSessionStoreTimer
             = new Timer(CleanUpProfilingSessionStoreTimerCallback, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new <see cref="CallContextProfilingSessionContainer"/>.
-        /// </summary>
-        public CallContextProfilingSessionContainer() { }
-
-        /// <summary>
-        /// for backward compatible only, don't use.
-        /// </summary>
-        /// <param name="useWeakReference"></param>
-        [Obsolete("for backward compatible only", true)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public CallContextProfilingSessionContainer(bool useWeakReference) { }
-
-        #endregion
 
         #region Public Methods
 
