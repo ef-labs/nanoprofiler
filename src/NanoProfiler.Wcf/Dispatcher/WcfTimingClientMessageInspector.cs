@@ -21,6 +21,7 @@
     THE SOFTWARE.
 */
 
+using System;
 using System.Globalization;
 using System.Net;
 using System.ServiceModel;
@@ -80,14 +81,20 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             }
 
             var wcfTiming = new WcfTiming(profilingSession.Profiler, ref request);
+            var correlationId = Guid.NewGuid().ToString();
+            wcfTiming.Data["correlationId"] = correlationId;
             wcfTiming.Data["remoteAddress"] = channel.RemoteAddress.ToString();
 
-            // we copies tags from the current profiling session to the remote WCF profiling session
+            // we copy tags from the current profiling session to the remote WCF profiling session
             // so that we could group/wire client and server profiling session by tags in the future
             var tags = profilingSession.Profiler.GetTimingSession().Tags ?? new TagCollection();
 
-            // add profiler.Id as a tag of sub WCF call session tags
-            // so that we could build the full snapshot of parent profiling session
+            // add correlationId as a tag of sub wcf call session tags
+            // so that we could drill down to the wcf profiling session from current profiling session
+            tags.Add(correlationId);
+
+            // add profiler.Id as a tag of sub wcf call session tags
+            // so that we easily load all child sessions related to a parent profiling session
             tags.Add(profilingSession.Profiler.Id.ToString());
 
             if (!Equals(request.Headers.MessageVersion, MessageVersion.None))

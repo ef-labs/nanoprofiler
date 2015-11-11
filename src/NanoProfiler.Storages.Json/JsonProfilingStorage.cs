@@ -98,7 +98,6 @@ namespace EF.Diagnostics.Profiling.Storages.Json
             sb.Append("{");
 
             AppendSessionSharedFields(sb, session);
-            AppendSessionAggregationFields(sb, session);
             AppendTimingFields(sb, session);
 
             sb.Append("}");
@@ -123,27 +122,6 @@ namespace EF.Diagnostics.Profiling.Storages.Json
         {
             AppendField(sb, "sessionId", session.Id, null);
             AppendField(sb, "machine", session.MachineName);
-        }
-
-        private static void AppendSessionAggregationFields(StringBuilder sb, ITimingSession session)
-        {
-            if (session.Timings == null || !session.Timings.Any()) return;
-
-            var groups = session.Timings.GroupBy(timing => timing.Type);
-            foreach (var group in groups)
-            {
-                if (string.Equals("step", group.Key)) continue;
-
-                sb.Append(",\"");
-                sb.Append(group.Key);
-                sb.Append("Count\":");
-                sb.Append(group.Count());
-
-                sb.Append(",\"");
-                sb.Append(group.Key);
-                sb.Append("Duration\":");
-                sb.Append((long)group.Average(timing => timing.DurationMilliseconds));
-            }
         }
 
         private static void AppendTimingFields(StringBuilder sb, ITiming timing)

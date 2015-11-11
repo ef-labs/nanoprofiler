@@ -23,6 +23,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using EF.Diagnostics.Profiling.Storages;
 using EF.Diagnostics.Profiling.Timings;
@@ -126,13 +127,33 @@ namespace EF.Diagnostics.Profiling
             // save result
             if (!discardResults)
             {
-                _storage.SaveSession(GetTimingSession());
+                var session = GetTimingSession();
+                AddAggregationFields(session);
+                _storage.SaveSession(session);
             }
         }
 
         public ITimingSession GetTimingSession()
         {
             return _timingSession;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private static void AddAggregationFields(ITimingSession session)
+        {
+            if (session.Timings == null || !session.Timings.Any()) return;
+
+            var groups = session.Timings.GroupBy(timing => timing.Type);
+            foreach (var group in groups)
+            {
+                if (string.Equals("step", group.Key)) continue;
+
+                session.Data[group.Key + "Count"] = group.Count().ToString(CultureInfo.InvariantCulture);
+                session.Data[group.Key + "Duration"] = ((long)group.Average(timing => timing.DurationMilliseconds)).ToString(CultureInfo.InvariantCulture);
+            }
         }
 
         #endregion

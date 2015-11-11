@@ -11,6 +11,8 @@
     <AssemblyName>NanoProfiler.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,6 +38,10 @@
     <AssemblyOriginatorKeyFile>..\..\Shared\NanoProfiler.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,7 +53,47 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\NanoProfiler.Core\NanoProfiler.Core.csproj">
+      <Project>{51c22469-3be7-4be1-807b-764683883605}</Project>
+      <Name>NanoProfiler.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NanoProfiler.Data\NanoProfiler.Data.csproj">
+      <Project>{4ebb9a68-67eb-495d-8a4c-30f2c9f43a49}</Project>
+      <Name>NanoProfiler.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NanoProfiler.Storages.Json\NanoProfiler.Storages.Json.csproj">
+      <Project>{19216fba-b584-4bc5-b6a9-85694e3dc44b}</Project>
+      <Name>NanoProfiler.Storages.Json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NanoProfiler.Unity\NanoProfiler.Unity.csproj">
+      <Project>{85d9a8ab-8ee0-4286-866c-a21004613f48}</Project>
+      <Name>NanoProfiler.Unity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NanoProfiler.Wcf\NanoProfiler.Wcf.csproj">
+      <Project>{8004e5d2-3bbd-4909-8aff-19f036bd6d6b}</Project>
+      <Name>NanoProfiler.Wcf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NanoProfiler.Web.Import\NanoProfiler.Web.Import.csproj">
+      <Project>{9a23ea8d-90f4-46ef-93d8-7e47d86e0501}</Project>
+      <Name>NanoProfiler.Web.Import</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NanoProfiler.Web\NanoProfiler.Web.csproj">
+      <Project>{a10a8047-26c3-41b4-a904-71b6548aaafc}</Project>
+      <Name>NanoProfiler.Web</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

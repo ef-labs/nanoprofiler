@@ -50,14 +50,9 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
         public static string ViewResultHeaderHtml = "<h1>NanoProfiler Profiling Result</h1>";
 
         /// <summary>
-        /// The max number of latest profiling sessions in kept by NanoProfilerModule.
+        /// The handler to search for child profiling session by correlationId.
         /// </summary>
-        public static int MaxNumberOfLatestSessions { get; set; }
-
-        /// <summary>
-        /// The handler to filter profiling sessions.
-        /// </summary>
-        public static Func<ITimingSession, bool> ShouldBeExcluded { get; set; }
+        public static Func<string, Guid> DrillDownHandler { get; set; }
 
         #region IHttpModule Members
 
@@ -234,7 +229,19 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                             sb.Append("<b>");
                             sb.Append(keyValue.Key);
                             sb.Append(": </b>");
-                            sb.Append(HttpUtility.HtmlEncode(keyValue.Value));
+                            var encodedValue = HttpUtility.HtmlEncode(keyValue.Value);
+                            if (keyValue.Key.EndsWith("Count") || keyValue.Key.EndsWith("Duration"))
+                            {
+                                sb.Append("<span class=\"");
+                                sb.Append(keyValue.Key);
+                                sb.Append("\">");
+                                sb.Append(encodedValue);
+                                sb.Append("</span>");
+                            }
+                            else
+                            {
+                                sb.Append(encodedValue);
+                            }
                             sb.Append(" &nbsp; ");
                         }
                     }
@@ -396,6 +403,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                 sb.Append(timing.Id.ToString());
                 sb.Append("\">");
                 PrintDataLink(sb, timing);
+                PrintDrillDownLink(sb, timing);
                 sb.Append(timing.Name.Replace("\r\n", " "));
                 sb.Append("</label>");
                 sb.Append("<ul>");
@@ -406,6 +414,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             {
                 sb.Append("<span class=\"leaf\">");
                 PrintDataLink(sb, timing);
+                PrintDrillDownLink(sb, timing);
                 sb.Append(timing.Name.Replace("\r\n", " "));
                 sb.Append("</span>");
             }
@@ -421,6 +430,30 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             sb.Append("\" onclick=\"document.getElementById('data_");
             sb.Append(timing.Id.ToString());
             sb.Append("').style.display='block';\" class=\"openModal\">data</a>] ");
+        }
+
+        private void PrintDrillDownLink(StringBuilder sb, ITiming timing)
+        {
+            if (timing.Data == null || !timing.Data.ContainsKey("correlationId")) return;
+
+            var correlationId = timing.Data["correlationId"];
+
+            Guid? drillDownSessionId = null;
+            if (DrillDownHandler == null)
+            {
+                var drillDownSession = ProfilingSession.CircularBuffer.FirstOrDefault(s => s.Tags != null && s.Tags.Contains(correlationId));
+                if (drillDownSession != null) drillDownSessionId = drillDownSession.Id;
+            }
+            else
+            {
+                drillDownSessionId = DrillDownHandler(correlationId);
+            }
+
+            if (!drillDownSessionId.HasValue) return;
+
+            sb.Append("[<a target=\"blank\" href=\"./");
+            sb.Append(drillDownSessionId);
+            sb.Append("\">drill down</a>] ");
         }
 
         private void ApplicationOnError(object sender, EventArgs eventArgs)

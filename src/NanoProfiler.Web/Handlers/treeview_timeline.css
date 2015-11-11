@@ -35,6 +35,8 @@
 .css-treeview span.start { display:inline-block !important; position: absolute; left:400px }
 .css-treeview span.duration { display:inline-block !important; position: absolute; left: 460px }
 .css-treeview span.leaf { margin-left: 16px; }
+.css-treeview span.wcfCount, .css-treeview span.rpc_wcfCount, .css-treeview span.wcfDuration, .css-treeview span.rpc_wcfDuration { color:green !important; }
+.css-treeview span.dbCount, .css-treeview span.dbDuration { color:red !important; }
 
 /* webkit adjacent element selector bugfix */
 @media screen and (-webkit-min-device-pixel-ratio:0)
