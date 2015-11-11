@@ -44,7 +44,11 @@ namespace NanoProfiler.Demos.SimpleDemo
             var server = context.Request.QueryString["server"];
             if (server == null) return;
 
-            var logParser = new ElasticsearchProfilingLogParser(new Uri(server));
+            var logParser = new ElasticsearchProfilingLogParser(new Uri(server))
+                {
+                    IgnoreFieldNames = new[] { "@timestamp", "executeType", "@version", "_viewInNanoProfilerUI", "queryType" }
+                };
+
             var sessions = logParser.LoadLatestSessionSummaries(10);
             foreach (var item in sessions)
             {

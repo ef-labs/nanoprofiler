@@ -39,6 +39,11 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
     {
         private readonly Uri _searchPath;
 
+        /// <summary>
+        /// Fields should be ignored on parsing.
+        /// </summary>
+        public string[] IgnoreFieldNames = new [] { "@timestamp" };
+
         #region Constructors
 
         /// <summary>
@@ -181,6 +186,16 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             }
 
             return null;
+        }
+
+        protected override bool IsIgnoreField(ITiming timing, string key)
+        {
+            if (IgnoreFieldNames != null && IgnoreFieldNames.Any(f => string.Equals(f, key)))
+            {
+                return true;
+            }
+
+            return base.IsIgnoreField(timing, key);
         }
 
         #endregion

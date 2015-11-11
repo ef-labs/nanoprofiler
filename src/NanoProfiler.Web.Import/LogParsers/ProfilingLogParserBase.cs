@@ -126,13 +126,18 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             return timings.OrderBy(s => s.Sort);
         }
 
+        protected virtual bool IsIgnoreField(ITiming timing, string key)
+        {
+            return false;
+        }
+
         #endregion
 
         #region Private Methods
 
         private void ParseTimingField(ITiming timing, string key, JToken value)
         {
-            if (string.Equals("@timestamp", key)) return;
+            if (IsIgnoreField(timing, key)) return;
 
             switch (key)
             {
