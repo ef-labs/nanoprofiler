@@ -63,6 +63,7 @@
     <Compile Include="Configuration\ProfilingFilterElement.cs" />
     <Compile Include="Configuration\ProfilingFilterElementCollection.cs" />
     <Compile Include="ICircularBuffer.cs" />
+    <Compile Include="ProfilingFilters\DisableProfilingFilter.cs" />
     <Compile Include="ProfilingFilters\IProfilingFilter.cs" />
     <Compile Include="IProfilingSessionContainer.cs" />
     <Compile Include="ProfilingFilters\ProfilingFilterList.cs" />

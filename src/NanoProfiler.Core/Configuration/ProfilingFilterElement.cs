@@ -31,7 +31,7 @@ namespace EF.Diagnostics.Profiling.Configuration
     public sealed class ProfilingFilterElement : ConfigurationElement
     {
         private static readonly ConfigurationProperty PropKey = new ConfigurationProperty("key", typeof(string), string.Empty, ConfigurationPropertyOptions.IsRequired);
-        private static readonly ConfigurationProperty PropValue = new ConfigurationProperty("value", typeof(string), string.Empty, ConfigurationPropertyOptions.IsRequired);
+        private static readonly ConfigurationProperty PropValue = new ConfigurationProperty("value", typeof(string), string.Empty);
         private static readonly ConfigurationProperty PropType = new ConfigurationProperty("type", typeof(string), string.Empty, ConfigurationPropertyOptions.None);
         private static readonly ConfigurationPropertyCollection Props = new ConfigurationPropertyCollection();
 

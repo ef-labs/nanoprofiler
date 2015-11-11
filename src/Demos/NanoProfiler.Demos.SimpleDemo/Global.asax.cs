@@ -23,6 +23,7 @@
 
 using System;
 using EF.Diagnostics.Profiling;
+using EF.Diagnostics.Profiling.ProfilingFilters;
 using Microsoft.Practices.Unity;
 using NanoProfiler.Demos.SimpleDemo.Code.Biz;
 using NanoProfiler.Demos.SimpleDemo.Code.Data;
@@ -49,7 +50,16 @@ namespace NanoProfiler.Demos.SimpleDemo
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
+            // for web applications, profiling is started ad stopped automatically via NanoProfilerModule by default
+            // you could add addtional tags or fields like below
             ProfilingSession.Current.AddTag("session tag 1");
+            ProfilingSession.Current.AddField("sessioField1", "test1");
+
+            // if you want to disable profiling
+            // you could specify a global profiler filter like below
+            // ProfilingSession.ProfilingFilters.Add(new DisableProfilingFilter());
+            // or, you could also disable profiling globally
+            // by adding the disable filter configuration in web.config
         }
 
         protected void Application_EndRequest(object sender, EventArgs e)

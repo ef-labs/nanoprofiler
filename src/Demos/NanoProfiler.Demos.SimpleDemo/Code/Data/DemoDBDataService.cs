@@ -84,10 +84,21 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
                         cmd.Parameters.Add(new SqlParameter("@IsActive", 1));
 
                         var dataAdapter = new SqlDataAdapter(cmd);
-                        var dbProfiler = new DbProfiler(ProfilingSession.Current.Profiler);
-                        var profiledDataAdapter = new ProfiledDbDataAdapter(dataAdapter, dbProfiler);
                         var ds = new DataSet("SimpleDemoDB");
-                        profiledDataAdapter.Fill(ds);
+
+                        // the simplest way to enable DB profiling is to hook the DbConnection like in the method above.
+                        // But if for any reason, you could not hook profiling at the DbConnection,
+                        // you could also hook it inline at DataAdapter, DataReader or DbCommand.
+                        if (ProfilingSession.Current != null)
+                        {
+                            var dbProfiler = new DbProfiler(ProfilingSession.Current.Profiler);
+                            var profiledDataAdapter = new ProfiledDbDataAdapter(dataAdapter, dbProfiler);
+                            profiledDataAdapter.Fill(ds);
+                        }
+                        else
+                        {
+                            dataAdapter.Fill(ds);
+                        }
                     }
                 }
             }

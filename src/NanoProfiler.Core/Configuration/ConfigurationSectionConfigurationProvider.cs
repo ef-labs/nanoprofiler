@@ -57,6 +57,10 @@ namespace EF.Diagnostics.Profiling.Configuration
                     {
                         filterList.Add(new RegexProfilingFilter(new Regex(filter.Value, RegexOptions.Compiled | RegexOptions.IgnoreCase)));
                     }
+                    else if (string.Equals(filter.Type, "disable", StringComparison.OrdinalIgnoreCase))
+                    {
+                        filterList.Add(new DisableProfilingFilter());
+                    }
                     else
                     {
                         var filterType = Type.GetType(filter.Type, true);

@@ -20,3 +20,13 @@ Do the following steps before opening NanoProfiler.sln in Visual Studio 2012 Pro
 License terms
 -------------
 NanoProfiler is published under the [MIT license](http://englishtown.mit-license.org).
+
+About v2.0
+----------
+
+Changes since latest version of v1:
+
+- Profiling engine redesign for better performance & less memory concumption;
+- Enhanced View-Results UI to display all custom profiling tags & fields;
+- New configuration provider support for easier integration;
+- Simplified profiling bootstrap (zero configuration for simple use cases);
