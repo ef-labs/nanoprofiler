@@ -69,10 +69,6 @@
       <Project>{19216fba-b584-4bc5-b6a9-85694e3dc44b}</Project>
       <Name>NanoProfiler.Storages.Json</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\NanoProfiler.Unity\NanoProfiler.Unity.csproj">
-      <Project>{85d9a8ab-8ee0-4286-866c-a21004613f48}</Project>
-      <Name>NanoProfiler.Unity</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\NanoProfiler.Wcf\NanoProfiler.Wcf.csproj">
       <Project>{8004e5d2-3bbd-4909-8aff-19f036bd6d6b}</Project>
       <Name>NanoProfiler.Wcf</Name>

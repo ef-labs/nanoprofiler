@@ -23,7 +23,7 @@
 
 using System;
 
-namespace EF.Diagnostics.Profiling.Unity
+namespace NanoProfiler.Demos.SimpleDemo.Unity
 {
     /// <summary>
     /// Represents an generic deep profiling filter.

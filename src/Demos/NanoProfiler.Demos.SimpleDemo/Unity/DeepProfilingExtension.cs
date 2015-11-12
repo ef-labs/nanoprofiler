@@ -24,7 +24,7 @@
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.ObjectBuilder;
 
-namespace EF.Diagnostics.Profiling.Unity
+namespace NanoProfiler.Demos.SimpleDemo.Unity
 {
     /// <summary>
     /// A unity extension for injecting deep profiling to method executions filtered by types.

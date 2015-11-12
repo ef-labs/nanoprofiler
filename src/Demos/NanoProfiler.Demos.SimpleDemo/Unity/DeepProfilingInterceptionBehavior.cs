@@ -21,24 +21,26 @@
     THE SOFTWARE.
 */
 
+using System;
+using System.Collections.Generic;
+using EF.Diagnostics.Profiling;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
-namespace EF.Diagnostics.Profiling.Unity
+namespace NanoProfiler.Demos.SimpleDemo.Unity
 {
     /// <summary>
-    /// The <see cref="ICallHandler"/> implementation for policy injection based profiling
-    /// through <see cref="ProfiledMethodAttribute"/>.
+    /// The <see cref="IInterceptionBehavior"/> implementation for deep profiling.
     /// </summary>
-    public class PolicyInjectionProfilingCallHandler : ICallHandler
+    internal class DeepProfilingInterceptionBehavior : IInterceptionBehavior
     {
-        /// <summary>
-        /// The execution order of the <see cref="ICallHandler"/>.
-        /// </summary>
-        public int Order { get; set; }
+        #region IInterceptionBehavior Members
 
-        #region ICallHandler Members
+        IEnumerable<Type> IInterceptionBehavior.GetRequiredInterfaces()
+        {
+            return Type.EmptyTypes;
+        }
 
-        IMethodReturn ICallHandler.Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
+        IMethodReturn IInterceptionBehavior.Invoke(IMethodInvocation input, GetNextInterceptionBehaviorDelegate getNext)
         {
             if (ProfilingSession.Current != null)
             {
@@ -47,6 +49,7 @@ namespace EF.Diagnostics.Profiling.Unity
                 {
                     var method = input.MethodBase;
                     var targetType = input.Target == null ? method.ReflectedType : input.Target.GetType();
+
 
                     using (profiler.Step(targetType.FullName + "." + method.Name, null))
                     {
@@ -58,10 +61,9 @@ namespace EF.Diagnostics.Profiling.Unity
             return getNext()(input, getNext);
         }
 
-        int ICallHandler.Order
+        bool IInterceptionBehavior.WillExecute
         {
-            get { return Order; }
-            set { Order = value; }
+            get { return true; }
         }
 
         #endregion

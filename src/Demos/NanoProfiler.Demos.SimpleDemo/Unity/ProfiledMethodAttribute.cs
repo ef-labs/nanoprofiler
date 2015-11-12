@@ -22,39 +22,25 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
-namespace EF.Diagnostics.Profiling.Unity
+namespace NanoProfiler.Demos.SimpleDemo.Unity
 {
     /// <summary>
-    /// A regular expression based deep profiling filter.
+    /// The attribute to support policy injection based profiling of a method declaratively.
     /// </summary>
-    public sealed class RegexDeepProfilingFilter : IDeepProfilingFilter
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ProfiledMethodAttribute : HandlerAttribute
     {
-        private readonly Regex _regex;
-
         /// <summary>
-        /// Initialize a RegexDeepProfilingFilter instance from specified regular expression pattern.
+        /// Creates the <see cref="ICallHandler"/> for the actual execution of the profiling.
         /// </summary>
-        /// <param name="regex">The <see cref="Regex"/>.</param>
-        public RegexDeepProfilingFilter(Regex regex)
+        /// <param name="container">The <see cref="IUnityContainer"/>.</param>
+        /// <returns></returns>
+        public override ICallHandler CreateHandler(IUnityContainer container)
         {
-            if (regex == null)
-            {
-                throw new ArgumentNullException("regex");
-            }
-
-            _regex = regex;
-        }
-
-        bool IDeepProfilingFilter.ShouldBeProfiled(Type type)
-        {
-            if (type == null)
-            {
-                return false;
-            }
-
-            return _regex.IsMatch(type.FullName);
+            return new PolicyInjectionProfilingCallHandler {Order = Order};
         }
     }
 }

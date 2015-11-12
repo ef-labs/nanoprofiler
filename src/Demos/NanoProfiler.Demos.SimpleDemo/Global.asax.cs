@@ -22,11 +22,13 @@
 */
 
 using System;
+using System.Text.RegularExpressions;
 using EF.Diagnostics.Profiling;
-using EF.Diagnostics.Profiling.ProfilingFilters;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using NanoProfiler.Demos.SimpleDemo.Code.Biz;
 using NanoProfiler.Demos.SimpleDemo.Code.Data;
+using NanoProfiler.Demos.SimpleDemo.Unity;
 
 namespace NanoProfiler.Demos.SimpleDemo
 {
@@ -36,11 +38,25 @@ namespace NanoProfiler.Demos.SimpleDemo
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            // register types to unity container
+            #region Optional bootstrap code for unity based deep profiling and policy injection based profiling
+
+            // Register types to unity container to demo unity based deep profiling & policy injection based profiling.
             Container.RegisterType<IDemoDBDataService, DemoDBDataService>(
-                new ContainerControlledLifetimeManager());
-            Container.RegisterType<IDemoDBService, DemoDBService>(
-                new ContainerControlledLifetimeManager());
+                new ContainerControlledLifetimeManager()
+                , new InterceptionBehavior<PolicyInjectionBehavior>()); //enable policy injection
+            Container.RegisterType<IDemoDBService, DemoDBService>(new ContainerControlledLifetimeManager());
+
+            // Enable policy injection for interface types registered with PolicyInjectionBehavior
+            Container.AddNewExtension<Interception>()
+                .Configure<Interception>()
+                .SetDefaultInterceptorFor<IDemoDBDataService>(new InterfaceInterceptor());
+
+            // Enable deep profiling extension for profiling any interface methods on
+            // interface types containing "DemoDBService".
+            // When deep profiling is enabled on specified types, policy injection will be ignored.
+            Container.AddExtension(new DeepProfilingExtension(new RegexDeepProfilingFilter(new Regex("DemoDBService"))));
+
+            #endregion
         }
 
         protected void Session_Start(object sender, EventArgs e)

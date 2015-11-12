@@ -22,11 +22,10 @@
 */
 
 using System;
-
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
-namespace EF.Diagnostics.Profiling.Unity
+namespace NanoProfiler.Demos.SimpleDemo.Unity
 {
     /// <summary>
     /// The interception strategy for deep profiling method calls of interface types.

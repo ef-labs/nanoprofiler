@@ -29,13 +29,16 @@ using EF.Diagnostics.Profiling;
 using EF.Diagnostics.Profiling.Data;
 
 using NanoProfiler.Demos.SimpleDemo.Code.Models;
+using NanoProfiler.Demos.SimpleDemo.Unity;
 
 namespace NanoProfiler.Demos.SimpleDemo.Code.Data
 {
     public interface IDemoDBDataService
     {
+        [ProfiledMethod]
         List<DemoData> LoadActiveDemoData();
 
+        [ProfiledMethod]
         DataSet LoadActiveDemoDataWithDataAdapter();
     }
 
