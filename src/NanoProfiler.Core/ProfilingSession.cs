@@ -71,22 +71,26 @@ namespace EF.Diagnostics.Profiling
         {
             ProfilingSessionContainer.CurrentSession = null;
             ProfilingSessionContainer.CurrentSessionStepId = null;
-            if (session != null && session.Profiler != null)
+
+            if (session == null || session.Profiler == null) return;
+
+            var timingSession = session.Profiler.GetTimingSession();
+            if (timingSession == null 
+                || timingSession.Timings == null
+                || timingSession.Timings.All(t => t.ParentId != timingSession.Id)) return;
+
+            ProfilingSessionContainer.CurrentSession = session;
+
+            if (parentStepId.HasValue && timingSession.Timings.Any(t => t.Id == parentStepId.Value && string.Equals(t.Type, "step")))
             {
-                ProfilingSessionContainer.CurrentSession = session;
-                var timingSession = session.Profiler.GetTimingSession();
-                if (parentStepId.HasValue && timingSession.Timings.Any(t => t.Id == parentStepId.Value))
-                {
-                    ProfilingSessionContainer.CurrentSessionStepId = parentStepId.Value;
-                }
-                else // if parentStepId not specified, use the root step of session as parent step by default
-                {
-                    var rootStep = timingSession.Timings.FirstOrDefault();
-                    if (rootStep != null)
-                    {
-                        ProfilingSessionContainer.CurrentSessionStepId = rootStep.Id;
-                    }
-                }
+                ProfilingSessionContainer.CurrentSessionStepId = parentStepId.Value;
+            }
+            else // if parentStepId not specified, use the root step of session as parent step by default
+            {
+                var rootStep = timingSession.Timings.FirstOrDefault(t => t.ParentId == timingSession.Id);
+                if (rootStep == null) return;
+
+                ProfilingSessionContainer.CurrentSessionStepId = rootStep.Id;
             }
         }
 
@@ -134,6 +138,16 @@ namespace EF.Diagnostics.Profiling
         /// Gets or sets a circular buffer for latest profiling sessions.
         /// </summary>
         public static ICircularBuffer<ITimingSession> CircularBuffer { get; set; }
+
+        /// <summary>
+        /// Default handler for creating a profiler.
+        /// </summary>
+        internal static Func<string, IProfilingStorage, TagCollection, IProfiler> CreateProfilerHandler = (name, storage, tags) => new Profiler(name, storage, tags);
+
+        /// <summary>
+        /// Default handler for handling exception.
+        /// </summary>
+        internal static Action<Exception, object> HandleExceptionHandler = HandleException;
 
         #endregion
 
@@ -184,8 +198,7 @@ namespace EF.Diagnostics.Profiling
             }
 
             // set null the current profiling session if exists
-            ProfilingSessionContainer.CurrentSession = null;
-            ProfilingSessionContainer.CurrentSessionStepId = null;
+            ProfilingSession.SetCurrentProfilingSession(null);
 
             if (ProfilingFilters.Count > 0)
             {
@@ -199,11 +212,11 @@ namespace EF.Diagnostics.Profiling
             IProfiler profiler = null;
             try
             {
-                profiler = new Profiler(name, _profilingStorage, tags == null || !tags.Any() ? null : new TagCollection(tags));
+                profiler = CreateProfilerHandler(name, _profilingStorage, tags == null || !tags.Any() ? null : new TagCollection(tags));
             }
             catch (Exception ex)
             {
-                HandleException(ex, typeof(ProfilingSession));
+                HandleExceptionHandler(ex, typeof(ProfilingSession));
             }
 
             if (profiler != null)
@@ -235,7 +248,7 @@ namespace EF.Diagnostics.Profiling
                 }
                 catch (Exception ex)
                 {
-                    HandleException(ex, typeof(ProfilingSession));
+                    HandleExceptionHandler(ex, typeof(ProfilingSession));
                 }
             }
 
@@ -291,7 +304,7 @@ namespace EF.Diagnostics.Profiling
             }
             catch (Exception ex)
             {
-                HandleException(ex, this);
+                HandleExceptionHandler(ex, this);
             }
 
             return step;
@@ -310,7 +323,7 @@ namespace EF.Diagnostics.Profiling
             }
             catch (Exception ex)
             {
-                HandleException(ex, this);
+                HandleExceptionHandler(ex, this);
             }
 
             return ignoredStep;

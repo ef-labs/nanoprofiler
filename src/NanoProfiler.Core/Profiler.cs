@@ -49,6 +49,10 @@ namespace EF.Diagnostics.Profiling
         /// <param name="tags">Tags of the profiler.</param>
         public Profiler(string name, IProfilingStorage storage, TagCollection tags)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException("name");
+            }
             if (storage == null)
             {
                 throw new ArgumentNullException("storage");

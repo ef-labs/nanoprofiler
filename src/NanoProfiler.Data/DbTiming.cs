@@ -61,6 +61,7 @@ namespace EF.Diagnostics.Profiling.Data
             Data["executeType"] = executeType.ToString().ToLowerInvariant();
 
             if (command == null) return;
+            if (command.Parameters == null || command.Parameters.Count == 0) return;
 
             Data["parameters"] = SerializeParameters(command.Parameters);
         }

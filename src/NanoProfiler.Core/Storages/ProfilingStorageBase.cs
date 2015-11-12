@@ -201,8 +201,7 @@ namespace EF.Diagnostics.Profiling.Storages
                 Thread.CurrentThread.IsBackground = false;
 
                 // set null the current profiling session bound to the running thread to release the memory
-                ProfilingSession.ProfilingSessionContainer.CurrentSession = null;
-                ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId = null;
+                ProfilingSession.SetCurrentProfilingSession(null);
 
                 // Save all the queued sessions
                 ITimingSession session;

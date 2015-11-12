@@ -11,7 +11,7 @@ For more documentations, please check out wiki pages: https://github.com/english
 
 How to compile the source code?
 -------------------------------
-Do the following steps before opening NanoProfiler.sln in Visual Studio 2012 Pro+
+Do the following steps before opening NanoProfiler.sln in Visual Studio 2012 +
 
 - git clone
 - cd src
@@ -31,4 +31,3 @@ Changes since latest version of v1:
 - Simplified profiling configuration (zero configuration for simple use cases);
 - New configuration provider interface for easier integration with existing frameworks;
 - New NanoProfiler.Web.Import components for importing and visualizing profiling sessions from log files or elasticsearch;
-- 
