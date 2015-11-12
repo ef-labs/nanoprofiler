@@ -32,9 +32,9 @@ using Newtonsoft.Json.Serialization;
 namespace EF.Diagnostics.Profiling.Web.Import
 {
     /// <summary>
-    /// Helper for importing profiling results.
+    /// Serializer for importing profiling results.
     /// </summary>
-    public static class ImportHelper
+    public static class ImportSerializer
     {
         /// <summary>
         /// Serialize a list of sessions.

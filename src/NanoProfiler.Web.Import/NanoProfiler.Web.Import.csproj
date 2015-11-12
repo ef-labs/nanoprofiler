@@ -58,7 +58,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Handlers\NanoProfilerImportModule.cs" />
-    <Compile Include="ImportHelper.cs" />
+    <Compile Include="ImportSerializer.cs" />
     <Compile Include="LogParsers\ElasticsearchProfilingLogParser.cs" />
     <Compile Include="LogParsers\FileProfilingLogParser.cs" />
     <Compile Include="LogParsers\IProfilingLogParser.cs" />
@@ -72,10 +72,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NanoProfiler.Web\NanoProfiler.Web.csproj">
-      <Project>{a10a8047-26c3-41b4-a904-71b6548aaafc}</Project>
-      <Name>NanoProfiler.Web</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NanoProfiler.Core\NanoProfiler.Core.csproj">
       <Project>{51c22469-3be7-4be1-807b-764683883605}</Project>
       <Name>NanoProfiler.Core</Name>

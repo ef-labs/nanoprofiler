@@ -36,7 +36,7 @@ namespace NanoProfiler.Demos.ConsoleDemo
                 context.Response.ContentType = "application/json";
 
                 return context.Response.WriteAsync(
-                    ImportHelper.SerializeSessions(ProfilingSession.CircularBuffer));
+                    ImportSerializer.SerializeSessions(ProfilingSession.CircularBuffer));
             });
         }
     }

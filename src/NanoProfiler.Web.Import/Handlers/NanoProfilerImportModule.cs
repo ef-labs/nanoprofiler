@@ -85,7 +85,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
                 {
                     context.Response.ContentType = "application/json";
 
-                    context.Response.Write(ImportHelper.SerializeSessions(ProfilingSession.CircularBuffer));
+                    context.Response.Write(ImportSerializer.SerializeSessions(ProfilingSession.CircularBuffer));
                     context.Response.End();
                 }
             }
@@ -102,7 +102,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var content = stream.ReadToEnd();
-                    sessions = ImportHelper.DeserializeSessions(content);
+                    sessions = ImportSerializer.DeserializeSessions(content);
                 }
             }
 

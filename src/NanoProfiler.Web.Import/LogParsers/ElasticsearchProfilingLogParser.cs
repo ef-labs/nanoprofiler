@@ -42,7 +42,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
         /// <summary>
         /// Fields should be ignored on parsing.
         /// </summary>
-        public string[] IgnoreFieldNames = new [] { "@timestamp" };
+        public string[] IgnoreFieldNames = new [] { "@timestamp", "@version" };
 
         #region Constructors
 
