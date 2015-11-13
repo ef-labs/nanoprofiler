@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
     public class NanoProfilerModule : IHttpModule
     {
         private const string ViewUrl = "/nanoprofiler/view";
+        private const string ProfilingTags = "X-ET-Profiling-Tags";
 
         /// <summary>
         /// The default Html of the view-result index page: ~/nanoprofiler/view
@@ -92,6 +94,28 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             }
         }
 
+        private string[] GetProfilingTagsFromHeaders(HttpContext context)
+        {
+            HashSet<string> tags = null;
+            if (context.Request.Headers.AllKeys.Contains(ProfilingTags))
+            {
+                var profilingTags = context.Request.Headers.GetValues(ProfilingTags);
+                if (profilingTags != null && profilingTags.Any())
+                {
+                    tags = new HashSet<string>();
+
+                    foreach (var tag in profilingTags.First().Split(','))
+                    {
+                        if (string.IsNullOrWhiteSpace(tag)) continue;
+
+                        tags.Add(tag.Trim());
+                    }
+                }
+            }
+
+            return tags == null ? null : tags.ToArray();
+        }
+
         private void ApplicationOnBeginRequest(object sender, EventArgs eventArgs)
         {
             var context = HttpContext.Current;
@@ -108,7 +132,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             // so it is not necessary to start profiling here
             if (url.Contains(".svc")) return;
 
-            ProfilingSession.Start(url);
+            ProfilingSession.Start(url, GetProfilingTagsFromHeaders(context));
 
             #endregion
 
