@@ -21,7 +21,7 @@
     THE SOFTWARE.
 */
 
-using System.Threading;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -54,21 +54,22 @@ namespace NanoProfiler.Demos.SimpleDemo
                     await client.DoWorkAsync("somework");
                 }
 
-                SimulateWebRequest("http://some.thing.com");
+                await CallWebRequest("http://" + context.Request.Url.Host + ":" + context.Request.Url.Port + "/SyncHandler.ashx");
             }
         }
 
-        private void SimulateWebRequest(string url)
+        private static async Task CallWebRequest(string url)
         {
             var profilingSession = ProfilingSession.Current;
             if (profilingSession != null && profilingSession.Profiler != null)
             {
                 var webTiming = new WebTiming(profilingSession.Profiler, url);
 
-                // sleep to simulate web request call
-                Thread.Sleep(200);
-
-                webTiming.Data["customField1"] = "value1";
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("X-ET-Correlation-Id", webTiming.CorrelationId);
+                    await httpClient.GetAsync(url);
+                }
 
                 webTiming.Stop();
             }

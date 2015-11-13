@@ -22,7 +22,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -39,7 +38,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
     public class NanoProfilerModule : IHttpModule
     {
         private const string ViewUrl = "/nanoprofiler/view";
-        private const string ProfilingTags = "X-ET-Profiling-Tags";
+        private const string ETCorrelationId = "X-ET-Correlation-Id";
 
         /// <summary>
         /// The default Html of the view-result index page: ~/nanoprofiler/view
@@ -55,6 +54,11 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
         /// The handler to search for child profiling session by correlationId.
         /// </summary>
         public static Func<string, Guid> DrillDownHandler { get; set; }
+
+        /// <summary>
+        /// The handler to search for parent profiling session by correlationId.
+        /// </summary>
+        public static Func<string, Guid> DrillUpHandler { get; set; }
 
         #region IHttpModule Members
 
@@ -94,26 +98,18 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             }
         }
 
-        private string[] GetProfilingTagsFromHeaders(HttpContext context)
+        private string GetCorrelationIdFromHeaders(HttpContext context)
         {
-            HashSet<string> tags = null;
-            if (context.Request.Headers.AllKeys.Contains(ProfilingTags))
+            if (context.Request.Headers.AllKeys.Contains(ETCorrelationId))
             {
-                var profilingTags = context.Request.Headers.GetValues(ProfilingTags);
-                if (profilingTags != null && profilingTags.Any())
+                var correlationIds = context.Request.Headers.GetValues(ETCorrelationId);
+                if (correlationIds != null)
                 {
-                    tags = new HashSet<string>();
-
-                    foreach (var tag in profilingTags.First().Split(','))
-                    {
-                        if (string.IsNullOrWhiteSpace(tag)) continue;
-
-                        tags.Add(tag.Trim());
-                    }
+                    return correlationIds.FirstOrDefault();
                 }
             }
 
-            return tags == null ? null : tags.ToArray();
+            return null;
         }
 
         private void ApplicationOnBeginRequest(object sender, EventArgs eventArgs)
@@ -132,7 +128,13 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             // so it is not necessary to start profiling here
             if (url.Contains(".svc")) return;
 
-            ProfilingSession.Start(url, GetProfilingTagsFromHeaders(context));
+            ProfilingSession.Start(url);
+
+            var correlationId = GetCorrelationIdFromHeaders(context);
+            if (!string.IsNullOrWhiteSpace(correlationId))
+            {
+                ProfilingSession.Current.AddField("correlationId", correlationId);
+            }
 
             #endregion
 
@@ -241,6 +243,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                     // print summary
                     sb.Append("<ul>");
                     sb.Append("<li class=\"summary\">");
+                    PrintDrillUpLink(sb, result);
                     sb.Append(result.Name.Replace("\r\n", " "));
                     sb.Append("</li>");
                     sb.Append("<li class=\"summary\">");
@@ -465,7 +468,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             Guid? drillDownSessionId = null;
             if (DrillDownHandler == null)
             {
-                var drillDownSession = ProfilingSession.CircularBuffer.FirstOrDefault(s => s.Tags != null && s.Tags.Contains(correlationId));
+                var drillDownSession = ProfilingSession.CircularBuffer.FirstOrDefault(s => s.Data != null && s.Data.ContainsKey("correlationId") && s.Data["correlationId"] == correlationId);
                 if (drillDownSession != null) drillDownSessionId = drillDownSession.Id;
             }
             else
@@ -475,9 +478,33 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
 
             if (!drillDownSessionId.HasValue) return;
 
-            sb.Append("[<a target=\"blank\" href=\"./");
+            sb.Append("[<a href=\"./");
             sb.Append(drillDownSessionId);
             sb.Append("\">drill down</a>] ");
+        }
+
+        private void PrintDrillUpLink(StringBuilder sb, ITimingSession session)
+        {
+            if (session.Data == null || !session.Data.ContainsKey("correlationId")) return;
+
+            var correlationId = session.Data["correlationId"];
+
+            Guid? drillUpSessionId = null;
+            if (DrillUpHandler == null)
+            {
+                var drillUpSession = ProfilingSession.CircularBuffer.FirstOrDefault(s => s.Timings != null && s.Timings.Any(t => t.Data != null && t.Data.ContainsKey("correlationId") && t.Data["correlationId"] == correlationId));
+                if (drillUpSession != null) drillUpSessionId = drillUpSession.Id;
+            }
+            else
+            {
+                drillUpSessionId = DrillUpHandler(correlationId);
+            }
+
+            if (!drillUpSessionId.HasValue) return;
+
+            sb.Append("[<a href=\"./");
+            sb.Append(drillUpSessionId);
+            sb.Append("\">drill up</a>] ");
         }
 
         private void ApplicationOnError(object sender, EventArgs eventArgs)

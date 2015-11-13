@@ -47,8 +47,6 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 return null;
             }
 
-            var tags = GetRequestProfilingTags(request, channel);
-
             // fix properties for WCF profiling session
             var profilingSession = GetCurrentProfilingSession();
             if (profilingSession == null)
@@ -59,7 +57,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 //   and if there is already a profiling session started in begin request event when working with HTTP bindings,
                 //   since HttpContext.Current is not accessible from WCF context, there will be two profiling sessions
                 //   be saved, one for the web request wrapping the WCF call and the other for the WCF call.
-                ProfilingSession.Start(request.Headers.Action, tags);
+                ProfilingSession.Start(request.Headers.Action);
             }
             else
             {
@@ -73,9 +71,12 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 
                 // set profiler session's name to the WCF action name
                 profilingSession.Profiler.GetTimingSession().Name = request.Headers.Action;
+            }
 
-                // merge tags
-                MergeRequestTags(profilingSession, tags);
+            var correlationId = GetCorrelationIdRequestHeaders(request, channel);
+            if (!string.IsNullOrWhiteSpace(correlationId))
+            {
+                ProfilingSession.Current.AddField("correlationId", correlationId);
             }
 
             SetProfilingSessionClientIpAndLocalAddress(request, channel);
@@ -111,55 +112,32 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             return profilingSession;
         }
 
-        private static string[] GetRequestProfilingTags(Message request, IClientChannel channel)
+        private static string GetCorrelationIdRequestHeaders(Message request, IClientChannel channel)
         {
-            string tagsString = null;
-
-            // try to get tags from headers for soap messages
+            // try to get correlationId from headers for soap messages
             if (!Equals(request.Headers.MessageVersion, MessageVersion.None))
             {
                 // Check to see if we have a request as part of this message
                 var headerIndex = request.Headers.FindHeader(
-                    WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
+                    WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingCorrelationId
                     , WcfProfilingMessageHeaderConstants.HeaderNamespace);
 
                 if (headerIndex >= 0)
                 {
-                    tagsString = request.Headers.GetHeader<string>(headerIndex);
+                    return request.Headers.GetHeader<string>(headerIndex);
                 }
             }
-            // else try to get tags from properties for web operation messages
+            // else try to get correlationId from properties for web operation messages
             else if (WebOperationContext.Current != null || channel.Via.Scheme == "http" || channel.Via.Scheme == "https")
             {
                 if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
                 {
                     var property = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
-                    tagsString = property.Headers[WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags];
+                    return property.Headers[WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingCorrelationId];
                 }
             }
 
-            var tags = string.IsNullOrWhiteSpace(tagsString) ? null : TagCollection.FromString(tagsString);
-            return tags == null || !tags.Any() ? null : tags.ToArray();
-        }
-
-        private static void MergeRequestTags(ProfilingSession profilingSession, IEnumerable<string> tags)
-        {
-            if (tags != null)
-            {
-                var mergedTags = profilingSession.Profiler.GetTimingSession().Tags;
-                if (mergedTags == null)
-                {
-                    mergedTags = new TagCollection(tags);
-                    profilingSession.Profiler.GetTimingSession().Tags = mergedTags;
-                }
-                else
-                {
-                    foreach (var tag in tags)
-                    {
-                        mergedTags.Add(tag);
-                    }
-                }
-            }
+            return null;
         }
 
         private static void SetProfilingSessionClientIpAndLocalAddress(

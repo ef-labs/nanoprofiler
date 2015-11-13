@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EF.Diagnostics.Profiling.Timings;
 
 namespace EF.Diagnostics.Profiling.Web
@@ -10,6 +11,15 @@ namespace EF.Diagnostics.Profiling.Web
     {
         private readonly IProfiler _profiler;
         private const string WebTimingType = "web";
+        private const string CorrelationIdKey = "correlationId";
+
+        /// <summary>
+        /// Gets the correlationId of a web timing.
+        /// </summary>
+        public string CorrelationId
+        {
+            get { return Data[CorrelationIdKey]; }
+        }
 
         #region Constructors
 
@@ -25,6 +35,7 @@ namespace EF.Diagnostics.Profiling.Web
             StartMilliseconds = (long)_profiler.Elapsed.TotalMilliseconds;
             Sort = profiler.Elapsed.Ticks;
             Data = new Dictionary<string, string>();
+            Data[CorrelationIdKey] = Guid.NewGuid().ToString();
         }
 
         #endregion

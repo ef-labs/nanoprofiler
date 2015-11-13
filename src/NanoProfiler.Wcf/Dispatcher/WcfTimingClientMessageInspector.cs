@@ -21,14 +21,12 @@
     THE SOFTWARE.
 */
 
-using System;
 using System.Globalization;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
-using EF.Diagnostics.Profiling.Timings;
 
 namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
 {
@@ -81,35 +79,23 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             }
 
             var wcfTiming = new WcfTiming(profilingSession.Profiler, ref request);
-            var correlationId = Guid.NewGuid().ToString();
-            wcfTiming.Data["correlationId"] = correlationId;
             wcfTiming.Data["remoteAddress"] = channel.RemoteAddress.ToString();
 
-            // we copy tags from the current profiling session to the remote WCF profiling session
-            // so that we could group/wire client and server profiling session by tags in the future
-            var tags = profilingSession.Profiler.GetTimingSession().Tags ?? new TagCollection();
-
-            // add correlationId as a tag of sub wcf call session tags
+            // add correlationId as a header of sub wcf call
             // so that we could drill down to the wcf profiling session from current profiling session
-            tags.Add(correlationId);
-
-            // add profiler.Id as a tag of sub wcf call session tags
-            // so that we easily load all child sessions related to a parent profiling session
-            tags.Add(profilingSession.Profiler.Id.ToString());
-
             if (!Equals(request.Headers.MessageVersion, MessageVersion.None))
             {
-                var untypedHeader = new MessageHeader<string>(tags.ToString()).GetUntypedHeader(
-                    WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
+                var untypedHeader = new MessageHeader<string>(wcfTiming.CorrelationId).GetUntypedHeader(
+                    WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingCorrelationId
                     , WcfProfilingMessageHeaderConstants.HeaderNamespace);
                 request.Headers.Add(untypedHeader);
             }
             else if (WebOperationContext.Current != null || channel.Via.Scheme == "http" || channel.Via.Scheme == "https")
             {
-                if (!request.Properties.ContainsKey(WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags))
+                if (!request.Properties.ContainsKey(WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingCorrelationId))
                 {
                     request.Properties.Add(
-                        WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
+                        WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingCorrelationId
                         , new HttpRequestMessageProperty());
                 }
 
@@ -117,8 +103,8 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 {
                     var httpRequestProperty = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
                     httpRequestProperty.Headers.Add(
-                        WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingTags
-                        , WcfProfilingMessageHeaderConstants.HeaderNamespace);
+                        WcfProfilingMessageHeaderConstants.HeaderNameOfProfilingCorrelationId
+                        , wcfTiming.CorrelationId);
                 }
             }
 

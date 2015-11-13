@@ -25,7 +25,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
 {
     internal static class WcfProfilingMessageHeaderConstants
     {
-        public const string HeaderNameOfProfilingTags = "NanoProfilerProfilingTags";
+        public const string HeaderNameOfProfilingCorrelationId = "X-ET-Correlation-Id";
         public const string HeaderNamespace = "EF.Diagnostics.Profiling.ServiceModel";
     }
 }

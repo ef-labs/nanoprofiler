@@ -37,7 +37,16 @@ namespace EF.Diagnostics.Profiling.ServiceModel
     {
         private readonly IProfiler _profiler;
         private const string WcfTimingType = "wcf";
-        
+        private const string CorrelationIdKey = "correlationId";
+
+        /// <summary>
+        /// Gets the correlationId of a web timing.
+        /// </summary>
+        public string CorrelationId
+        {
+            get { return Data[CorrelationIdKey]; }
+        }
+
         #region Constructors
 
         /// <summary>
@@ -62,6 +71,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel
             StartMilliseconds = (long)_profiler.Elapsed.TotalMilliseconds;
             Sort = profiler.Elapsed.Ticks;
             Data = new Dictionary<string, string>();
+            Data[CorrelationIdKey] = Guid.NewGuid().ToString();
             var requestMessageContent = ToXml(ref requestMessage);
             Data["requestMessage"] = requestMessageContent;
             Data["requestSize"] = requestMessageContent.Length.ToString(CultureInfo.InvariantCulture);
