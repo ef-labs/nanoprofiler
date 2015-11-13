@@ -28,6 +28,7 @@ Changes since latest version of v1:
 
 - Profiling engine redesign for better performance & less memory concumption;
 - Enhanced View-Results UI to display all custom profiling tags & fields;
+- Drill down/up to child/parent profiling sessions in View-Results UI;
 - Simplified profiling configuration (zero configuration for simple use cases);
 - New configuration provider interface for easier integration with existing frameworks;
 - New NanoProfiler.Web.Import components for importing and visualizing profiling sessions from log files or elasticsearch;
