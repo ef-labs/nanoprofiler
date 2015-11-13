@@ -50,7 +50,17 @@ namespace EF.Diagnostics.Profiling.Timings
         public IEnumerable<ITiming> Timings
         {
             get { return _timings ?? (_timings = new ConcurrentQueue<ITiming>()); }
-            set { _timings = (value == null ? new ConcurrentQueue<ITiming>() : new ConcurrentQueue<ITiming>(value)); }
+            set
+            {
+                _timings = null;
+
+                if (value == null) return;
+
+                var timings = new ConcurrentQueue<ITiming>(value);
+                if (timings.Count == 0) return;
+
+                _timings = timings;
+            }
         }
 
         /// <summary>

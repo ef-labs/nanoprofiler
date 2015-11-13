@@ -154,22 +154,23 @@ namespace EF.Diagnostics.Profiling.Data
         {
             get
             {
-                if (_command.Connection == null)
+                if (_command.Connection == null && (_dbCommand == null || _dbCommand.Connection == null))
                 {
                     return null;
                 }
 
                 if (_dbConnection == null)
                 {
+                    var conn = (_dbCommand == null ? _command.Connection : _dbCommand.Connection);
 
-                    var profiledDbConnection = _command.Connection as ProfiledDbConnection;
+                    var profiledDbConnection = conn as ProfiledDbConnection;
                     if (profiledDbConnection != null)
                     {
                         _dbConnection = profiledDbConnection;
                     }
                     else
                     {
-                        _dbConnection = new ProfiledDbConnection(_command.Connection, _dbProfiler);
+                        _dbConnection = new ProfiledDbConnection(conn, _dbProfiler);
                     }
                 }
 
@@ -188,7 +189,7 @@ namespace EF.Diagnostics.Profiling.Data
         {
             get
             {
-                if (_command.Parameters == null)
+                if (_command.Parameters == null && (_dbCommand == null || _dbCommand.Parameters == null))
                 {
                     return null;
                 }
@@ -199,7 +200,7 @@ namespace EF.Diagnostics.Profiling.Data
                     {
                         _dbParameterCollection = _dbCommand.Parameters;
                     }
-                    else
+                    else if (_command.Parameters != null)
                     {
                         _dbParameterCollection = new DbParameterCollectionWrapper(_command.Parameters);
                     }
@@ -216,21 +217,23 @@ namespace EF.Diagnostics.Profiling.Data
         {
             get
             {
-                if (_command.Transaction == null)
+                if (_command.Transaction == null && (_dbCommand == null || _dbCommand.Transaction == null))
                 {
                     return null;
                 }
 
                 if (_dbTransaction == null)
                 {
-                    var profiledDbTransaction = _command.Transaction as ProfiledDbTransaction;
+                    var trans = (_dbCommand == null ? _command.Transaction : _dbCommand.Transaction);
+
+                    var profiledDbTransaction = trans as ProfiledDbTransaction;
                     if (profiledDbTransaction != null)
                     {
                         _dbTransaction = profiledDbTransaction;
                     }
                     else
                     {
-                        _dbTransaction = new ProfiledDbTransaction(_command.Transaction, _dbProfiler);
+                        _dbTransaction = new ProfiledDbTransaction(trans, _dbProfiler);
                     }
                 }
 
@@ -274,7 +277,10 @@ namespace EF.Diagnostics.Profiling.Data
         {
             IDataReader reader = null;
             _dbProfiler.ExecuteDbCommand(
-                DbExecuteType.Reader, _command, () => reader = _command.ExecuteReader(behavior), Tags);
+                DbExecuteType.Reader
+                , _dbCommand ?? _command
+                , () => reader = _dbCommand == null ? _command.ExecuteReader(behavior) : _dbCommand.ExecuteReader(behavior)
+                , Tags);
 
             var profiledReader = reader as ProfiledDbDataReader;
             if (profiledReader != null)
@@ -351,7 +357,10 @@ namespace EF.Diagnostics.Profiling.Data
         {
             if (disposing)
             {
-                _command.Dispose();
+                if (_dbCommand == null)
+                    _command.Dispose();
+                else
+                    _dbCommand.Dispose();
             }
 
             base.Dispose(disposing);

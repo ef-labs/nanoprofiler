@@ -68,8 +68,10 @@ namespace EF.Diagnostics.Profiling.Timings
                     return _started.Value;
                 }
 
-                if (_profiler == null)
-                    return default(DateTime);
+                if (_profiler == null) return default(DateTime);
+
+                var timingSession = _profiler.GetTimingSession();
+                if (timingSession == null) return default(DateTime);
 
                 return _profiler.GetTimingSession().Started.AddMilliseconds(StartMilliseconds);
             }

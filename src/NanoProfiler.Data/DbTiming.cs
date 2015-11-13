@@ -53,6 +53,9 @@ namespace EF.Diagnostics.Profiling.Data
             IProfiler profiler, DbExecuteType executeType, IDbCommand command)
             : base(profiler, "db", ProfilingSession.ProfilingSessionContainer.CurrentSessionStepId, command == null ? null : command.CommandText, null)
         {
+            if (profiler == null) throw new ArgumentNullException("profiler");
+            if (command == null) throw new ArgumentNullException("command");
+
             _profiler = profiler;
             StartMilliseconds = (long)_profiler.Elapsed.TotalMilliseconds;
             Sort = profiler.Elapsed.Ticks;
@@ -60,7 +63,6 @@ namespace EF.Diagnostics.Profiling.Data
 
             Data["executeType"] = executeType.ToString().ToLowerInvariant();
 
-            if (command == null) return;
             if (command.Parameters == null || command.Parameters.Count == 0) return;
 
             Data["parameters"] = SerializeParameters(command.Parameters);
