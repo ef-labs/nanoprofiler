@@ -75,9 +75,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NanoProfiler.Core\NanoProfiler.Core.csproj">
+    <ProjectReference Include="..\..\NanoProfiler\NanoProfiler.csproj">
       <Project>{51c22469-3be7-4be1-807b-764683883605}</Project>
-      <Name>NanoProfiler.Core</Name>
+      <Name>NanoProfiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\NanoProfiler.Data\NanoProfiler.Data.csproj">
       <Project>{4ebb9a68-67eb-495d-8a4c-30f2c9f43a49}</Project>

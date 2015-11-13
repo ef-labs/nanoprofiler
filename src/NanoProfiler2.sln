@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{64F273
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Core", "NanoProfiler.Core\NanoProfiler.Core.csproj", "{51C22469-3BE7-4BE1-807B-764683883605}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler", "NanoProfiler\NanoProfiler.csproj", "{51C22469-3BE7-4BE1-807B-764683883605}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.Web", "NanoProfiler.Web\NanoProfiler.Web.csproj", "{A10A8047-26C3-41B4-A904-71B6548AAAFC}"
 EndProject

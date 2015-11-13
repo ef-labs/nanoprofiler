@@ -72,9 +72,9 @@
     <None Include="NanoProfiler.Wcf.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NanoProfiler.Core\NanoProfiler.Core.csproj">
+    <ProjectReference Include="..\NanoProfiler\NanoProfiler.csproj">
       <Project>{51c22469-3be7-4be1-807b-764683883605}</Project>
-      <Name>NanoProfiler.Core</Name>
+      <Name>NanoProfiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\NanoProfiler.Web\NanoProfiler.Web.csproj">
       <Project>{a10a8047-26c3-41b4-a904-71b6548aaafc}</Project>

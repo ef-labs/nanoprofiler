@@ -90,9 +90,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NanoProfiler.Core\NanoProfiler.Core.csproj">
+    <ProjectReference Include="..\..\NanoProfiler\NanoProfiler.csproj">
       <Project>{51c22469-3be7-4be1-807b-764683883605}</Project>
-      <Name>NanoProfiler.Core</Name>
+      <Name>NanoProfiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\NanoProfiler.Storages.Json\NanoProfiler.Storages.Json.csproj">
       <Project>{19216fba-b584-4bc5-b6a9-85694e3dc44b}</Project>

@@ -30,6 +30,7 @@
 .css-treeview span.step { background-color:blue !important; }
 .css-treeview span.db { background-color:red !important; }
 .css-treeview span.wcf, .css-treeview span.rpc_wcf { background-color:green !important; }
+.css-treeview span.web { background-color:orange !important; }
 .css-treeview ul.timing { padding-left: 538px; }
 .css-treeview span.timing { display:inline-block !important; position: absolute; left: 8px; }
 .css-treeview span.start { display:inline-block !important; position: absolute; left:400px }
@@ -37,6 +38,7 @@
 .css-treeview span.leaf { margin-left: 16px; }
 .css-treeview span.wcfCount, .css-treeview span.rpc_wcfCount, .css-treeview span.wcfDuration, .css-treeview span.rpc_wcfDuration { color:green !important; }
 .css-treeview span.dbCount, .css-treeview span.dbDuration { color:red !important; }
+.css-treeview span.webCount, .css-treeview span.webDuration { color:orange !important; }
 
 /* webkit adjacent element selector bugfix */
 @media screen and (-webkit-min-device-pixel-ratio:0)

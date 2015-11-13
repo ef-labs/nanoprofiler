@@ -21,11 +21,12 @@
     THE SOFTWARE.
 */
 
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
 using EF.Diagnostics.Profiling;
-
+using EF.Diagnostics.Profiling.Web;
 using Microsoft.Practices.Unity;
 using NanoProfiler.Demos.SimpleDemo.Code.Biz;
 using NanoProfiler.Demos.SimpleDemo.DemoService;
@@ -52,6 +53,24 @@ namespace NanoProfiler.Demos.SimpleDemo
                 {
                     await client.DoWorkAsync("somework");
                 }
+
+                SimulateWebRequest("http://some.thing.com");
+            }
+        }
+
+        private void SimulateWebRequest(string url)
+        {
+            var profilingSession = ProfilingSession.Current;
+            if (profilingSession != null && profilingSession.Profiler != null)
+            {
+                var webTiming = new WebTiming(profilingSession.Profiler, url);
+
+                // sleep to simulate web request call
+                Thread.Sleep(200);
+
+                webTiming.Data["customField1"] = "value1";
+
+                webTiming.Stop();
             }
         }
 

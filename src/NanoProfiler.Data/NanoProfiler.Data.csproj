@@ -76,9 +76,9 @@
     <Compile Include="DbProfiler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NanoProfiler.Core\NanoProfiler.Core.csproj">
+    <ProjectReference Include="..\NanoProfiler\NanoProfiler.csproj">
       <Project>{51c22469-3be7-4be1-807b-764683883605}</Project>
-      <Name>NanoProfiler.Core</Name>
+      <Name>NanoProfiler</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
