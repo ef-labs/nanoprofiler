@@ -40,9 +40,9 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
         private readonly Uri _searchPath;
 
         /// <summary>
-        /// Fields should be ignored on parsing.
+        /// Data fields should be ignored on parsing timing.
         /// </summary>
-        public string[] IgnoreFieldNames = new [] { "@timestamp", "@version" };
+        public string[] IgnoreDataFieldNames = new [] { "@timestamp", "@version" };
 
         #region Constructors
 
@@ -175,7 +175,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
                     var timingJsons = hitsJson.Select(hit => hit["_source"]).Where(source => source["type"].ToObject<string>() != "session");
                     foreach (var timingJson in timingJsons)
                     {
-                        var timing = ParseTimingFields((JObject)sessionJson, (JObject)timingJson);
+                        var timing = ParseTimingFields((JObject)timingJson);
                         timings.Add(timing);
                     }
 
@@ -189,19 +189,19 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
         }
 
         /// <summary>
-        /// Whether or not this field should be ignored.
+        /// Whether or not this data field should be ignored.
         /// </summary>
         /// <param name="timing"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        protected override bool IsIgnoreField(ITiming timing, string key)
+        protected override bool IsIgnoreDataField(ITiming timing, string key)
         {
-            if (IgnoreFieldNames != null && IgnoreFieldNames.Any(f => string.Equals(f, key)))
+            if (IgnoreDataFieldNames != null && IgnoreDataFieldNames.Any(f => string.Equals(f, key)))
             {
                 return true;
             }
 
-            return base.IsIgnoreField(timing, key);
+            return base.IsIgnoreDataField(timing, key);
         }
 
         #endregion

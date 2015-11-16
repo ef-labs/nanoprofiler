@@ -23,8 +23,10 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using EF.Diagnostics.Profiling;
+using EF.Diagnostics.Profiling.Timings;
 using EF.Diagnostics.Profiling.Web.Import.LogParsers;
 
 namespace NanoProfiler.Demos.SimpleDemo
@@ -46,13 +48,28 @@ namespace NanoProfiler.Demos.SimpleDemo
 
             var logParser = new ElasticsearchProfilingLogParser(new Uri(server))
                 {
-                    IgnoreFieldNames = new[] { "@timestamp", "executeType", "@version", "_viewInNanoProfilerUI", "queryType" }
+                    IgnoreDataFieldNames = new[] { "@timestamp", "@version", "executeType", "_viewInNanoProfilerUI", "queryType" }
                 };
 
+            var sessionId = context.Request.QueryString["id"];
+            if (sessionId != null)
+            {
+                ProfilingSession.CircularBuffer = new CircularBuffer<ITimingSession>();
+                var session = logParser.LoadSession(Guid.Parse(sessionId));
+                ProfilingSession.CircularBuffer.Add(session);
+
+                context.Response.Write("<a target=\"_blank\" href=\"./nanoprofiler/view/" + session.Id + "\">" + session.Name + "</a>, " + session.DurationMilliseconds + "ms @" + session.Started.ToString("s") + "<br />");
+                return;
+            }
+
             var sessions = logParser.LoadLatestSessionSummaries(10);
+            if (sessions == null) return;
+
             foreach (var item in sessions)
             {
                 var session = logParser.LoadSession(item.Id);
+                if (session == null) continue;
+
                 if (ProfilingSession.CircularBuffer.All(s => s.Id != session.Id))
                 {
                     ProfilingSession.CircularBuffer.Add(session);

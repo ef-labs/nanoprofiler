@@ -120,16 +120,16 @@ namespace EF.Diagnostics.Profiling.Storages.Json
 
         private static void AppendSessionSharedFields(StringBuilder sb, ITimingSession session)
         {
-            AppendField(sb, "sessionId", session.Id, null);
+            AppendField(sb, "sessionId", session.Id.ToString("N"), null);
             AppendField(sb, "machine", session.MachineName);
         }
 
         private static void AppendTimingFields(StringBuilder sb, ITiming timing)
         {
             AppendField(sb, "type", timing.Type);
-            AppendField(sb, "id", timing.Id);
+            AppendField(sb, "id", timing.Id.ToString("N"));
             if (timing.ParentId.HasValue)
-                AppendField(sb, "parentId", timing.ParentId.Value);
+                AppendField(sb, "parentId", timing.ParentId.Value.ToString("N"));
             AppendField(sb, "name", timing.Name);
             AppendField(sb, "started", timing.Started);
             AppendField(sb, "start", timing.StartMilliseconds);

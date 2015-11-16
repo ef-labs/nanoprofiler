@@ -129,7 +129,7 @@ namespace EF.Diagnostics.Profiling.Data
                 return value.ToString();
             }
 
-            if (!string.IsNullOrEmpty(table.TableName))
+            if (string.IsNullOrEmpty(table.TableName))
             {
                 table.TableName = "Table"; // ensure table name to avoid serialization error
             }

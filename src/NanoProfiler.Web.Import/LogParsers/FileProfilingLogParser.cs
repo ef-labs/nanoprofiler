@@ -124,7 +124,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             var timingJsons = jsonArray.Where(json => json["type"].ToObject<string>() != "session");
             foreach (var timingJson in timingJsons)
             {
-                var timing = ParseTimingFields(sessionJson, timingJson);
+                var timing = ParseTimingFields(timingJson);
                 timings.Add(timing);
             }
 

@@ -79,18 +79,14 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
         /// <summary>
         /// Parses timing fields.
         /// </summary>
-        /// <param name="sessionJson"></param>
         /// <param name="timingJson"></param>
         /// <returns></returns>
-        protected ITiming ParseTimingFields(JObject sessionJson, JObject timingJson)
+        protected ITiming ParseTimingFields(JObject timingJson)
         {
             var timing = new Timing();
 
             foreach (var keyValue in timingJson)
             {
-                JToken sessionValue;
-                if (sessionJson.TryGetValue(keyValue.Key, out sessionValue) && JToken.DeepEquals(sessionValue, keyValue.Value)) continue;
-
                 ParseTimingField(timing, keyValue.Key, keyValue.Value.ToString());
             }
 
@@ -122,19 +118,19 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
                 }
             }
 
-            // order timings by value of sort
-            return timings.OrderBy(s => s.Sort);
+            // order timings by value of sort and then start ms
+            return timings.OrderBy(s => s.Sort).ThenBy(s => s.StartMilliseconds);
         }
 
         /// <summary>
-        /// Whether or not this field should be ignored.
+        /// Whether or not this data field should be ignored.
         /// </summary>
         /// <param name="timing"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        protected virtual bool IsIgnoreField(ITiming timing, string key)
+        protected virtual bool IsIgnoreDataField(ITiming timing, string key)
         {
-            return false;
+            return key == "sessionId" || key == "machine";
         }
 
         #endregion
@@ -143,7 +139,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
 
         private void ParseTimingField(ITiming timing, string key, JToken value)
         {
-            if (IsIgnoreField(timing, key)) return;
+            if (IsIgnoreDataField(timing, key)) return;
 
             switch (key)
             {
