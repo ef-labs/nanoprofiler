@@ -115,8 +115,12 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
                 }
             }
 
+            if (jsonArray.Count == 0) return null;
+
             // parse session
-            var sessionJson = jsonArray.First(json => json["type"].ToObject<string>() == "session");
+            var sessionJson = jsonArray.FirstOrDefault(json => json["type"].ToObject<string>() == "session");
+            if (sessionJson == null) return null;
+
             var session = ParseSessionFields(sessionJson);
             var timings = new List<ITiming>();
 
@@ -131,6 +135,46 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             session.Timings = SortSessionTimings(timings);
 
             return session;
+        }
+
+        /// <summary>
+        /// Drill down profiling session from log.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        public override ITimingSession DrillDownSession(Guid correlationId)
+        {
+            for (var i = _logFileLines.Length - 1; i >= 0; --i)
+            {
+                var json = JObject.Parse(_logFileLines[i]);
+                JToken id;
+                if (json["type"].ToObject<string>() == "session" && json.TryGetValue("correlationId", out id) && id.ToObject<Guid>() == correlationId)
+                {
+                    return LoadSession(json["sessionId"].ToObject<Guid>());
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Drill up profiling session from log.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        public override ITimingSession DrillUpSession(Guid correlationId)
+        {
+            for (var i = _logFileLines.Length - 1; i >= 0; --i)
+            {
+                var json = JObject.Parse(_logFileLines[i]);
+                JToken id;
+                if (json["type"].ToObject<string>() != "session" && json.TryGetValue("correlationId", out id) && id.ToObject<Guid>() == correlationId)
+                {
+                    return LoadSession(json["sessionId"].ToObject<Guid>());
+                }
+            }
+
+            return null;
         }
 
         #endregion

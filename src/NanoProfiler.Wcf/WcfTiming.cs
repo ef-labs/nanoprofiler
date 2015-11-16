@@ -71,7 +71,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel
             StartMilliseconds = (long)_profiler.Elapsed.TotalMilliseconds;
             Sort = profiler.Elapsed.Ticks;
             Data = new Dictionary<string, string>();
-            Data[CorrelationIdKey] = Guid.NewGuid().ToString();
+            Data[CorrelationIdKey] = Guid.NewGuid().ToString("N");
             var requestMessageContent = ToXml(ref requestMessage);
             Data["requestMessage"] = requestMessageContent;
             Data["requestSize"] = requestMessageContent.Length.ToString(CultureInfo.InvariantCulture);

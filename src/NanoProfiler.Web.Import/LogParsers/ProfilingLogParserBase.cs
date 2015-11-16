@@ -49,6 +49,20 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
         /// <returns></returns>
         public abstract ITimingSession LoadSession(Guid sessionId);
 
+        /// <summary>
+        /// Drill down profiling session from log.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        public abstract ITimingSession DrillDownSession(Guid correlationId);
+
+        /// <summary>
+        /// Drill up profiling session from log.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        public abstract ITimingSession DrillUpSession(Guid correlationId);
+
         #region Protected Methods
 
         /// <summary>

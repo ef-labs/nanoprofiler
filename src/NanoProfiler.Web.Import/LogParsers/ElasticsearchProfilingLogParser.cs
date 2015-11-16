@@ -105,8 +105,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
                         return null;
                     }
 
-                    var hasSession =
-                        hitsJson.Select(hit => hit["_source"]).Any(source => source["type"].ToObject<string>() == "session");
+                    var hasSession = hitsJson.Select(hit => hit["_source"]).Any(source => source["type"].ToObject<string>() == "session");
                     if (!hasSession)
                     {
                         return null;
@@ -204,6 +203,26 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             return base.IsIgnoreDataField(timing, key);
         }
 
+        /// <summary>
+        /// Drill down profiling session from log.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        public override ITimingSession DrillDownSession(Guid correlationId)
+        {
+            return DrillSession(correlationId, true);
+        }
+
+        /// <summary>
+        /// Drill up profiling session from log.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <returns></returns>
+        public override ITimingSession DrillUpSession(Guid correlationId)
+        {
+            return DrillSession(correlationId, false);
+        }
+
         #endregion
 
         #region Private Methods
@@ -213,9 +232,55 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             return "{\"query\":{\"filtered\":{\"query\":{\"bool\":{\"should\":[{\"query_string\":{\"query\":\"sessionId:" + sessionId.ToString("N") + "\"}}]}}}},\"size\":1000}";
         }
 
+        private string CreateQueryByCorrelationIdJson(Guid correlationId, bool isSession)
+        {
+            return "{\"query\":{\"filtered\":{\"query\":{\"bool\":{\"should\":[{\"query_string\":{\"query\":\"correlationId:" + correlationId.ToString("N") + "\"}}]}},\"filter\":{\"bool\":{\"must" + (isSession ? "" : "_not") + "\":[{\"fquery\":{\"query\":{\"query_string\":{\"query\":\"type:session\"}},\"_cache\": true}}]}}}},\"size\":1}";
+        }
+
         private string CreateQueryLatestJson(uint top, uint minDuration)
         {
             return "{\"query\":{\"filtered\":{\"query\":{\"bool\":{\"should\":[{\"query_string\":{\"query\":\"type:session\"}}]}},\"filter\":{\"bool\":{\"must\":[{\"fquery\":{\"query\":{\"query_string\":{\"query\":\"duration:[" + minDuration + " TO *]\"}},\"_cache\": true}}]}}}},\"size\":" + top + ", \"sort\":[{\"@timestamp\":{\"order\": \"desc\",\"ignore_unmapped\": true}}]}";
+        }
+
+        private ITimingSession DrillSession(Guid correlationId, bool isDrillDown)
+        {
+            var request = WebRequest.Create(_searchPath) as HttpWebRequest;
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.KeepAlive = true;
+            request.UseDefaultCredentials = true;
+            request.UserAgent = "ElasticsearchProfilingLogParser";
+            request.AllowAutoRedirect = false;
+            var postData = CreateQueryByCorrelationIdJson(correlationId, isDrillDown);
+            var postBytes = Encoding.UTF8.GetBytes(postData);
+            request.ContentLength = postBytes.Length;
+
+            using (var postStream = request.GetRequestStream())
+            {
+                postStream.Write(postBytes, 0, postBytes.Length);
+                postStream.Flush();
+            }
+
+            using (var response = request.GetResponse() as HttpWebResponse)
+            using (var stream = new StreamReader(response.GetResponseStream()))
+            {
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var content = stream.ReadToEnd();
+                    var json = JObject.Parse(content);
+
+                    var hitsJson = json["hits"]["hits"].Children();
+                    if (!hitsJson.Any())
+                    {
+                        return null;
+                    }
+
+                    var sessionJson = hitsJson.Select(hit => hit["_source"]).First();
+                    return LoadSession(sessionJson["sessionId"].ToObject<Guid>());
+                }
+            }
+
+            return null;
         }
 
         #endregion
