@@ -126,6 +126,12 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             return timings.OrderBy(s => s.Sort);
         }
 
+        /// <summary>
+        /// Whether or not this field should be ignored.
+        /// </summary>
+        /// <param name="timing"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         protected virtual bool IsIgnoreField(ITiming timing, string key)
         {
             return false;

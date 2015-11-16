@@ -188,6 +188,12 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
             return null;
         }
 
+        /// <summary>
+        /// Whether or not this field should be ignored.
+        /// </summary>
+        /// <param name="timing"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         protected override bool IsIgnoreField(ITiming timing, string key)
         {
             if (IgnoreFieldNames != null && IgnoreFieldNames.Any(f => string.Equals(f, key)))

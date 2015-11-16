@@ -129,6 +129,11 @@ namespace EF.Diagnostics.Profiling.Data
                 return value.ToString();
             }
 
+            if (!string.IsNullOrEmpty(table.TableName))
+            {
+                table.TableName = "Table"; // ensure table name to avoid serialization error
+            }
+
             // for DataTable, serialize and only take top 500 content
             var sb = new StringBuilder();
             using (var sw = new StringWriter(sb))

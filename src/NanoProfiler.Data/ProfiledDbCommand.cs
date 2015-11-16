@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using EF.Diagnostics.Profiling.Timings;
@@ -57,7 +58,18 @@ namespace EF.Diagnostics.Profiling.Data
         /// <param name="command">The <see cref="IDbCommand"/> to be profiled.</param>
         /// <param name="dbProfiler">The <see cref="IDbProfiler"/>.</param>
         /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
-        public ProfiledDbCommand(IDbCommand command, IDbProfiler dbProfiler, TagCollection tags = null)
+        public ProfiledDbCommand(IDbCommand command, IDbProfiler dbProfiler, IEnumerable<string> tags = null)
+            : this(command, dbProfiler, tags == null ? null : new TagCollection(tags))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="ProfiledDbCommand"/>.
+        /// </summary>
+        /// <param name="command">The <see cref="IDbCommand"/> to be profiled.</param>
+        /// <param name="dbProfiler">The <see cref="IDbProfiler"/>.</param>
+        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
+        public ProfiledDbCommand(IDbCommand command, IDbProfiler dbProfiler, TagCollection tags)
         {
             if (command == null)
             {
