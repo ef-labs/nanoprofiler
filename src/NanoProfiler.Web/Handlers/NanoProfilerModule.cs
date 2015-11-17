@@ -326,7 +326,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                             sb.Append(keyValue.Key);
                             sb.Append(":\r\n");
                             var value = keyValue.Value.Trim();
-                            if (value.Contains("<"))
+                            if (value.StartsWith("<"))
                             {
                                 // asuume it is XML
                                 // try to format XML with indent
@@ -431,7 +431,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                 sb.Append("\">");
                 PrintDataLink(sb, timing);
                 PrintDrillDownLink(sb, timing);
-                sb.Append(timing.Name.Replace("\r\n", " "));
+                sb.Append(HttpUtility.HtmlEncode(timing.Name.Replace("\r\n", " ")));
                 sb.Append("</label>");
                 sb.Append("<ul>");
                 PrintTimings(session, timing.Id, sb, factor);
@@ -442,7 +442,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
                 sb.Append("<span class=\"leaf\">");
                 PrintDataLink(sb, timing);
                 PrintDrillDownLink(sb, timing);
-                sb.Append(timing.Name.Replace("\r\n", " "));
+                sb.Append(HttpUtility.HtmlEncode(timing.Name.Replace("\r\n", " ")));
                 sb.Append("</span>");
             }
             sb.Append("</li>");
