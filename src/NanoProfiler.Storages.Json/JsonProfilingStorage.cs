@@ -33,9 +33,14 @@ namespace EF.Diagnostics.Profiling.Storages.Json
     /// <summary>
     /// A <see cref="IProfilingStorage"/> implementation which persists profiling results as json via slf4net.
     /// </summary>
-    public sealed class JsonProfilingStorage : ProfilingStorageBase
+    public class JsonProfilingStorage : ProfilingStorageBase
     {
         private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => LoggerFactory.GetLogger(typeof(JsonProfilingStorage)));
+
+        /// <summary>
+        /// Data filed names which should be treated as integer fields.
+        /// </summary>
+        public static string[] IntegerDataFieldNames { get; set; }
 
         #region Constructors
 
@@ -81,12 +86,14 @@ namespace EF.Diagnostics.Profiling.Storages.Json
 
         #endregion
 
-        #region Public Methods
+        #region Protected Members
 
-        /// <summary>
-        /// Data filed names which should be treated as integer fields.
-        /// </summary>
-        public static string[] IntegerDataFieldNames { get; set; }
+        protected virtual bool IsIntFieldName(string key)
+        {
+            if (IntegerDataFieldNames == null || !IntegerDataFieldNames.Any()) return false;
+
+            return IntegerDataFieldNames.Any(key.EndsWith);
+        }
 
         #endregion
 
@@ -124,7 +131,7 @@ namespace EF.Diagnostics.Profiling.Storages.Json
             AppendField(sb, "machine", session.MachineName);
         }
 
-        private static void AppendTimingFields(StringBuilder sb, ITiming timing)
+        private void AppendTimingFields(StringBuilder sb, ITiming timing)
         {
             AppendField(sb, "type", timing.Type);
             AppendField(sb, "id", timing.Id.ToString("N"));
@@ -184,12 +191,7 @@ namespace EF.Diagnostics.Profiling.Storages.Json
             }
         }
 
-        private static bool IsIntFieldName(string key)
-        {
-            return IntegerDataFieldNames.Any(key.EndsWith);
-        }
-
-        private static void AppendDataFields(StringBuilder sb, Dictionary<string, string> data)
+        private void AppendDataFields(StringBuilder sb, Dictionary<string, string> data)
         {
             if (data == null) return;
 
@@ -229,18 +231,6 @@ namespace EF.Diagnostics.Profiling.Storages.Json
             sb.Append(key);
             sb.Append("\":");
             sb.Append(value);
-        }
-
-        private static void AppendField(StringBuilder sb, string key, Guid value, string separator = ",")
-        {
-            if (separator != null)
-                sb.Append(separator);
-
-            sb.Append("\"");
-            sb.Append(key);
-            sb.Append("\":\"");
-            sb.Append(value);
-            sb.Append("\"");
         }
 
         private static void AppendField(StringBuilder sb, string key, DateTime value, string separator = ",")

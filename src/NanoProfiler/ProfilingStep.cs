@@ -30,7 +30,7 @@ namespace EF.Diagnostics.Profiling
     /// <summary>
     /// Implements <see cref="EF.Diagnostics.Profiling.IProfilingStep"/>.
     /// </summary>
-    internal sealed class ProfilingStep : Timing, IProfilingStep
+    public class ProfilingStep : Timing, IProfilingStep
     {
         private readonly IProfiler _profiler;
         private bool _isDiscarded;
@@ -70,6 +70,10 @@ namespace EF.Diagnostics.Profiling
 
         #region Public Methods
 
+        /// <summary>
+        /// Gets the timing of the profiling current step.
+        /// </summary>
+        /// <returns></returns>
         public ITiming GetStepTiming()
         {
             return this;

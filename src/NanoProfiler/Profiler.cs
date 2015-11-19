@@ -33,7 +33,7 @@ namespace EF.Diagnostics.Profiling
     /// <summary>
     /// The default <see cref="IProfiler"/> implementation.
     /// </summary>
-    internal sealed class Profiler : IProfiler
+    public class Profiler : IProfiler
     {
         private readonly IProfilingStorage _storage;
         private readonly Stopwatch _stopwatch;
@@ -91,7 +91,7 @@ namespace EF.Diagnostics.Profiling
         /// <param name="name">The name of the step.</param>
         /// <param name="tags">The tags of the step.</param>
         /// <returns>Returns the created <see cref="IProfilingStep"/>.</returns>
-        public IProfilingStep Step(string name, TagCollection tags)
+        public virtual IProfilingStep Step(string name, TagCollection tags)
         {
             return new ProfilingStep(this, name, tags);
         }
@@ -100,7 +100,7 @@ namespace EF.Diagnostics.Profiling
         /// Returns an <see cref="System.IDisposable"/> that will ignore the profiling between its creation and disposal.
         /// </summary>
         /// <returns>Returns the created <see cref="System.IDisposable"/> as the ignored step.</returns>
-        public IDisposable Ignore()
+        public virtual IDisposable Ignore()
         {
             IProfilingStep ignoredStep = new ProfilingStep(this, "ignored step", null);
             ignoredStep.Discard();

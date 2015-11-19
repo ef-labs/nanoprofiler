@@ -28,7 +28,7 @@ namespace EF.Diagnostics.Profiling.Storages
     /// <summary>
     /// A <see cref="IProfilingStorage"/> implementation which performs no operation.
     /// </summary>
-    public class NoOperationProfilingStorage : ProfilingStorageBase
+    public sealed class NoOperationProfilingStorage : ProfilingStorageBase
     {
         #region JsonProfilingStorage Members
 
