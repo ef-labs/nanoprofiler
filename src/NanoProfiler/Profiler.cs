@@ -70,16 +70,25 @@ namespace EF.Diagnostics.Profiling
 
         #region IProfiler Members
 
+        /// <summary>
+        /// Gets the identity of the profiler.
+        /// </summary>
         public Guid Id
         {
             get { return _timingSession.Id; }
         }
 
+        /// <summary>
+        /// Gets the elapsed time since the start of the <see cref="IProfiler"/>.
+        /// </summary>
         public TimeSpan Elapsed
         {
             get { return _stopwatch.Elapsed; }
         }
 
+        /// <summary>
+        /// Whether or not the current profiler is stopped.
+        /// </summary>
         public bool IsStopped
         {
             get { return !_stopwatch.IsRunning; }
@@ -137,6 +146,10 @@ namespace EF.Diagnostics.Profiling
             }
         }
 
+        /// <summary>
+        /// Gets the timing session of the current profiler.
+        /// </summary>
+        /// <returns></returns>
         public ITimingSession GetTimingSession()
         {
             return _timingSession;

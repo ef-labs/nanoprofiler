@@ -53,12 +53,12 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
         /// <summary>
         /// The handler to search for child profiling session by correlationId.
         /// </summary>
-        public static Func<string, Guid> DrillDownHandler { get; set; }
+        public static Func<string, Guid?> DrillDownHandler { get; set; }
 
         /// <summary>
         /// The handler to search for parent profiling session by correlationId.
         /// </summary>
-        public static Func<string, Guid> DrillUpHandler { get; set; }
+        public static Func<string, Guid?> DrillUpHandler { get; set; }
 
         #region IHttpModule Members
 

@@ -88,6 +88,11 @@ namespace EF.Diagnostics.Profiling.Storages.Json
 
         #region Protected Members
 
+        /// <summary>
+        /// Whether or not a field is an integer field.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         protected virtual bool IsIntFieldName(string key)
         {
             if (IntegerDataFieldNames == null || !IntegerDataFieldNames.Any()) return false;
