@@ -223,6 +223,8 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
             // view specific result by uuid: ~/nanoprofiler/view/{uuid}
             if (path.IndexOf(ViewUrl, StringComparison.OrdinalIgnoreCase) >= 0)
             {
+                context.Response.ContentType = "text/html";
+
                 var sb = new StringBuilder();
                 sb.Append("<head>");
                 sb.Append("<meta charset=\"utf-8\" />");

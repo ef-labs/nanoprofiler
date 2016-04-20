@@ -13,7 +13,7 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild NanoProfiler2.sln /p:Con
 .nuget/nuget pack NanoProfiler.Web.Import\NanoProfiler.Web.Import.csproj -Prop Configuration=Release -Sym
 .nuget/nuget pack NanoProfiler.Wcf\NanoProfiler.Wcf.csproj -Prop Configuration=Release -Sym
 
-nuget push *.symbols.nupkg 123 -Source http://nuget.gw.symbolsource.org/Public/NuGet
+.nuget/nuget push *.symbols.nupkg
 del *.symbols.nupkg
 
 md bin

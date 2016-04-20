@@ -169,7 +169,7 @@ namespace EF.Diagnostics.Profiling
                 if (string.Equals("step", group.Key)) continue;
 
                 session.Data[group.Key + "Count"] = group.Count().ToString(CultureInfo.InvariantCulture);
-                session.Data[group.Key + "Duration"] = ((long)group.Average(timing => timing.DurationMilliseconds)).ToString(CultureInfo.InvariantCulture);
+                session.Data[group.Key + "Duration"] = ((long)group.Sum(timing => timing.DurationMilliseconds)).ToString(CultureInfo.InvariantCulture);
             }
         }
 
