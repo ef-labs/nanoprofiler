@@ -24,6 +24,7 @@
 using System;
 using System.Text.RegularExpressions;
 using EF.Diagnostics.Profiling;
+using EF.Diagnostics.Profiling.EF;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using NanoProfiler.Demos.SimpleDemo.Code.Biz;
@@ -38,6 +39,9 @@ namespace NanoProfiler.Demos.SimpleDemo
 
         protected void Application_Start(object sender, EventArgs e)
         {
+            // initialize entity framework 6 profiling
+            EFProfilingBootstrapper.Initialize();
+
             #region Optional bootstrap code for unity based deep profiling and policy injection based profiling
 
             // Register types to unity container to demo unity based deep profiling & policy injection based profiling.

@@ -1,4 +1,4 @@
-/*
+﻿/*
     The MIT License (MIT)
     Copyright © 2015 Englishtown <opensource@englishtown.com>
 
@@ -22,15 +22,12 @@
 */
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyCompany("EF Education First")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCopyright("Copyright © EF Education First 2015")]
-[assembly: AssemblyProduct("NanoProfiler")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyTrademark("")]
+[assembly: Guid("828859a5-dcee-4425-ab78-8d873b808c87")]
 
-[assembly: ComVisible(false)]
+[assembly: AssemblyTitle("NanoProfiler EF")]
+[assembly: AssemblyDescription("NanoProfiler EntityFramework 6 Support")]
 
-[assembly: AssemblyVersion("2.0.7.2")]
+[assembly: InternalsVisibleTo("NanoProfiler.Tests, PublicKey=00240000048000009400000006020000002400005253413100040000010001009fc16eb8200de4b7492362918a4f30e197b62d92e6e655be09c7377c9288d234f8e6b0b0448e391759ebb07431ad69adf893c0c546f1094d914cec980107763811ad3e528ef73cf47c90156c7f92cd44d881e2a46f6c568adb6cbf3ba0ee01d3b162ca7eb63d08edc978a0c87d80a48ba94f630115d53594fac7fa459bff85a0")]

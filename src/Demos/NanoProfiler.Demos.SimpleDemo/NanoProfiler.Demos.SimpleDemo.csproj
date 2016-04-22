@@ -45,6 +45,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -127,6 +135,7 @@
     </Compile>
     <Compile Include="Code\Data\DemoDBDataContext.cs" />
     <Compile Include="Code\Data\DemoDBDataService.cs" />
+    <Compile Include="Code\Data\DemoEFDbContext.cs" />
     <Compile Include="Code\Models\DemoData.cs" />
     <Compile Include="Code\Biz\DemoDBService.cs" />
     <Compile Include="AsyncHandler.ashx.cs">
@@ -202,6 +211,10 @@
     <WCFMetadataStorage Include="Service References\DemoService\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\NanoProfiler.EF\NanoProfiler.EF.csproj">
+      <Project>{828859a5-dcee-4425-ab78-8d873b808c87}</Project>
+      <Name>NanoProfiler.EF</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\NanoProfiler\NanoProfiler.csproj">
       <Project>{51c22469-3be7-4be1-807b-764683883605}</Project>
       <Name>NanoProfiler</Name>

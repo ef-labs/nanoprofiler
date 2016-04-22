@@ -38,7 +38,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
 
         public static DbConnection GetConnection()
         {
-            var conn = new SqlConnection(@"Server=(LocalDb)\v11.0;AttachDbFilename=|DataDirectory|\SimpleDemoDB.mdf;Database=SimpleDemoDB;Trusted_Connection=Yes;");
+            var conn = new SqlConnection(@"Server=(LocalDb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SimpleDemoDB.mdf;Database=SimpleDemoDB;Trusted_Connection=Yes;");
 
             // wrap the connection with ProfiledDbConnection that tracks timings 
             var dbProfiler = new ProfiledDbConnection(conn, new DbProfiler(ProfilingSession.Current.Profiler));

@@ -35,6 +35,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Biz
     {
         List<DemoData> LoadActiveDemoData();
         List<DemoData> LoadActiveDemoData2();
+        List<DemoData> LoadActiveDemoData3();
     }
 
     public class DemoDBService : IDemoDBService
@@ -62,10 +63,23 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Biz
             using (ProfilingSession.Current.Step("Biz.LoadActiveDemoData2"))
             {
                 var query = from item in DemoDBDataContext.Get().GetTable<Table>()
-                    where item.IsActive
-                    select item;
+                            where item.IsActive
+                            select item;
 
-                return query.Select(item => new DemoData {Id = item.Id, Name = item.Name}).ToList();
+                return query.Select(item => new DemoData { Id = item.Id, Name = item.Name }).ToList();
+            }
+        }
+
+        public List<DemoData> LoadActiveDemoData3()
+        {
+            using (ProfilingSession.Current.Step("Biz.LoadActiveDemoData3"))
+            {
+                using (var dbContext = new DemoEFDbContext())
+                {
+                    var query = dbContext.DemoDatas.Where(item => item.IsActive);
+
+                    return query.Select(item => new DemoData {Id = item.Id, Name = item.Name}).ToList();
+                }
             }
         }
     }

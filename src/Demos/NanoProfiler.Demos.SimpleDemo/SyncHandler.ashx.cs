@@ -55,6 +55,15 @@ namespace NanoProfiler.Demos.SimpleDemo
                         context.Response.Write(string.Format(@"Id={0}, Name={1}<br />", item.Id, item.Name));
                     }
                 }
+                context.Response.Write("<hr />");
+                demoData = Global.Container.Resolve<IDemoDBService>().LoadActiveDemoData3();
+                foreach (var item in demoData)
+                {
+                    using (ProfilingSession.Current.Step(() => "Print item: " + item.Id))
+                    {
+                        context.Response.Write(string.Format(@"Id={0}, Name={1}<br />", item.Id, item.Name));
+                    }
+                }
 
                 using (var client = new WcfDemoServiceClient())
                 {

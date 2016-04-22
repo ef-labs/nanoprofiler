@@ -76,7 +76,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
         {
             using (ProfilingSession.Current.Step("Data.LoadActiveDemoDataWithDataAdapter"))
             {
-                using (var conn = new SqlConnection(@"Server=(LocalDb)\v11.0;AttachDbFilename=|DataDirectory|\SimpleDemoDB.mdf;Database=SimpleDemoDB;Trusted_Connection=Yes;"))
+                using (var conn = new SqlConnection(@"Server=(LocalDb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SimpleDemoDB.mdf;Database=SimpleDemoDB;Trusted_Connection=Yes;"))
                 {
                     conn.Open();
 
@@ -111,7 +111,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
 
         private IDbConnection GetConnection()
         {
-            var conn = new SqlConnection(@"Server=(LocalDb)\v11.0;AttachDbFilename=|DataDirectory|\SimpleDemoDB.mdf;Database=SimpleDemoDB;Trusted_Connection=Yes;");
+            var conn = new SqlConnection(@"Server=(LocalDb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SimpleDemoDB.mdf;Database=SimpleDemoDB;Trusted_Connection=Yes;");
 
             if (ProfilingSession.Current == null)
             {

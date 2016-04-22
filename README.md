@@ -11,7 +11,7 @@ For more documentations, please check out wiki pages: https://github.com/english
 
 How to compile the source code?
 -------------------------------
-Do the following steps before opening NanoProfiler.sln in Visual Studio 2012 +
+Do the following steps before opening NanoProfiler.sln in Visual Studio 2015 +
 
 - git clone
 - cd src
@@ -19,7 +19,7 @@ Do the following steps before opening NanoProfiler.sln in Visual Studio 2012 +
 
 License terms
 -------------
-NanoProfiler is published under the [MIT license](http://englishtown.mit-license.org).
+NanoProfiler is released under the [MIT license](http://englishtown.mit-license.org).
 
 About v2.0
 ----------
@@ -33,3 +33,4 @@ Changes since latest version of v1:
 - New configuration provider interface for easier integration with existing frameworks;
 - New NanoProfiler.Web.Import components for importing and visualizing profiling sessions from log files or elasticsearch;
 - New generic custom web request timing support;
+- Entity Framework 6 Profiling *experimental* support (since v2.0.7);

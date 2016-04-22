@@ -32,7 +32,7 @@ namespace EF.Diagnostics.Profiling.Data
     /// <summary>
     /// A <see cref="IDbCommand"/> wrapper which supports DB profiling.
     /// </summary>
-    public class ProfiledDbCommand : DbCommand
+    public class ProfiledDbCommand : DbCommand, ICloneable
     {
         private readonly IDbCommand _command;
         private readonly DbCommand _dbCommand;
@@ -166,7 +166,7 @@ namespace EF.Diagnostics.Profiling.Data
         {
             get
             {
-                if (_command.Connection == null && (_dbCommand == null || _dbCommand.Connection == null))
+                if (_dbConnection == null && _command.Connection == null && (_dbCommand == null || _dbCommand.Connection == null))
                 {
                     return null;
                 }
@@ -190,7 +190,7 @@ namespace EF.Diagnostics.Profiling.Data
             }
             set
             {
-                _dbConnection = value;
+                _command.Connection = _dbConnection = value;
             }
         }
 
@@ -376,6 +376,18 @@ namespace EF.Diagnostics.Profiling.Data
             }
 
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            var cmdCloneable = _dbCommand as ICloneable;
+            var cmdClone = cmdCloneable == null ? _dbCommand : cmdCloneable.Clone() as DbCommand;
+
+            return new ProfiledDbCommand(cmdClone, _dbProfiler, Tags) { Connection = cmdClone.Connection };
         }
 
         #endregion

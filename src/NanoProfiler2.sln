@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		builld.ps1 = builld.ps1
 		pack.ps1 = pack.ps1
+		push.ps1 = push.ps1
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
@@ -44,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{281993
 		Shared\GlobalAssemblyInfo.cs = Shared\GlobalAssemblyInfo.cs
 		Shared\NanoProfiler.snk = Shared\NanoProfiler.snk
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoProfiler.EF", "NanoProfiler.EF\NanoProfiler.EF.csproj", "{828859A5-DCEE-4425-AB78-8D873B808C87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +90,10 @@ Global
 		{9A23EA8D-90F4-46EF-93D8-7E47D86E0501}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A23EA8D-90F4-46EF-93D8-7E47D86E0501}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A23EA8D-90F4-46EF-93D8-7E47D86E0501}.Release|Any CPU.Build.0 = Release|Any CPU
+		{828859A5-DCEE-4425-AB78-8D873B808C87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{828859A5-DCEE-4425-AB78-8D873B808C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{828859A5-DCEE-4425-AB78-8D873B808C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{828859A5-DCEE-4425-AB78-8D873B808C87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
