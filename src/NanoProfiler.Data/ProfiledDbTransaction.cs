@@ -29,11 +29,16 @@ namespace EF.Diagnostics.Profiling.Data
     /// <summary>
     /// A wrapper of <see cref="IDbTransaction"/> which supports DB profiling.
     /// </summary>
-    public class ProfiledDbTransaction : DbTransaction
+    internal class ProfiledDbTransaction : DbTransaction
     {
         private readonly IDbTransaction _transaction;
-        private readonly IDbProfiler _dbProfiler;
+        private readonly DbTransaction _dbTransaction;
         private DbConnection _dbConnection;
+
+        /// <summary>
+        /// Gets the wrapped <see cref="DbTransaction"/>
+        /// </summary>
+        public DbTransaction WrappedTransaction { get { return _dbTransaction; } }
 
         #region Constructors
 
@@ -41,11 +46,12 @@ namespace EF.Diagnostics.Profiling.Data
         /// Initializes a <see cref="ProfiledDbTransaction"/>.
         /// </summary>
         /// <param name="transaction">The <see cref="IDbTransaction"/> to be profiled.</param>
-        /// <param name="dbProfiler">The <see cref="IDbProfiler"/>.</param>
-        public ProfiledDbTransaction(IDbTransaction transaction, IDbProfiler dbProfiler)
+        /// <param name="connection">The <see cref="DbConnection"/>.</param>
+        public ProfiledDbTransaction(IDbTransaction transaction, DbConnection connection)
         {
             _transaction = transaction;
-            _dbProfiler = dbProfiler;
+            _dbTransaction = _transaction as DbTransaction;
+            _dbConnection = connection ?? transaction.Connection as DbConnection;
         }
 
         #endregion
@@ -65,28 +71,7 @@ namespace EF.Diagnostics.Profiling.Data
         /// </summary>
         protected override DbConnection DbConnection
         {
-            get
-            {
-                if (_transaction.Connection == null)
-                {
-                    return null;
-                }
-
-                if (_dbConnection == null)
-                {
-                    var profiledDbConnection = _transaction.Connection as ProfiledDbConnection;
-                    if (profiledDbConnection != null)
-                    {
-                        _dbConnection = profiledDbConnection;
-                    }
-                    else
-                    {
-                        _dbConnection = new ProfiledDbConnection(_transaction.Connection, _dbProfiler);
-                    }
-                }
-
-                return _dbConnection;
-            }
+            get { return _dbConnection; }
         }
 
         /// <summary>

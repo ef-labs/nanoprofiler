@@ -11,7 +11,7 @@ For more documentations, please check out wiki pages: https://github.com/english
 
 How to compile the source code?
 -------------------------------
-Do the following steps before opening NanoProfiler.sln in Visual Studio 2015 +
+Do the following steps before opening NanoProfiler2.sln in Visual Studio 2015 +
 
 - git clone
 - cd src

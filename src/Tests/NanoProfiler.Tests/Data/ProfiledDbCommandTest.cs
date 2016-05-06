@@ -21,7 +21,7 @@ namespace EF.Diagnostics.Profiling.Tests.Data
             var mockDbProfiler = new Mock<IDbProfiler>();
 
             var tags = new TagCollection(new[] { "test" });
-            var target = new ProfiledDbCommand(mockCommand.Object, mockDbProfiler.Object, tags);
+            var target = new ProfiledDbCommand(mockCommand.Object, mockDbProfiler.Object, tags) as IDbCommand;
 
             // test Cancel()
             var cancelCalled = false;
@@ -81,19 +81,14 @@ namespace EF.Diagnostics.Profiling.Tests.Data
             Assert.AreEqual(parameterName, parameter.ParameterName);
 
             // test DbConnection
-            Assert.IsNull(target.Connection);
             var mockConnection = new Mock<IDbConnection>();
             var connStr = "test conn str";
             mockConnection.Setup(c => c.ConnectionString).Returns(connStr);
             mockCommand.Setup(cmd => cmd.Connection).Returns(mockConnection.Object);
             var connection = target.Connection;
-            Assert.AreNotEqual(mockConnection.Object, connection);
+            Assert.AreEqual(mockConnection.Object, connection);
             Assert.AreEqual(connection, target.Connection);
-            Assert.IsTrue(connection is ProfiledDbConnection);
             Assert.AreEqual(connStr, connection.ConnectionString);
-            var mockConnection2 = new Mock<DbConnection>();
-            target.Connection = mockConnection2.Object;
-            Assert.AreEqual(mockConnection2.Object, target.Connection);
 
             // test DbParameterCollection
             Assert.IsNull(target.Parameters);
@@ -107,19 +102,14 @@ namespace EF.Diagnostics.Profiling.Tests.Data
             Assert.AreEqual(mockParameterCollection.Object.Count, parameterCollection.Count);
 
             // test DbTransaction
-            Assert.IsNull(target.Transaction);
             var mockTransaction = new Mock<IDbTransaction>();
             var isoLevel = IsolationLevel.Chaos;
             mockTransaction.Setup(t => t.IsolationLevel).Returns(isoLevel);
             mockCommand.Setup(cmd => cmd.Transaction).Returns(mockTransaction.Object);
             var transaction = target.Transaction;
-            Assert.AreNotEqual(mockTransaction.Object, transaction);
+            Assert.AreEqual(mockTransaction.Object, transaction);
             Assert.AreEqual(transaction, target.Transaction);
-            Assert.IsTrue(transaction is ProfiledDbTransaction);
             Assert.AreEqual(isoLevel, transaction.IsolationLevel);
-            var mockTransaction2 = new Mock<DbTransaction>();
-            target.Transaction = mockTransaction2.Object;
-            Assert.AreEqual(mockTransaction2.Object, target.Transaction);
 
             //test ExecuteDbDataReader()
             var mockReader = new Mock<IDataReader>();
@@ -209,7 +199,7 @@ namespace EF.Diagnostics.Profiling.Tests.Data
 
             // test DbTransaction
             var mockTransaction = new Mock<DbTransaction>();
-            var profiledTransaction = new ProfiledDbTransaction(mockTransaction.Object, mockDbProfiler.Object);
+            var profiledTransaction = new ProfiledDbTransaction(mockTransaction.Object, profiledConnection);
             mockCommand.Protected().Setup<DbTransaction>("DbTransaction").Returns(profiledTransaction);
             var transaction = target.Transaction;
             Assert.AreEqual(profiledTransaction, transaction);

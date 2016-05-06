@@ -22,7 +22,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="DemoDB")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name= "SimpleDemoDB")]
 	public partial class DemoDBDataContext : System.Data.Linq.DataContext
 	{
 		

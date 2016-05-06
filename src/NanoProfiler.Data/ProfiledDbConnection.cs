@@ -34,7 +34,12 @@ namespace EF.Diagnostics.Profiling.Data
     {
         private readonly IDbConnection _connection;
         private readonly DbConnection _dbConnection;
-        private readonly IDbProfiler _dbProfiler;
+        private readonly Func<IDbProfiler> _getDbProfiler;
+
+        /// <summary>
+        /// Gets the wrapped <see cref="DbConnection"/>.
+        /// </summary>
+        public DbConnection WrappedConnection { get { return _dbConnection; } }
 
         #region Constructors
 
@@ -44,15 +49,25 @@ namespace EF.Diagnostics.Profiling.Data
         /// <param name="connection">The <see cref="IDbConnection"/> to be profiled.</param>
         /// <param name="dbProfiler">The <see cref="IDbProfiler"/>.</param>
         public ProfiledDbConnection(IDbConnection connection, IDbProfiler dbProfiler)
+            : this(connection, () => dbProfiler)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="ProfiledDbConnection"/>.
+        /// </summary>
+        /// <param name="connection">The <see cref="IDbConnection"/> to be profiled.</param>
+        /// <param name="getDbProfiler">Gets the <see cref="IDbProfiler"/>.</param>
+        public ProfiledDbConnection(IDbConnection connection, Func<IDbProfiler> getDbProfiler)
         {
             if (connection == null)
             {
                 throw new ArgumentNullException("connection");
             }
 
-            if (dbProfiler == null)
+            if (getDbProfiler == null)
             {
-                throw new ArgumentNullException("dbProfiler");
+                throw new ArgumentNullException("getDbProfiler");
             }
 
             _connection = connection;
@@ -61,7 +76,7 @@ namespace EF.Diagnostics.Profiling.Data
             {
                 _dbConnection.StateChange += StateChangeHandler;
             }
-            _dbProfiler = dbProfiler;
+            _getDbProfiler = getDbProfiler;
         }
 
         #endregion
@@ -76,13 +91,7 @@ namespace EF.Diagnostics.Profiling.Data
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
             var transaction = _connection.BeginTransaction(isolationLevel);
-            var profiledTransaction = transaction as ProfiledDbTransaction;
-            if (profiledTransaction != null)
-            {
-                return profiledTransaction;
-            }
-
-            return new ProfiledDbTransaction(transaction, _dbProfiler);
+            return new ProfiledDbTransaction(transaction, this);
         }
 
         /// <summary>
@@ -124,13 +133,7 @@ namespace EF.Diagnostics.Profiling.Data
         protected override DbCommand CreateDbCommand()
         {
             var command = _connection.CreateCommand();
-            var profiledCommand = command as ProfiledDbCommand;
-            if (profiledCommand != null)
-            {
-                return profiledCommand;
-            }
-
-            return new ProfiledDbCommand(command, _dbProfiler);
+            return new ProfiledDbCommand(command, _getDbProfiler);
         }
 
         /// <summary>

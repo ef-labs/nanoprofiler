@@ -32,14 +32,12 @@ namespace EF.Diagnostics.Profiling.Data
     /// <summary>
     /// A <see cref="IDbCommand"/> wrapper which supports DB profiling.
     /// </summary>
-    public class ProfiledDbCommand : DbCommand, ICloneable
+    public class ProfiledDbCommand : DbCommand, ICloneable, IDbCommand
     {
         private readonly IDbCommand _command;
         private readonly DbCommand _dbCommand;
-        private readonly IDbProfiler _dbProfiler;
-        private DbConnection _dbConnection;
+        private readonly Func<IDbProfiler> _getDbProfiler;
         private DbParameterCollection _dbParameterCollection;
-        private DbTransaction _dbTransaction;
 
         #region Properties
 
@@ -70,20 +68,42 @@ namespace EF.Diagnostics.Profiling.Data
         /// <param name="dbProfiler">The <see cref="IDbProfiler"/>.</param>
         /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
         public ProfiledDbCommand(IDbCommand command, IDbProfiler dbProfiler, TagCollection tags)
+            : this(command, () => dbProfiler, tags)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="ProfiledDbCommand"/>.
+        /// </summary>
+        /// <param name="command">The <see cref="IDbCommand"/> to be profiled.</param>
+        /// <param name="getDbProfiler">Gets the <see cref="IDbProfiler"/>.</param>
+        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
+        public ProfiledDbCommand(IDbCommand command, Func<IDbProfiler> getDbProfiler, IEnumerable<string> tags = null)
+            : this(command, getDbProfiler, tags == null ? null : new TagCollection(tags))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="ProfiledDbCommand"/>.
+        /// </summary>
+        /// <param name="command">The <see cref="IDbCommand"/> to be profiled.</param>
+        /// <param name="getDbProfiler">Gets the <see cref="IDbProfiler"/>.</param>
+        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
+        public ProfiledDbCommand(IDbCommand command, Func<IDbProfiler> getDbProfiler, TagCollection tags)
         {
             if (command == null)
             {
                 throw new ArgumentNullException("command");
             }
 
-            if (dbProfiler == null)
+            if (getDbProfiler == null)
             {
-                throw new ArgumentNullException("dbProfiler");
+                throw new ArgumentNullException("getDbProfiler");
             }
 
             _command = command;
             _dbCommand = command as DbCommand;
-            _dbProfiler = dbProfiler;
+            _getDbProfiler = getDbProfiler;
 
             Tags = tags;
         }
@@ -166,31 +186,29 @@ namespace EF.Diagnostics.Profiling.Data
         {
             get
             {
-                if (_dbConnection == null && _command.Connection == null && (_dbCommand == null || _dbCommand.Connection == null))
-                {
-                    return null;
-                }
-
-                if (_dbConnection == null)
-                {
-                    var conn = (_dbCommand == null ? _command.Connection : _dbCommand.Connection);
-
-                    var profiledDbConnection = conn as ProfiledDbConnection;
-                    if (profiledDbConnection != null)
-                    {
-                        _dbConnection = profiledDbConnection;
-                    }
-                    else
-                    {
-                        _dbConnection = new ProfiledDbConnection(conn, _dbProfiler);
-                    }
-                }
-
-                return _dbConnection;
+                return _dbCommand.Connection;
             }
             set
             {
-                _command.Connection = _dbConnection = value;
+                if (value is ProfiledDbConnection)
+                    _dbCommand.Connection = (value as ProfiledDbConnection).WrappedConnection;
+                else
+                    _dbCommand.Connection = value;
+            }
+        }
+
+        IDbConnection IDbCommand.Connection
+        {
+            get
+            {
+                return _command.Connection;
+            }
+            set
+            {
+                if (value is ProfiledDbConnection)
+                    _command.Connection = (value as ProfiledDbConnection).WrappedConnection;
+                else
+                    _command.Connection = value;
             }
         }
 
@@ -229,31 +247,29 @@ namespace EF.Diagnostics.Profiling.Data
         {
             get
             {
-                if (_command.Transaction == null && (_dbCommand == null || _dbCommand.Transaction == null))
-                {
-                    return null;
-                }
-
-                if (_dbTransaction == null)
-                {
-                    var trans = (_dbCommand == null ? _command.Transaction : _dbCommand.Transaction);
-
-                    var profiledDbTransaction = trans as ProfiledDbTransaction;
-                    if (profiledDbTransaction != null)
-                    {
-                        _dbTransaction = profiledDbTransaction;
-                    }
-                    else
-                    {
-                        _dbTransaction = new ProfiledDbTransaction(trans, _dbProfiler);
-                    }
-                }
-
-                return _dbTransaction;
+                return _dbCommand.Transaction;
             }
             set
             {
-                _dbTransaction = value;
+                if (value is ProfiledDbTransaction)
+                    _dbCommand.Transaction = (value as ProfiledDbTransaction).WrappedTransaction;
+                else
+                    _dbCommand.Transaction = value;
+            }
+        }
+
+        IDbTransaction IDbCommand.Transaction
+        {
+            get
+            {
+                return _command.Transaction;
+            }
+            set
+            {
+                if (value is ProfiledDbTransaction)
+                    _command.Transaction = (value as ProfiledDbTransaction).WrappedTransaction;
+                else
+                    _command.Transaction = value;
             }
         }
 
@@ -287,11 +303,14 @@ namespace EF.Diagnostics.Profiling.Data
         /// <returns></returns>
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            IDataReader reader = null;
-            _dbProfiler.ExecuteDbCommand(
+            var dbProfiler = _getDbProfiler();
+            if (dbProfiler == null) return _dbCommand.ExecuteReader();
+
+            DbDataReader reader = null;
+            dbProfiler.ExecuteDbCommand(
                 DbExecuteType.Reader
-                , _dbCommand ?? _command
-                , () => reader = _dbCommand == null ? _command.ExecuteReader(behavior) : _dbCommand.ExecuteReader(behavior)
+                , _command
+                , () => reader = _dbCommand.ExecuteReader(behavior)
                 , Tags);
 
             var profiledReader = reader as ProfiledDbDataReader;
@@ -300,7 +319,33 @@ namespace EF.Diagnostics.Profiling.Data
                 return profiledReader;
             }
 
-            return new ProfiledDbDataReader(reader, _dbProfiler);
+            return new ProfiledDbDataReader(reader, dbProfiler);
+        }
+
+        IDataReader IDbCommand.ExecuteReader()
+        {
+            return _command.ExecuteReader(CommandBehavior.Default);
+        }
+
+        IDataReader IDbCommand.ExecuteReader(CommandBehavior behavior)
+        {
+            var dbProfiler = _getDbProfiler();
+            if (dbProfiler == null) return _command.ExecuteReader();
+
+            IDataReader reader = null;
+            dbProfiler.ExecuteDbCommand(
+                DbExecuteType.Reader
+                , _command
+                , () => reader = _command.ExecuteReader(behavior)
+                , Tags);
+
+            var profiledReader = reader as ProfiledDbDataReader;
+            if (profiledReader != null)
+            {
+                return profiledReader;
+            }
+
+            return new ProfiledDbDataReader(reader, dbProfiler);
         }
 
         /// <summary>
@@ -309,8 +354,11 @@ namespace EF.Diagnostics.Profiling.Data
         /// <returns>Returns The number of rows affected. </returns>
         public override int ExecuteNonQuery()
         {
+            var dbProfiler = _getDbProfiler();
+            if (dbProfiler == null) return _command.ExecuteNonQuery();
+
             int affected = 0;
-            _dbProfiler.ExecuteDbCommand(
+            dbProfiler.ExecuteDbCommand(
                 DbExecuteType.NonQuery, _command, () => { affected = _command.ExecuteNonQuery(); return null; }, Tags);
             return affected;
         }
@@ -321,8 +369,11 @@ namespace EF.Diagnostics.Profiling.Data
         /// <returns>The first column of the first row in the result set. </returns>
         public override object ExecuteScalar()
         {
+            var dbProfiler = _getDbProfiler();
+            if (dbProfiler == null) return _command.ExecuteScalar();
+
             object returnValue = null;
-            _dbProfiler.ExecuteDbCommand(
+            dbProfiler.ExecuteDbCommand(
                 DbExecuteType.Scalar, _command, () => { returnValue = _command.ExecuteScalar(); return null; }, Tags);
             return returnValue;
         }
@@ -387,7 +438,7 @@ namespace EF.Diagnostics.Profiling.Data
             var cmdCloneable = _dbCommand as ICloneable;
             var cmdClone = cmdCloneable == null ? _dbCommand : cmdCloneable.Clone() as DbCommand;
 
-            return new ProfiledDbCommand(cmdClone, _dbProfiler, Tags) { Connection = cmdClone.Connection };
+            return new ProfiledDbCommand(cmdClone, _getDbProfiler, Tags) { Connection = cmdClone.Connection };
         }
 
         #endregion

@@ -64,12 +64,17 @@ namespace EF.Diagnostics.Profiling.EF
         protected override DbCommandDefinition CreateDbCommandDefinition(DbProviderManifest providerManifest, DbCommandTree commandTree)
         {
             var cmdDef = _services.CreateCommandDefinition(providerManifest, commandTree);
-
-            var profilingSession = ProfilingSession.Current;
-            if (profilingSession == null) return cmdDef;
-
             var cmd = cmdDef.CreateCommand();
-            return CreateCommandDefinition(new ProfiledDbCommand(cmd, new DbProfiler(profilingSession.Profiler)) { Connection = cmd.Connection });
+            return CreateCommandDefinition(new ProfiledDbCommand(cmd, () =>
+                {
+                    var profilingSession = ProfilingSession.Current;
+                    if (profilingSession == null) return null;
+
+                    return new DbProfiler(profilingSession.Profiler);
+                })
+                {
+                    Connection = cmd.Connection
+                });
         }
 
         protected override string DbCreateDatabaseScript(string providerManifestToken, StoreItemCollection storeItemCollection)
