@@ -40,6 +40,12 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
         private const string Import = "import";
         private const string Export = "export";
         private const string QueryString = "QUERY_STRING";
+        private const string CorrelationId = "correlationId";
+
+        /// <summary>
+        /// Tries to import drilldown result by remote address of the step
+        /// </summary>
+        public static bool TryToImportDrillDownResult;
 
         #region Public Methods
 
@@ -79,6 +85,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
                 if (Uri.IsWellFormedUriString(import, UriKind.Absolute))
                 {
                     ImportSessionsFromUrl(import);
+                    return;
                 }
 
                 if (context.Request.ServerVariables[QueryString] == Export)
@@ -87,6 +94,58 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
 
                     context.Response.Write(ImportSerializer.SerializeSessions(ProfilingSession.CircularBuffer));
                     context.Response.End();
+                    return;
+                }
+
+                var exportCorrelationId = context.Request.QueryString[CorrelationId];
+                if (!string.IsNullOrEmpty(exportCorrelationId))
+                {
+                    context.Response.ContentType = "application/json";
+                    var result = ProfilingSession.CircularBuffer.FirstOrDefault(
+                            r => r.Data != null && r.Data.ContainsKey(CorrelationId) && r.Data[CorrelationId] == exportCorrelationId);
+                    if (result != null)
+                    {
+                        context.Response.Write(ImportSerializer.SerializeSessions(new[] { result }));
+                        context.Response.End();
+                        return;
+                    }
+                }
+            }
+            else if (TryToImportDrillDownResult && path.IndexOf(ViewUrl, StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                var uuid = path.Split('/').Last();
+                var result = ProfilingSession.CircularBuffer.FirstOrDefault(
+                        r => r.Id.ToString().ToLowerInvariant() == uuid.ToLowerInvariant());
+                if (result != null)
+                {
+                    foreach (var timing in result.Timings)
+                    {
+                        if (timing.Data == null || !timing.Data.ContainsKey(CorrelationId)) continue;
+                        Guid correlationId;
+                        if (!Guid.TryParse(timing.Data[CorrelationId], out correlationId)
+                            || ProfilingSession.CircularBuffer.Any(r => r.Id == correlationId)) continue;
+
+                        string remoteAddress;
+                        if (!timing.Data.TryGetValue("remoteAddress", out remoteAddress))
+                            remoteAddress = timing.Name;
+
+                        if (!Uri.IsWellFormedUriString(remoteAddress, UriKind.Absolute)) continue;
+
+                        var pos = remoteAddress.IndexOf("?");
+                        if (pos > 0) remoteAddress = remoteAddress.Substring(0, pos);
+                        if (remoteAddress.Split('/').Last().Contains(".")) remoteAddress = remoteAddress.Substring(0, remoteAddress.LastIndexOf("/"));
+
+                        try
+                        {
+                            ImportSessionsFromUrl(remoteAddress + "/nanoprofiler/view?" + CorrelationId + "=" + correlationId.ToString("N"));
+                        }
+                        catch(Exception ex)
+                        {
+                            System.Diagnostics.Debug.Write(ex.Message);
+
+                            //ignore exceptions
+                        }
+                    }
                 }
             }
         }
@@ -96,6 +155,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
             IEnumerable<ITimingSession> sessions = null;
 
             var request = WebRequest.Create(importUrl);
+            request.Timeout = 30000;
             using (var response = request.GetResponse() as HttpWebResponse)
             using (var stream = new StreamReader(response.GetResponseStream()))
             {
