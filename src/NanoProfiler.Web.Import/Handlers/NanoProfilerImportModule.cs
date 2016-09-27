@@ -133,6 +133,8 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
 
                         if (!Uri.IsWellFormedUriString(remoteAddress, UriKind.Absolute)) continue;
 
+                        if (!remoteAddress.StartsWith("http", StringComparison.OrdinalIgnoreCase)) continue;
+
                         var pos = remoteAddress.IndexOf("?");
                         if (pos > 0) remoteAddress = remoteAddress.Substring(0, pos);
                         if (remoteAddress.Split('/').Last().Contains(".")) remoteAddress = remoteAddress.Substring(0, remoteAddress.LastIndexOf("/"));
