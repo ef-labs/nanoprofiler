@@ -83,7 +83,7 @@ namespace EF.Diagnostics.Profiling.Web.Import
 
         #region Nested Classes
 
-        private class TimingSessionWrapper : Timing, ITimingSession
+        private sealed class TimingSessionWrapper : Timing, ITimingSession
         {
             private List<ITiming> _timings;
 
