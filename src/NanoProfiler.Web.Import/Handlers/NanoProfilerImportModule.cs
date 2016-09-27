@@ -37,6 +37,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
     public sealed class NanoProfilerImportModule : IHttpModule
     {
         private const string ViewUrl = "/nanoprofiler/view";
+        private const string ViewUrlCore = "/coreprofiler/view";
         private const string Import = "import";
         private const string Export = "export";
         private const string QueryString = "QUERY_STRING";
@@ -79,7 +80,8 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
 
             var path = context.Request.Path.TrimEnd('/');
 
-            if (path.EndsWith(ViewUrl, StringComparison.OrdinalIgnoreCase))
+            if (path.EndsWith(ViewUrl, StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(ViewUrlCore, StringComparison.OrdinalIgnoreCase))
             {
                 var import = context.Request.QueryString[Import];
                 if (Uri.IsWellFormedUriString(import, UriKind.Absolute))
