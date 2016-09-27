@@ -63,6 +63,7 @@
     <Compile Include="Data\DbTimingTest.cs" />
     <Compile Include="Data\ProfiledDbCommandTest.cs" />
     <Compile Include="HttpContextMock.cs" />
+    <Compile Include="ImportSerializerTest.cs" />
     <Compile Include="ProfilerTest.cs" />
     <Compile Include="ProfilingSessionExtensionsTest.cs" />
     <Compile Include="ProfilingSessionTest.cs" />

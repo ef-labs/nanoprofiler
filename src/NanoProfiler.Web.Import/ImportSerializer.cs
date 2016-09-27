@@ -45,7 +45,11 @@ namespace EF.Diagnostics.Profiling.Web.Import
         {
             if (sessions == null) return "[]";
 
-            var json = JsonConvert.SerializeObject(sessions.ToArray(), new JsonSerializerSettings
+            var sessionsWrapper = new List<TimingSessionWrapper>();
+            foreach (var session in sessions)
+                sessionsWrapper.Add(new TimingSessionWrapper(session));
+
+            var json = JsonConvert.SerializeObject(sessionsWrapper, new JsonSerializerSettings
                 {
                     DateFormatHandling = DateFormatHandling.IsoDateFormat,
                     NullValueHandling = NullValueHandling.Ignore,
@@ -70,6 +74,7 @@ namespace EF.Diagnostics.Profiling.Web.Import
                             new ConcurrentQueueDeserializationConverter(), 
                             new TimingListDeserializationConverter(),
                             new TimingDeserializationConverter(), 
+                            new TagCollectionDeserializationConverter()
                         })
             });
 
@@ -77,6 +82,52 @@ namespace EF.Diagnostics.Profiling.Web.Import
         }
 
         #region Nested Classes
+
+        private class TimingSessionWrapper : Timing, ITimingSession
+        {
+            private List<ITiming> _timings;
+
+            public TimingSessionWrapper(ITimingSession session)
+            {
+                if (session == null) return;
+
+                MachineName = session.MachineName;
+                Timings = session.Timings;
+                Type = session.Type;
+                Id = session.Id;
+                ParentId = session.ParentId;
+                Name = session.Name;
+                Started = session.Started;
+                StartMilliseconds = session.StartMilliseconds;
+                DurationMilliseconds = session.DurationMilliseconds;
+                Tags = session.Tags;
+                Sort = session.Sort;
+                Data = session.Data;
+            }
+
+            public string MachineName { get; set; }
+
+            public IEnumerable<ITiming> Timings
+            {
+                get { return _timings; }
+                set
+                {
+                    _timings = null;
+
+                    if (value == null) return;
+
+                    var timings = new List<ITiming>(value);
+                    if (timings.Count == 0) return;
+
+                    _timings = timings;
+                }
+            }
+
+            public void AddTiming(ITiming timing)
+            {
+                throw new NotSupportedException();
+            }
+        }
 
         private class TimingListDeserializationConverter : JsonConverter
         {
@@ -129,6 +180,27 @@ namespace EF.Diagnostics.Profiling.Web.Import
                 var bagType = typeof(ConcurrentQueue<>).MakeGenericType(objType);
                 var instance = Activator.CreateInstance(bagType, list);
                 return instance;
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class TagCollectionDeserializationConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(TagCollection);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                var deserialized = serializer.Deserialize<List<string>>(reader);
+                if (deserialized == null) return null;
+
+                return new TagCollection(deserialized);
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
