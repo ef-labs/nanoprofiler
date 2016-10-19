@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CircularBufferTest.cs" />
+    <Compile Include="ConcurrencyTest.cs" />
     <Compile Include="Data\DbProfilerTest.cs" />
     <Compile Include="Data\DbTimingTest.cs" />
     <Compile Include="Data\ProfiledDbCommandTest.cs" />
