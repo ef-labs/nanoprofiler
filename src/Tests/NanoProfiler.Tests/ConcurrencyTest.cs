@@ -93,6 +93,10 @@ namespace EF.Diagnostics.Profiling.Tests
         private static async Task<string> DoWork()
         {
             ProfilingSession.Start("DoWork");
+
+            // Avoid GC of session
+            var profilingSession = ProfilingSession.Current;
+
             ITimingSession timingSession = ProfilingSession.Current.Profiler.GetTimingSession();
             using (ProfilingSession.Current.Step("child1"))
             {
