@@ -28,12 +28,16 @@ using EF.Diagnostics.Profiling;
 
 using NanoProfiler.Demos.SimpleDemo.Code.Data;
 using NanoProfiler.Demos.SimpleDemo.Code.Models;
+using System.Threading.Tasks;
 
 namespace NanoProfiler.Demos.SimpleDemo.Code.Biz
 {
     public interface IDemoDBService
     {
         List<DemoData> LoadActiveDemoData();
+        Task<List<DemoData>> LoadActiveDemoDataAsync();
+        int LoadActiveDemoDataCount();
+        Task<int> LoadActiveDemoDataCountAsync();
         List<DemoData> LoadActiveDemoData2();
         List<DemoData> LoadActiveDemoData3();
     }
@@ -55,6 +59,33 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Biz
                 _dataService.LoadActiveDemoDataWithDataAdapter();
 
                 return _dataService.LoadActiveDemoData();
+            }
+        }
+
+        public async Task<List<DemoData>> LoadActiveDemoDataAsync()
+        {
+            using (ProfilingSession.Current.Step("Biz.LoadActiveDemoDataAsync"))
+            {
+                //demos load data with data adapter
+                _dataService.LoadActiveDemoDataWithDataAdapter();
+
+                return await _dataService.LoadActiveDemoDataAsync();
+            }
+        }
+
+        public int LoadActiveDemoDataCount()
+        {
+            using (ProfilingSession.Current.Step("Biz.LoadActiveDemoDataCount"))
+            {
+                return _dataService.LoadActiveDemoDataCount();
+            }
+        }
+
+        public async Task<int> LoadActiveDemoDataCountAsync()
+        {
+            using (ProfilingSession.Current.Step("Biz.LoadActiveDemoDataCountAsync"))
+            {
+                return await _dataService.LoadActiveDemoDataCountAsync();
             }
         }
 

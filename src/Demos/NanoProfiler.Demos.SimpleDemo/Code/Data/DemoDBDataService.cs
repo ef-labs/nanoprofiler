@@ -30,6 +30,8 @@ using EF.Diagnostics.Profiling.Data;
 
 using NanoProfiler.Demos.SimpleDemo.Code.Models;
 using NanoProfiler.Demos.SimpleDemo.Unity;
+using System.Threading.Tasks;
+using System.Data.Common;
 
 namespace NanoProfiler.Demos.SimpleDemo.Code.Data
 {
@@ -37,6 +39,15 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
     {
         [ProfiledMethod]
         List<DemoData> LoadActiveDemoData();
+
+        [ProfiledMethod]
+        Task<List<DemoData>> LoadActiveDemoDataAsync();
+
+        [ProfiledMethod]
+        int LoadActiveDemoDataCount();
+
+        [ProfiledMethod]
+        Task<int> LoadActiveDemoDataCountAsync();
 
         [ProfiledMethod]
         DataSet LoadActiveDemoDataWithDataAdapter();
@@ -67,6 +78,72 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
                             }
                             return results;
                         }
+                    }
+                }
+            }
+        }
+
+        public async Task<List<DemoData>> LoadActiveDemoDataAsync()
+        {
+            using (ProfilingSession.Current.Step("Data.LoadActiveDemoDataAsync"))
+            {
+                using (var conn = GetConnection())
+                {
+                    await conn.OpenAsync();
+
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandText = "WAITFOR DELAY '00:00:01'; select Id, Name from [Table] where IsActive = @IsActive";
+                        cmd.Parameters.Add(new SqlParameter("@IsActive", 1));
+
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            var results = new List<DemoData>();
+                            while (await reader.ReadAsync())
+                            {
+                                results.Add(new DemoData { Id = reader.GetInt32(0), Name = reader.GetString(1) });
+                            }
+                            return results;
+                        }
+                    }
+                }
+            }
+        }
+
+        public int LoadActiveDemoDataCount()
+        {
+            using (ProfilingSession.Current.Step("Data.LoadActiveDemoDataCount"))
+            {
+                using (var conn = GetConnection())
+                {
+                    conn.Open();
+
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandText = "select COUNT(*) from [Table] where IsActive = @IsActive";
+                        cmd.Parameters.Add(new SqlParameter("@IsActive", 1));
+                        return (int)cmd.ExecuteScalar();
+                    }
+                }
+            }
+        }
+
+        public async Task<int> LoadActiveDemoDataCountAsync()
+        {
+            using (ProfilingSession.Current.Step("Data.LoadActiveDemoDataCountAsync"))
+            {
+                using (var conn = GetConnection())
+                {
+                    await conn.OpenAsync();
+
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandText = "WAITFOR DELAY '00:00:01'; select COUNT(*) from [Table] where IsActive = @IsActive";
+                        cmd.Parameters.Add(new SqlParameter("@IsActive", 1));
+                        return await cmd.ExecuteScalarAsync().ContinueWith(r => (int)r.Result);
                     }
                 }
             }
@@ -109,7 +186,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Data
             return null;
         }
 
-        private IDbConnection GetConnection()
+        private DbConnection GetConnection()
         {
             var conn = new SqlConnection(@"Server=(LocalDb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SimpleDemoDB.mdf;Database=SimpleDemoDB;Trusted_Connection=Yes;");
 

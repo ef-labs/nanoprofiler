@@ -25,6 +25,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 using EF.Diagnostics.Profiling.Timings;
 
 namespace EF.Diagnostics.Profiling.Data
@@ -321,6 +323,66 @@ namespace EF.Diagnostics.Profiling.Data
 
             return new ProfiledDbDataReader(reader, dbProfiler);
         }
+
+#if NET45
+
+        /// <summary>
+        /// Executes the command text against the connection.
+        /// </summary>
+        /// <param name="behavior"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        protected override Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+        {
+            var dbProfiler = _getDbProfiler();
+            if (dbProfiler == null) return _dbCommand.ExecuteReaderAsync(behavior, cancellationToken);
+
+            return dbProfiler.ExecuteDbDataReaderCommandAsync(
+                DbExecuteType.Reader
+                , _command
+                , () => _dbCommand.ExecuteReaderAsync(behavior, cancellationToken)
+                , Tags).ContinueWith<DbDataReader>(r =>
+                {
+                    var reader = r.Result;
+                    var profiledReader = reader as ProfiledDbDataReader;
+                    if (profiledReader != null)
+                    {
+                        return profiledReader;
+                    }
+
+                    return new ProfiledDbDataReader(reader, dbProfiler);
+                });
+        }
+
+        /// <summary>
+        /// Executes a SQL statement against a connection object. 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Returns The number of rows affected. </returns>
+        public override Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
+        {
+            var dbProfiler = _getDbProfiler();
+            if (dbProfiler == null) return _dbCommand.ExecuteNonQueryAsync(cancellationToken);
+            
+            return dbProfiler.ExecuteNonQueryCommandAsync(
+                DbExecuteType.NonQuery, _command, () => _dbCommand.ExecuteNonQueryAsync(cancellationToken), Tags);
+        }
+
+        /// <summary>
+        /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored. 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The first column of the first row in the result set. </returns>
+        public override Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
+        {
+            var dbProfiler = _getDbProfiler();
+            if (dbProfiler == null) return _dbCommand.ExecuteScalarAsync(cancellationToken);
+
+            return dbProfiler.ExecuteScalarCommandAsync(
+                DbExecuteType.Scalar, _command, () => _dbCommand.ExecuteScalarAsync(cancellationToken), Tags);
+        }
+
+#endif
 
         IDataReader IDbCommand.ExecuteReader()
         {

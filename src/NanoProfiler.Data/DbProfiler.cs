@@ -24,7 +24,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Data;
+using System.Threading.Tasks;
 using EF.Diagnostics.Profiling.Timings;
+using System.Data.Common;
 
 namespace EF.Diagnostics.Profiling.Data
 {
@@ -81,7 +83,7 @@ namespace EF.Diagnostics.Profiling.Data
                 return;
             }
 
-            var dbTiming = new DbTiming(_profiler, executeType, command) {Tags = tags};
+            var dbTiming = new DbTiming(_profiler, executeType, command) { Tags = tags };
 
             var dataReader = execute();
             if (dataReader == null)
@@ -96,6 +98,100 @@ namespace EF.Diagnostics.Profiling.Data
                 new ProfiledDbDataReader(dataReader, this);
             _inProgressDataReaders[reader] = dbTiming;
         }
+
+#if NET45
+
+        /// <summary>
+        /// Executes &amp; profiles the execution of the specified <see cref="IDbCommand"/>.
+        /// </summary>
+        /// <param name="executeType">The <see cref="DbExecuteType"/>.</param>
+        /// <param name="command">The <see cref="IDbCommand"/> to be executed &amp; profiled.</param>
+        /// <param name="execute">
+        ///     The execute handler, 
+        ///     which should return the <see cref="DbDataReader"/> instance if it is an ExecuteReader operation.
+        /// </param>
+        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
+        public virtual Task<DbDataReader> ExecuteDbDataReaderCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<DbDataReader>> execute, TagCollection tags)
+        {
+            if (command == null)
+            {
+                return execute();
+            }
+
+            var dbTiming = new DbTiming(_profiler, executeType, command) { Tags = tags };
+
+            return execute().ContinueWith<DbDataReader>(r =>
+            {
+                var dataReader = r.Result;
+                if (dataReader == null)
+                {
+                    // if not executing reader, stop the sql timing right after execute()
+                    dbTiming.Stop();
+                    return null;
+                }
+
+                dbTiming.FirstFetch();
+                var reader = dataReader as ProfiledDbDataReader ??
+                    new ProfiledDbDataReader(dataReader, this);
+                _inProgressDataReaders[reader] = dbTiming;
+
+                return reader;
+            });
+        }
+
+        /// <summary>
+        /// Executes &amp; profiles the execution of the specified <see cref="IDbCommand"/>.
+        /// </summary>
+        /// <param name="executeType">The <see cref="DbExecuteType"/>.</param>
+        /// <param name="command">The <see cref="IDbCommand"/> to be executed &amp; profiled.</param>
+        /// <param name="execute">
+        ///     The execute handler, 
+        ///     which should return the number of affected rows if it is an ExecuteNonQuery operation.
+        /// </param>
+        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
+        public virtual Task<int> ExecuteNonQueryCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<int>> execute, TagCollection tags)
+        {
+            if (command == null)
+            {
+                return execute();
+            }
+
+            var dbTiming = new DbTiming(_profiler, executeType, command) { Tags = tags };
+
+            return execute().ContinueWith(r =>
+            {
+                dbTiming.Stop();
+                return r.Result;
+            });
+        }
+
+        /// <summary>
+        /// Executes &amp; profiles the execution of the specified <see cref="IDbCommand"/>.
+        /// </summary>
+        /// <param name="executeType">The <see cref="DbExecuteType"/>.</param>
+        /// <param name="command">The <see cref="IDbCommand"/> to be executed &amp; profiled.</param>
+        /// <param name="execute">
+        ///     The execute handler, 
+        ///     which should return the scalar value if it is an ExecuteScalar operation.
+        /// </param>
+        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
+        public virtual Task<object> ExecuteScalarCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<object>> execute, TagCollection tags)
+        {
+            if (command == null)
+            {
+                return execute();
+            }
+
+            var dbTiming = new DbTiming(_profiler, executeType, command) { Tags = tags };
+
+            return execute().ContinueWith(r =>
+            {
+                dbTiming.Stop();
+                return r.Result;
+            });
+        }
+
+#endif
 
         /// <summary>
         /// Notifies the profiler that the data reader has finished reading
@@ -114,20 +210,6 @@ namespace EF.Diagnostics.Profiling.Data
             {
                 dbTiming.Stop();
             }
-        }
-
-        #endregion
-
-        #region IDbProfiler Members
-
-        void IDbProfiler.ExecuteDbCommand(DbExecuteType executeType, IDbCommand command, Func<IDataReader> execute, TagCollection tags)
-        {
-            ExecuteDbCommand(executeType, command, execute, tags);
-        }
-
-        void IDbProfiler.DataReaderFinished(IDataReader dataReader)
-        {
-            DataReaderFinished(dataReader);
         }
 
         #endregion

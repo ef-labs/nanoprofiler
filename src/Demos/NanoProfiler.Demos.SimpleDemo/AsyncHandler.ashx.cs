@@ -75,24 +75,33 @@ namespace NanoProfiler.Demos.SimpleDemo
             }
         }
 
-        private Task ExecuteTask(HttpContext context)
-        {
-            return Task.Factory.StartNew(() => Execute(context));
-        }
-
-        private void Execute(HttpContext context)
+        private async Task ExecuteTask(HttpContext context)
         {
             context.Response.ContentType = "text/html";
 
-            var demoData = Global.Container.Resolve<IDemoDBService>().LoadActiveDemoData();
-            Parallel.ForEach(demoData, (item, state) =>
+            var service = Global.Container.Resolve<IDemoDBService>();
+
+            // these 4 async tasks here are for testing profiling async DB queries in .Net 4.5
+            // when openning with NanoProfiler2.Net45.sln, all these tasks are executed in parellel
+            // but when openning with NanoProfiler2.sln, all these tasks are executed in sequence
+            // you should be able to see the difference in ~/nanoprofiler/view
+            var demoDataTask1 = service.LoadActiveDemoDataAsync();
+            var demoDataTask2 = service.LoadActiveDemoDataAsync();
+            var demoDataCountTask1 = service.LoadActiveDemoDataCountAsync();
+            var demoDataCountTask2 = service.LoadActiveDemoDataCountAsync();
+
+            await demoDataTask1;
+            await demoDataTask2;
+            await demoDataCountTask1;
+            await demoDataCountTask2;
+
+            Parallel.ForEach(demoDataTask1.Result, (item, state) =>
+            {
+                using (ProfilingSession.Current.Step(() => "Async print item: " + item.Id))
                 {
-                    using (ProfilingSession.Current.Step(() => "Async print item: " + item.Id))
-                    {
-                        context.Response.Write(string.Format(@"Id={0}, Name={1}<br />", item.Id, item.Name));
-                    }
-                });
+                    context.Response.Write(string.Format(@"Id={0}, Name={1}<br />", item.Id, item.Name));
+                }
+            });
         }
     }
-
 }
