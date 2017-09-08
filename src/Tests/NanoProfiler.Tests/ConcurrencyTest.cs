@@ -17,6 +17,9 @@ namespace EF.Diagnostics.Profiling.Tests
     [TestFixture]
     public class ConcurrencyTest
     {
+        [ThreadStatic]
+        private static ProfilingSession _current;
+
         [Test]
         [Repeat(100)]
         public void NanoProfilerWrapper_WritesReportWhenExitingRootSpan_SaveSessionCallbackAndTasks()
@@ -95,7 +98,7 @@ namespace EF.Diagnostics.Profiling.Tests
             ProfilingSession.Start("DoWork");
 
             // Avoid GC of session
-            var profilingSession = ProfilingSession.Current;
+            _current = ProfilingSession.Current;
 
             ITimingSession timingSession = ProfilingSession.Current.Profiler.GetTimingSession();
             using (ProfilingSession.Current.Step("child1"))
