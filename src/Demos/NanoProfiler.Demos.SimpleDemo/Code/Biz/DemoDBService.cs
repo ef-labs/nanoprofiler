@@ -40,6 +40,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Biz
         Task<int> LoadActiveDemoDataCountAsync();
         List<DemoData> LoadActiveDemoData2();
         List<DemoData> LoadActiveDemoData3();
+        Task TestSaveDemoDataAsync();
     }
 
     public class DemoDBService : IDemoDBService
@@ -91,6 +92,7 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Biz
 
         public List<DemoData> LoadActiveDemoData2()
         {
+
             using (ProfilingSession.Current.Step("Biz.LoadActiveDemoData2"))
             {
                 var query = from item in DemoDBDataContext.Get().GetTable<Table>()
@@ -110,6 +112,25 @@ namespace NanoProfiler.Demos.SimpleDemo.Code.Biz
                     var query = dbContext.DemoDatas.Where(item => item.IsActive);
 
                     return query.Select(item => new DemoData {Id = item.Id, Name = item.Name}).ToList();
+                }
+            }
+        }
+
+        public async Task TestSaveDemoDataAsync()
+        {
+            using (ProfilingSession.Current.Step("Biz.TestSaveDemoDataAsync"))
+            {
+                using (var dbContext = new DemoEFDbContext())
+                {
+                    var newItem = dbContext.DemoDatas.Create();
+                    newItem.IsActive = true;
+                    newItem.Name = "new";
+                    dbContext.DemoDatas.Add(newItem);
+                    await dbContext.SaveChangesAsync();
+
+                    var items = dbContext.DemoDatas.Where(i => i.IsActive).OrderByDescending(e => e.Id).ToList();
+                    dbContext.DemoDatas.Remove(items.First());
+                    await dbContext.SaveChangesAsync();
                 }
             }
         }

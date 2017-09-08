@@ -102,6 +102,9 @@ namespace NanoProfiler.Demos.SimpleDemo
                     context.Response.Write(string.Format(@"Id={0}, Name={1}<br />", item.Id, item.Name));
                 }
             });
+
+            // test save
+            await service.TestSaveDemoDataAsync();
         }
     }
 }
