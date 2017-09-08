@@ -171,11 +171,10 @@ namespace EF.Diagnostics.Profiling.Data
         /// <param name="executeType">The <see cref="DbExecuteType"/>.</param>
         /// <param name="command">The <see cref="IDbCommand"/> to be executed &amp; profiled.</param>
         /// <param name="execute">
-        ///     The execute handler, 
-        ///     which should return the scalar value if it is an ExecuteScalar operation.
+        ///     The execute handler
         /// </param>
         /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
-        public virtual Task<object> ExecuteScalarCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<object>> execute, TagCollection tags)
+        public virtual async Task<object> ExecuteCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<object>> execute, TagCollection tags)
         {
             if (command == null)
             {
@@ -183,12 +182,21 @@ namespace EF.Diagnostics.Profiling.Data
             }
 
             var dbTiming = new DbTiming(_profiler, executeType, command) { Tags = tags };
-
-            return execute().ContinueWith(r =>
+            var result = await execute();
+            var dataReader = result as DbDataReader;
+            if (dataReader == null)
             {
+                // if not executing reader, stop the sql timing right after execute()
                 dbTiming.Stop();
-                return r.Result;
-            });
+                return result;
+            }
+
+            dbTiming.FirstFetch();
+            var reader = dataReader as ProfiledDbDataReader ??
+                new ProfiledDbDataReader(dataReader, this);
+            _inProgressDataReaders[reader] = dbTiming;
+
+            return reader;
         }
 
 #endif

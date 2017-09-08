@@ -55,35 +55,10 @@ namespace EF.Diagnostics.Profiling.Data
         /// <param name="executeType">The <see cref="DbExecuteType"/>.</param>
         /// <param name="command">The <see cref="IDbCommand"/> to be executed &amp; profiled.</param>
         /// <param name="execute">
-        ///     The execute handler, 
-        ///     which should return the <see cref="DbDataReader"/> instance if it is an ExecuteReader operation.
+        ///     The execute handler
         /// </param>
         /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
-        Task<DbDataReader> ExecuteDbDataReaderCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<DbDataReader>> execute, TagCollection tags);
-
-        /// <summary>
-        /// Executes &amp; profiles the execution of the specified <see cref="IDbCommand"/>.
-        /// </summary>
-        /// <param name="executeType">The <see cref="DbExecuteType"/>.</param>
-        /// <param name="command">The <see cref="IDbCommand"/> to be executed &amp; profiled.</param>
-        /// <param name="execute">
-        ///     The execute handler, 
-        ///     which should return the number of affected rows if it is an ExecuteNonQuery operation.
-        /// </param>
-        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
-        Task<int> ExecuteNonQueryCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<int>> execute, TagCollection tags);
-
-        /// <summary>
-        /// Executes &amp; profiles the execution of the specified <see cref="IDbCommand"/>.
-        /// </summary>
-        /// <param name="executeType">The <see cref="DbExecuteType"/>.</param>
-        /// <param name="command">The <see cref="IDbCommand"/> to be executed &amp; profiled.</param>
-        /// <param name="execute">
-        ///     The execute handler, 
-        ///     which should return the scalar value if it is an ExecuteScalar operation.
-        /// </param>
-        /// <param name="tags">The tags of the <see cref="DbTiming"/> which will be created internally.</param>
-        Task<object> ExecuteScalarCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<object>> execute, TagCollection tags);
+        Task<object> ExecuteCommandAsync(DbExecuteType executeType, IDbCommand command, Func<Task<object>> execute, TagCollection tags);
 
 #endif
 

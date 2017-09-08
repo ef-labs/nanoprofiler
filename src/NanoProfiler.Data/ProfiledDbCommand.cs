@@ -332,26 +332,25 @@ namespace EF.Diagnostics.Profiling.Data
         /// <param name="behavior"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected override Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+        protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
             var dbProfiler = _getDbProfiler();
-            if (dbProfiler == null) return _dbCommand.ExecuteReaderAsync(behavior, cancellationToken);
+            if (dbProfiler == null) return await _dbCommand.ExecuteReaderAsync(behavior, cancellationToken);
 
-            return dbProfiler.ExecuteDbDataReaderCommandAsync(
+            var result = await dbProfiler.ExecuteCommandAsync(
                 DbExecuteType.Reader
                 , _command
-                , () => _dbCommand.ExecuteReaderAsync(behavior, cancellationToken)
-                , Tags).ContinueWith<DbDataReader>(r =>
-                {
-                    var reader = r.Result;
-                    var profiledReader = reader as ProfiledDbDataReader;
-                    if (profiledReader != null)
-                    {
-                        return profiledReader;
-                    }
+                , async () => await _dbCommand.ExecuteReaderAsync(behavior, cancellationToken)
+                , Tags);
 
-                    return new ProfiledDbDataReader(reader, dbProfiler);
-                });
+            var reader = result as DbDataReader;
+            var profiledReader = reader as ProfiledDbDataReader;
+            if (profiledReader != null)
+            {
+                return profiledReader;
+            }
+
+            return new ProfiledDbDataReader(reader, dbProfiler);
         }
 
         /// <summary>
@@ -359,13 +358,14 @@ namespace EF.Diagnostics.Profiling.Data
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>Returns The number of rows affected. </returns>
-        public override Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
+        public override async Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
         {
             var dbProfiler = _getDbProfiler();
-            if (dbProfiler == null) return _dbCommand.ExecuteNonQueryAsync(cancellationToken);
+            if (dbProfiler == null) return await _dbCommand.ExecuteNonQueryAsync(cancellationToken);
             
-            return dbProfiler.ExecuteNonQueryCommandAsync(
-                DbExecuteType.NonQuery, _command, () => _dbCommand.ExecuteNonQueryAsync(cancellationToken), Tags);
+            var result = await dbProfiler.ExecuteCommandAsync(
+                DbExecuteType.NonQuery, _command, async () => await _dbCommand.ExecuteNonQueryAsync(cancellationToken), Tags);
+            return (int)result;
         }
 
         /// <summary>
@@ -378,7 +378,7 @@ namespace EF.Diagnostics.Profiling.Data
             var dbProfiler = _getDbProfiler();
             if (dbProfiler == null) return _dbCommand.ExecuteScalarAsync(cancellationToken);
 
-            return dbProfiler.ExecuteScalarCommandAsync(
+            return dbProfiler.ExecuteCommandAsync(
                 DbExecuteType.Scalar, _command, () => _dbCommand.ExecuteScalarAsync(cancellationToken), Tags);
         }
 
