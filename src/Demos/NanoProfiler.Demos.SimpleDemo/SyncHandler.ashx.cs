@@ -40,6 +40,8 @@ namespace NanoProfiler.Demos.SimpleDemo
 
         public void ProcessRequest(HttpContext context)
         {
+            ProfilingSession.Current.AddTag("sync");
+
             context.Response.ContentType = "text/html";
 
             using (ProfilingSession.Current.Step("ProcessRequest"))

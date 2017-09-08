@@ -42,6 +42,8 @@ namespace NanoProfiler.Demos.SimpleDemo
 
         public override async Task ProcessRequestAsync(HttpContext context)
         {
+            ProfilingSession.Current.AddTag("async");
+
             using (ProfilingSession.Current.Step("ProcessRequestAsync"))
             {
                 context.Response.Write("<a href=\"nanoprofiler/view\">View Profiling Results</a><br /><br />");
