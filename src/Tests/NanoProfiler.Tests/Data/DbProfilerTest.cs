@@ -82,10 +82,9 @@ namespace EF.Diagnostics.Profiling.Tests.Data
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestDbProfiler_ctor_InvalidProfiler()
         {
-            new DbProfiler(null);
+            Assert.Throws<ArgumentNullException>(() => new DbProfiler(null));
         }
     }
 }

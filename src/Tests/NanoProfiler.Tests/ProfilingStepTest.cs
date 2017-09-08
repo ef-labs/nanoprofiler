@@ -11,10 +11,9 @@ namespace EF.Diagnostics.Profiling.Tests
     public class ProfilingStepTest
     {
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestProfilingStep_ctor_EmptyName()
         {
-            new ProfilingStep(null, "", null);
+            Assert.Throws<ArgumentNullException>(() => new ProfilingStep(null, "", null));
         }
 
         [Test]

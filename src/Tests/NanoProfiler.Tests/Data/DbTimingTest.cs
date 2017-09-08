@@ -60,19 +60,17 @@ namespace EF.Diagnostics.Profiling.Tests.Data
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestDbTiming_ctor_InvalidProfiler()
         {
             var mockCommamnd = new Mock<IDbCommand>();
-            new DbTiming(null, DbExecuteType.NonQuery, mockCommamnd.Object);
+            Assert.Throws<ArgumentNullException>(() => new DbTiming(null, DbExecuteType.NonQuery, mockCommamnd.Object));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestDbTiming_ctor_InvalidCommand()
         {
             var mockProfiler = new Mock<IProfiler>();
-            new DbTiming(mockProfiler.Object, DbExecuteType.NonQuery, null);
+            Assert.Throws<ArgumentNullException>(() => new DbTiming(mockProfiler.Object, DbExecuteType.NonQuery, null));
         }
     }
 }

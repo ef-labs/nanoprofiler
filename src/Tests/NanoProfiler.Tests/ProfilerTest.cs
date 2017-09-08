@@ -68,18 +68,16 @@ namespace EF.Diagnostics.Profiling.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestProfiler_ctor_InvalidName()
         {
             var mockStorage = new Mock<IProfilingStorage>();
-            new Profiler(null, mockStorage.Object, null);
+            Assert.Throws<ArgumentNullException>(() => new Profiler(null, mockStorage.Object, null));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestProfiler_ctor_InvalidStorage()
         {
-            new Profiler("test", null, null);
+            Assert.Throws<ArgumentNullException>(() => new Profiler("test", null, null));
         }
     }
 }

@@ -35,7 +35,7 @@ namespace EF.Diagnostics.Profiling.Tests
     [TestFixture]
     public class ProfilingSessionTest
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestFixtureSetUp()
         {
             HttpContext.Current = null;
@@ -44,7 +44,7 @@ namespace EF.Diagnostics.Profiling.Tests
             ProfilingSession.ProfilingStorage = new JsonProfilingStorage();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TestFixtureTearDown()
         {
             HttpContext.Current = null;
@@ -54,10 +54,9 @@ namespace EF.Diagnostics.Profiling.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestProfilingSession_ctor_InvalidProfiler()
         {
-            new ProfilingSession(null);
+            Assert.Throws<ArgumentNullException>(() => new ProfilingSession(null));
         }
 
         [Test]
@@ -113,10 +112,9 @@ namespace EF.Diagnostics.Profiling.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestProfilingSession_Start_InvalidName()
         {
-            ProfilingSession.Start(null);
+            Assert.Throws<ArgumentNullException>(() => ProfilingSession.Start(null));
         }
 
         [Test]
@@ -231,17 +229,15 @@ namespace EF.Diagnostics.Profiling.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestProfilingSession_SetProfilingStorage_InvalidStorage()
         {
-            ProfilingSession.ProfilingStorage = null;
+            Assert.Throws<ArgumentNullException>(() => ProfilingSession.ProfilingStorage = null);
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestProfilingSession_SetProfilingSessionContainer_InvalidContainer()
         {
-            ProfilingSession.ProfilingSessionContainer = null;
+            Assert.Throws<ArgumentNullException>(() => ProfilingSession.ProfilingSessionContainer = null);
         }
 
         [Test]
