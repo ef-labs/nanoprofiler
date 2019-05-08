@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -59,7 +60,7 @@ namespace EF.Diagnostics.Profiling.Data
             _profiler = profiler;
             StartMilliseconds = (long)_profiler.Elapsed.TotalMilliseconds;
             Sort = profiler.Elapsed.Ticks;
-            Data = new Dictionary<string, string>();
+            Data = new ConcurrentDictionary<string, string>();
 
             Data["executeType"] = executeType.ToString().ToLowerInvariant();
 

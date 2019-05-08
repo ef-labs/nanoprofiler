@@ -159,7 +159,7 @@ namespace EF.Diagnostics.Profiling.Tests
         private static void SetDepth(ITiming timing, int depth)
         {
             if (timing.Data == null)
-                timing.Data = new Dictionary<string, string>();
+                timing.Data = new ConcurrentDictionary<string, string>();
             timing.Data["depth"] = depth.ToString();
         }
 

@@ -107,7 +107,7 @@ namespace EF.Diagnostics.Profiling.Timings
         {
             _profiler = profiler;
             _timings = new ConcurrentQueue<ITiming>();
-            Data = new Dictionary<string, string>();
+            Data = new ConcurrentDictionary<string, string>();
             MachineName = Environment.MachineName;
         }
 

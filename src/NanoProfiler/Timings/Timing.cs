@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace EF.Diagnostics.Profiling.Timings
@@ -101,7 +102,7 @@ namespace EF.Diagnostics.Profiling.Timings
         /// <summary>
         /// Gets or sets addtional data of the timing.
         /// </summary>
-        public Dictionary<string, string> Data { get; set; }
+        public ConcurrentDictionary<string, string> Data { get; set; }
 
         #endregion
 

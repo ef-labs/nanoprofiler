@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -360,7 +361,7 @@ namespace EF.Diagnostics.Profiling
             var session = Profiler.GetTimingSession();
             if (session == null) return;
 
-            if (session.Data == null) session.Data = new Dictionary<string, string>();
+            if (session.Data == null) session.Data = new ConcurrentDictionary<string, string>();
             session.Data[key] = value;
         }
 

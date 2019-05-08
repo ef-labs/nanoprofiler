@@ -21,6 +21,7 @@
     THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using EF.Diagnostics.Profiling.Timings;
@@ -207,7 +208,14 @@ namespace EF.Diagnostics.Profiling.Storages
                 ITimingSession session;
                 while (TryDequeue(out session))
                 {
-                    Save(session);
+                    try
+                    {
+                        Save(session);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "Unexpected exception on saving profiling session!");
+                    }
                     
                     // Signal waiting threads to continue
                     _entryWait.Set();

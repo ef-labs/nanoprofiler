@@ -53,7 +53,8 @@ namespace EF.Diagnostics.Profiling.Tests.Data
 
             // when firstFetchDurationMilliseconds is not set and stoppped is called, 
             // the value of firstFetchDurationMilliseconds should be copied from durationmilliseconds
-            target.Data.Remove("readStart");
+            string temp;
+            target.Data.TryRemove("readStart", out temp);
             target.Stop();
 
             Assert.AreEqual(target.DurationMilliseconds.ToString(), target.Data["readStart"]);

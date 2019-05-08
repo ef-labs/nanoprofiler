@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.ServiceModel.Channels;
@@ -70,7 +71,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel
             _profiler = profiler;
             StartMilliseconds = (long)_profiler.Elapsed.TotalMilliseconds;
             Sort = profiler.Elapsed.Ticks;
-            Data = new Dictionary<string, string>();
+            Data = new ConcurrentDictionary<string, string>();
             Data[CorrelationIdKey] = Guid.NewGuid().ToString("N");
             var requestMessageContent = ToXml(ref requestMessage);
             Data["requestMessage"] = requestMessageContent;

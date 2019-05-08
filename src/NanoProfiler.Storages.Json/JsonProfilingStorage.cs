@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -196,21 +197,22 @@ namespace EF.Diagnostics.Profiling.Storages.Json
             }
         }
 
-        private void AppendDataFields(StringBuilder sb, Dictionary<string, string> data)
+        private void AppendDataFields(StringBuilder sb, ConcurrentDictionary<string, string> data)
         {
             if (data == null) return;
 
-            foreach (var keyValue in data)
+            foreach (var key in new List<string>(data.Keys))
             {
-                if (keyValue.Value == null) continue;
+                var value = data[key];
+                if (value == null) continue;
 
-                if (IsIntFieldName(keyValue.Key))
+                if (IsIntFieldName(key))
                 {
-                    AppendField(sb, keyValue.Key, long.Parse(keyValue.Value));
+                    AppendField(sb, key, long.Parse(value));
                 }
                 else
                 {
-                    AppendField(sb, keyValue.Key, keyValue.Value);
+                    AppendField(sb, key, value);
                 }
             }
         }

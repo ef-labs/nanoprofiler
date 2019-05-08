@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using EF.Diagnostics.Profiling.Timings;
 
@@ -108,7 +109,7 @@ namespace EF.Diagnostics.Profiling
         {
             if (string.IsNullOrWhiteSpace(key)) return;
 
-            if (Data == null) Data = new Dictionary<string, string>();
+            if (Data == null) Data = new ConcurrentDictionary<string, string>();
             Data[key] = value;
         }
 

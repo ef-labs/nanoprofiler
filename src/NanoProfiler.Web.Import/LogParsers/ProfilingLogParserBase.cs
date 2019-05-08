@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EF.Diagnostics.Profiling.Timings;
@@ -187,7 +188,7 @@ namespace EF.Diagnostics.Profiling.Web.Import.LogParsers
                 default:
                     if (timing.Data == null)
                     {
-                        timing.Data = new Dictionary<string, string>();
+                        timing.Data = new ConcurrentDictionary<string, string>();
                     }
 
                     timing.Data[key] = value.ToString();

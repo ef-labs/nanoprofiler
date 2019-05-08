@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using EF.Diagnostics.Profiling.Timings;
 
@@ -34,7 +35,7 @@ namespace EF.Diagnostics.Profiling.Web
             _profiler = profiler;
             StartMilliseconds = (long)_profiler.Elapsed.TotalMilliseconds;
             Sort = profiler.Elapsed.Ticks;
-            Data = new Dictionary<string, string>();
+            Data = new ConcurrentDictionary<string, string>();
             Data[CorrelationIdKey] = Guid.NewGuid().ToString("N");
         }
 
