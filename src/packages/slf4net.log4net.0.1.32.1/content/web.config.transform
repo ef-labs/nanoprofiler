@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+
+  <configSections>
+    <section name="slf4net" type="slf4net.Configuration.SlfConfigurationSection, slf4net" />
+  </configSections>
+
+  <slf4net>
+    <factory type="slf4net.log4net.Log4netLoggerFactory, slf4net.log4net">
+      <factory-data>
+        <configFile value="log4net.config"/>
+        <watch value="true"/>
+      </factory-data>
+    </factory>
+  </slf4net>
+
+</configuration>

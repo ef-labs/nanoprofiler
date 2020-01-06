@@ -1,0 +1,1076 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>slf4net</name>
+    </assembly>
+    <members>
+        <member name="T:slf4net.ActivatorUtils">
+            <summary>
+            Provides helper methods that supplement the 
+            <see cref="T:System.Activator"/>.
+            </summary>
+        </member>
+        <member name="M:slf4net.ActivatorUtils.Instantiate``1(System.String)">
+            <summary>
+            Instantiates an object of the given type.
+            </summary>
+            <typeparam name="T">The type being instantiated</typeparam>
+            <param name="typeName">The full type name</param>
+            <returns></returns>
+        </member>
+        <member name="T:slf4net.Configuration.FactoryConfigurationElement">
+            <summary>
+            The factory element within the application
+            configuration.
+            </summary>
+        </member>
+        <member name="M:slf4net.Configuration.FactoryConfigurationElement.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            Parses custom factory data into the <see cref="P:slf4net.Configuration.FactoryConfigurationElement.FactoryData"/> property,
+            if <paramref name="elementName"/> refers to a <c>factory-data</c> element.
+            </summary>
+            <param name="elementName"></param>
+            <param name="reader"></param>
+            <returns>True if the element is a (supported) <c>factory-data</c> element.
+            If it's an other unexpected element, this method returns false.</returns>
+        </member>
+        <member name="P:slf4net.Configuration.FactoryConfigurationElement.FactoryData">
+            <summary>
+            Gets custom factory data, if available. This is data of the factory
+            element, that is wrapped into an element named <c>factory-data</c>.
+            The contents of the <c>factory-data</c> element can be as simple as
+            a literal, or a complex XML element.
+            Defaults to null.
+            </summary>
+            <example>
+            The following example shows two possible configurations - one with
+            a literal as custom configuration data, one with XML based configuration:
+            <code>
+            &lt;slf>
+              &lt;!-- a factory configuration with literal content -->
+              &lt;factory name="simple">
+                &lt;factory-data>
+                  simple data
+                &lt;/factory-data>
+              &lt;/factory>
+            
+              &lt;!-- a factory configuration with XML sub elements -->
+              &lt;factory name="complex">
+                &lt;factory-data>
+                  &lt;child foo="bar">
+                    &lt;subchild>foobar&lt;/subchild>
+                  &lt;/child>
+                &lt;/factory-data>
+              &lt;/factory>
+            &lt;/slf>
+            </code>
+            </example>
+        </member>
+        <member name="P:slf4net.Configuration.FactoryConfigurationElement.Type">
+            <summary>
+            Indicates the <see cref="T:slf4net.ILoggerFactory"/> factory Type
+            </summary>
+        </member>
+        <member name="T:slf4net.Configuration.SlfConfigurationSection">
+            <summary>
+            The slf4net configuration section to define which <see cref="T:slf4net.ILoggerFactory"/> type to use.
+            </summary>
+        </member>
+        <member name="P:slf4net.Configuration.SlfConfigurationSection.Factory">
+            <summary>
+            Defines the <see cref="T:slf4net.ILoggerFactory"/> to use.
+            </summary>
+        </member>
+        <member name="T:slf4net.Ensure">
+            <summary>
+            Provides common runtime validation functionality.
+            </summary>
+        </member>
+        <member name="M:slf4net.Ensure.ArgumentNotNull``1(``0,System.String)">
+            <summary>
+            Makes sure a given argument is not null.
+            </summary>
+            <typeparam name="T">Type of the argument.</typeparam>
+            <param name="argument">The submitted parameter value.</param>
+            <param name="argumentName">The name of the argument.</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="argument"/>
+            is a null reference.</exception>
+        </member>
+        <member name="T:slf4net.Factories.NamedLoggerFactoryBase">
+            <summary>
+            A base class for factories which created named logger
+            instance.
+            </summary>
+        </member>
+        <member name="T:slf4net.ILoggerFactory">
+            <summary>
+            <see cref="T:slf4net.ILoggerFactory"/> instances manufacture <see cref="T:slf4net.ILogger"/>
+            instances by name. These factory methods may create new instances
+            or retrieve cached / pooled instances depending on the the
+            name of the requested logger.
+            </summary>
+        </member>
+        <member name="M:slf4net.ILoggerFactory.GetLogger(System.String)">
+            <summary>
+            Returns an appropriate <see cref="T:slf4net.ILogger"/> instance as specified by the name parameter.
+            </summary>
+            <param name="name">The name of the logger to return.</param>
+        </member>
+        <member name="F:slf4net.Factories.NamedLoggerFactoryBase._loggers">
+            <summary>
+            A cache of named loggers
+            </summary>
+        </member>
+        <member name="F:slf4net.Factories.NamedLoggerFactoryBase._lockObj">
+            <summary>
+            An object which is used for locking
+            </summary>
+        </member>
+        <member name="M:slf4net.Factories.NamedLoggerFactoryBase.GetLogger(System.String)">
+            <summary>
+            Obtains an <see cref="T:slf4net.ILogger"/> instance that is identified by
+            the given name.
+            </summary>
+            <param name="name">The logger name.</param>
+            <returns>A factory that can be identified by the 
+            given name in the target output for this logger</returns>
+        </member>
+        <member name="M:slf4net.Factories.NamedLoggerFactoryBase.CreateLogger(System.String)">
+            <summary>
+            Constructs a logger with the given name
+            </summary>
+            <param name="name">The logger name.</param>
+            <returns>A logger with the given name.</returns>
+        </member>
+        <member name="T:slf4net.Factories.NOPLoggerFactory">
+            <summary>
+            A no operation implementation of the <see cref="T:slf4net.ILoggerFactory"/>
+            which simply returns a <see cref="T:slf4net.NOPLogger"/> instance.
+            </summary>
+        </member>
+        <member name="F:slf4net.Factories.NOPLoggerFactory._instance">
+            <summary>
+            Singleton instance.
+            </summary>
+        </member>
+        <member name="M:slf4net.Factories.NOPLoggerFactory.#ctor">
+            <summary>
+            Private constructor. A reference to the Singleton
+            instance of this class is available through the
+            static <see cref="P:slf4net.Factories.NOPLoggerFactory.Instance"/> property.
+            </summary>
+        </member>
+        <member name="M:slf4net.Factories.NOPLoggerFactory.GetLogger(System.String)">
+            <summary>
+            Obtains an <see cref="T:slf4net.ILogger"/> instance that is identified by
+            the given name.
+            </summary>
+            <param name="name">The logger name.</param>
+            <returns>An <see cref="T:slf4net.ILogger"/> instance</returns>
+        </member>
+        <member name="P:slf4net.Factories.NOPLoggerFactory.Instance">
+            <summary>
+            Provides access to the singleton instance of
+            the class.
+            </summary>
+        </member>
+        <member name="T:slf4net.IConfigurableLoggerFactory">
+            <summary>
+            Common interface for logger factories that can
+            be initialized with custom configuration data.
+            </summary>
+        </member>
+        <member name="M:slf4net.IConfigurableLoggerFactory.Init(System.String)">
+            <summary>
+            Inits the plug-in with configured factory data.
+            </summary>
+            <param name="factoryData">Retrieved factory settings.
+            This parameter is null if no configuration at all
+            was found.</param>
+        </member>
+        <member name="T:slf4net.IFactoryResolver">
+            <summary>
+            Responsible for finding and creating <see cref="T:slf4net.ILoggerFactory"/>
+            instances which are being used to create loggers of a given implementation.
+            </summary>
+        </member>
+        <member name="M:slf4net.IFactoryResolver.GetFactory">
+            <summary>
+            Determines a factory which in turn creates an
+            <see cref="T:slf4net.ILogger"/> instance based on a
+            request for a named logger.
+            </summary>
+            <returns>A factory which in turn is responsible for creating
+            a given <see cref="T:slf4net.ILogger"/> implementation.</returns>
+        </member>
+        <member name="T:slf4net.ILogger">
+            <summary>
+            Common interface of an arbitrary implementation that provides
+            logging capabilities.
+            </summary>
+        </member>
+        <member name="M:slf4net.ILogger.Debug(System.String)">
+            <summary>
+            Logs a message at the DEBUG level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Debug(System.String,System.Object[])">
+            <summary>
+            Logs a message at the DEBUG level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Debug(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the DEBUG level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Debug(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the DEBUG level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Debug(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the DEBUG level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Debug(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the DEBUG level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Trace(System.String)">
+            <summary>
+            Logs a message at the TRACE level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Trace(System.String,System.Object[])">
+            <summary>
+            Logs a message at the TRACE level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Trace(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the TRACE level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Trace(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the TRACE level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Trace(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the TRACE level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Trace(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the TRACE level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Info(System.String)">
+            <summary>
+            Logs a message at the INFO level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Info(System.String,System.Object[])">
+            <summary>
+            Logs a message at the INFO level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Info(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the INFO level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Info(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the INFO level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Info(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the INFO level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Info(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the INFO level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Warn(System.String)">
+            <summary>
+            Logs a message at the WARN level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Warn(System.String,System.Object[])">
+            <summary>
+            Logs a message at the WARN level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Warn(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the WARN level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Warn(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the WARN level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Warn(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the WARN level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Warn(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the WARN level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Error(System.String)">
+            <summary>
+            Logs a message at the ERROR level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Error(System.String,System.Object[])">
+            <summary>
+            Logs a message at the ERROR level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Error(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the ERROR level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Error(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the ERROR level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Error(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the ERROR level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.ILogger.Error(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the ERROR level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="P:slf4net.ILogger.Name">
+            <summary>
+            Gets this logger's name.
+            </summary>
+        </member>
+        <member name="P:slf4net.ILogger.IsDebugEnabled">
+            <summary>
+            Is the logger instance enabled for the DEBUG level?
+            </summary>
+        </member>
+        <member name="P:slf4net.ILogger.IsTraceEnabled">
+            <summary>
+            Is the logger instance enabled for the TRACE level?
+            </summary>
+        </member>
+        <member name="P:slf4net.ILogger.IsInfoEnabled">
+            <summary>
+            Is the logger instance enabled for the INFO level?
+            </summary>
+        </member>
+        <member name="P:slf4net.ILogger.IsWarnEnabled">
+            <summary>
+            Is the logger instance enabled for the WARN level?
+            </summary>
+        </member>
+        <member name="P:slf4net.ILogger.IsErrorEnabled">
+            <summary>
+            Is the logger instance enabled for the ERROR level?
+            </summary>
+        </member>
+        <member name="T:slf4net.LoggerFactory">
+            <summary>
+            Provides a global repository that provides access to <see cref="T:slf4net.ILogger"/>
+            instances. This class ensures that both the <see cref="M:slf4net.LoggerFactory.GetLogger(System.Type)"/>
+            and <see cref="M:slf4net.LoggerFactory.GetLogger(System.String)"/> methods always return a valid
+            <see cref="T:slf4net.ILogger"/> instance - if no matching logger can be resolved,
+            the service automatically falls back to a <see cref="T:slf4net.NOPLogger"/> instance.
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory._initializationState">
+            <summary>
+            The current initialization state
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory._tempFactory">
+            <summary>
+            A temporary factory that can be used during initialization
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory._fallbackFactory">
+            <summary>
+            A fallback factory used when initialization fails
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory._locker">
+            <summary>
+            Lock object
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory._factoryResolver">
+            <summary>
+            Provides access to the logger factory
+            </summary>
+        </member>
+        <member name="M:slf4net.LoggerFactory.SetFactoryResolver(slf4net.IFactoryResolver)">
+            <summary>
+            Sets the factory resolver used to get the <see cref="T:slf4net.ILoggerFactory"/>
+            </summary>
+            <param name="resolver">The resolver to use.  If null is passed, the <see cref="T:slf4net.Resolvers.NOPLoggerFactoryResolver"/> will be used.</param>
+        </member>
+        <member name="M:slf4net.LoggerFactory.Reset">
+            <summary>
+            Discards customizations and resets the configured logger
+            facilities to their defaults.
+            </summary>
+        </member>
+        <member name="M:slf4net.LoggerFactory.GetLogger(System.String)">
+            <summary>
+            Returns a logger named according to the name parameter using the <see cref="T:slf4net.IFactoryResolver"/>.
+            </summary>
+            <param name="name">The name of the logger</param>
+            <returns>logger</returns>
+        </member>
+        <member name="M:slf4net.LoggerFactory.GetLogger(System.Type)">
+            <summary>
+            Returns a logger named according to the type parameter using the <see cref="T:slf4net.IFactoryResolver"/>.
+            </summary>
+            <param name="type">The type of the logger</param>
+            <returns>logger</returns>
+        </member>
+        <member name="M:slf4net.LoggerFactory.GetILoggerFactory">
+            <summary>
+            Returns the <see cref="T:slf4net.ILoggerFactory"/> instance in use.
+            </summary>
+        </member>
+        <member name="T:slf4net.LoggerFactory.InitializationState">
+            <summary>
+            LoggerFactory initialization states
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory.InitializationState.Uninitialized">
+            <summary>
+            Logger factory is not initialized
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory.InitializationState.Ongoing">
+            <summary>
+            Initialization is currently ongoing
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory.InitializationState.Failed">
+            <summary>
+            Initialization failed
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory.InitializationState.Initialized">
+            <summary>
+            Intialization succeeded
+            </summary>
+        </member>
+        <member name="F:slf4net.LoggerFactory.InitializationState.NOP_Fallback">
+            <summary>
+            Fell back to a No Operation factory
+            </summary>
+        </member>
+        <member name="T:slf4net.NamedLoggerBase">
+            <summary>
+            Serves as base class for named logger implementations providing serialization capabilities.
+            </summary>
+        </member>
+        <member name="M:slf4net.NamedLoggerBase.#ctor(System.String)">
+            <summary>
+            Constructs a logger instance with the given name.
+            </summary>
+            <param name="name">the logger name</param>
+        </member>
+        <member name="M:slf4net.NamedLoggerBase.#ctor">
+            <summary>
+            Constructs an un-named logger
+            </summary>
+        </member>
+        <member name="M:slf4net.NamedLoggerBase.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Sets the object data into the serialization info using an IObjectReference serialization helper class
+            </summary>
+        </member>
+        <member name="P:slf4net.NamedLoggerBase.Name">
+            <summary>
+            The name of this logger - typically this is written to the 
+            log itself along with the formatted message.
+            </summary>
+        </member>
+        <member name="M:slf4net.NamedLoggerBase.NamedLoggerSerializationHelper.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Deserialization constructor
+            </summary>
+        </member>
+        <member name="T:slf4net.NOPLogger">
+            <summary>
+            A no operation implementation of the <see cref="T:slf4net.ILogger"/>
+            interface, which doesn't log anything. Use this implementation
+            in order not to have to check for null references when
+            using an <see cref="T:slf4net.ILogger"/>.<br/>
+            This logger implementation is a Singleton. You can get the singleton
+            instance through the <see cref="P:slf4net.NOPLogger.Instance"/> property.
+            </summary>
+        </member>
+        <member name="F:slf4net.NOPLogger._instance">
+            <summary>
+            Singleton instance.
+            </summary>
+        </member>
+        <member name="M:slf4net.NOPLogger.#ctor">
+            <summary>
+            Private constructor. A reference to the Singleton
+            instance of this class is available through the
+            static <see cref="P:slf4net.NOPLogger.Instance"/> property.
+            </summary>
+        </member>
+        <member name="M:slf4net.NOPLogger.Debug(System.String)">
+            <summary>
+            Logs a message at the DEBUG level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Debug(System.String,System.Object[])">
+            <summary>
+            Logs a message at the DEBUG level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Debug(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the DEBUG level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Debug(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the DEBUG level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Debug(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the DEBUG level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Debug(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the DEBUG level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Trace(System.String)">
+            <summary>
+            Logs a message at the TRACE level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Trace(System.String,System.Object[])">
+            <summary>
+            Logs a message at the TRACE level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Trace(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the TRACE level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Trace(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the TRACE level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Trace(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the TRACE level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Trace(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the TRACE level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Info(System.String)">
+            <summary>
+            Logs a message at the INFO level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Info(System.String,System.Object[])">
+            <summary>
+            Logs a message at the INFO level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Info(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the INFO level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Info(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the INFO level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Info(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the INFO level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Info(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the INFO level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Warn(System.String)">
+            <summary>
+            Logs a message at the WARN level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Warn(System.String,System.Object[])">
+            <summary>
+            Logs a message at the WARN level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Warn(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the WARN level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Warn(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the WARN level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Warn(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the WARN level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Warn(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the WARN level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Error(System.String)">
+            <summary>
+            Logs a message at the ERROR level.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Error(System.String,System.Object[])">
+            <summary>
+            Logs a message at the ERROR level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Error(System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs a message at the ERROR level according to the specified <paramref name="format"/> and <paramref name="args"/>.
+            </summary>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Error(System.Exception,System.String)">
+            <summary>
+            Logs an exception and an additional message at the ERROR level.
+            </summary>
+            <param name="exception"> The exception to log.</param>
+            <param name="message">Additional information regarding the
+            logged exception.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Error(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the ERROR level
+            </summary>
+            <param name="exception">The exception to log </param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="M:slf4net.NOPLogger.Error(System.Exception,System.IFormatProvider,System.String,System.Object[])">
+            <summary>
+            Logs an exception and an additional message at the ERROR level
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="provider">An <see cref="T:System.IFormatProvider"/> which provides
+            culture-specific formatting capabilities.</param>
+            <param name="format">A composite format string that contains placeholders for the
+            arguments.</param>
+            <param name="args">An <see cref="T:System.Object"/> array containing zero or more objects
+            to format.</param>
+        </member>
+        <member name="P:slf4net.NOPLogger.Instance">
+            <summary>
+            Provides access to the singleton instance of
+            the class.
+            </summary>
+        </member>
+        <member name="P:slf4net.NOPLogger.Name">
+            <summary>
+            Always returns "NOP".
+            </summary>
+        </member>
+        <member name="P:slf4net.NOPLogger.IsDebugEnabled">
+            <summary>
+            Is the logger instance enabled for the DEBUG level?
+            </summary>
+        </member>
+        <member name="P:slf4net.NOPLogger.IsTraceEnabled">
+            <summary>
+            Is the logger instance enabled for the TRACE level?
+            </summary>
+        </member>
+        <member name="P:slf4net.NOPLogger.IsInfoEnabled">
+            <summary>
+            Is the logger instance enabled for the INFO level?
+            </summary>
+        </member>
+        <member name="P:slf4net.NOPLogger.IsWarnEnabled">
+            <summary>
+            Is the logger instance enabled for the WARN level?
+            </summary>
+        </member>
+        <member name="P:slf4net.NOPLogger.IsErrorEnabled">
+            <summary>
+            Is the logger instance enabled for the ERROR level?
+            </summary>
+        </member>
+        <member name="T:slf4net.Resolvers.AppConfigFactoryResolver">
+            <summary>
+            Resolves factories to be used for logger instantiation based
+            on settings taken from the application's default configuration
+            file (<c>App.config</c> or <c>Web.config</c>).
+            </summary>
+        </member>
+        <member name="F:slf4net.Resolvers.AppConfigFactoryResolver.CONFIG_SECTION_NAME">
+            <summary>
+            The name of the SLF configuration section
+            </summary>
+        </member>
+        <member name="M:slf4net.Resolvers.AppConfigFactoryResolver.#ctor">
+            <summary>
+            Default constructor using the standard configuration section name <see cref="F:slf4net.Resolvers.AppConfigFactoryResolver.CONFIG_SECTION_NAME"/>
+            </summary>
+        </member>
+        <member name="M:slf4net.Resolvers.AppConfigFactoryResolver.#ctor(System.String)">
+            <summary>
+            Constructor where a custom configuration section name is used.
+            </summary>
+            <param name="sectionName">The name of the configuration section</param>
+        </member>
+        <member name="M:slf4net.Resolvers.AppConfigFactoryResolver.GetFactory">
+            <summary>
+            Returns the <see cref="T:slf4net.ILoggerFactory"/> instance in use.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:slf4net.Resolvers.AppConfigFactoryResolver.LoadConfiguration">
+            <summary>
+            Loads the resolver configuration from the application's config file.
+            </summary>
+        </member>
+        <member name="M:slf4net.Resolvers.AppConfigFactoryResolver.ReadConfiguration(slf4net.Configuration.SlfConfigurationSection)">
+            <summary>
+            Reads the <see cref="T:slf4net.Configuration.SlfConfigurationSection"/> and instantiates the ILoggerFactory defined in configuration.
+            </summary>
+            <param name="configSection"></param>
+        </member>
+        <member name="M:slf4net.Resolvers.AppConfigFactoryResolver.CreateFactoryInstance(slf4net.Configuration.FactoryConfigurationElement)">
+            <summary>
+            Creates a factory based on a given configuration.
+            If the factory provides invalid information, an error is logged through
+            the internal logger, and a <see cref="T:slf4net.Factories.NOPLoggerFactory"/> returned.
+            </summary>
+            <param name="factoryConfiguration">The configuration that provides type
+            information for the <see cref="T:slf4net.ILoggerFactory"/> that is being created.</param>
+            <returns>Factory instance.</returns>
+        </member>
+        <member name="T:slf4net.Resolvers.NOPLoggerFactoryResolver">
+            <summary>
+            A resolver that always returns a <see cref="T:slf4net.Factories.NOPLoggerFactory"/>,
+            which in turn creates a <see cref="T:slf4net.NOPLogger"/> instance.
+            </summary>
+        </member>
+        <member name="F:slf4net.Resolvers.NOPLoggerFactoryResolver._factory">
+            <summary>
+            The logger factory instance.
+            </summary>
+        </member>
+        <member name="F:slf4net.Resolvers.NOPLoggerFactoryResolver._instance">
+            <summary>
+            Singleton instance.
+            </summary>
+        </member>
+        <member name="M:slf4net.Resolvers.NOPLoggerFactoryResolver.#ctor">
+            <summary>
+            Private constructor. A reference to the Singleton
+            instance of this class is available through the
+            static <see cref="P:slf4net.Resolvers.NOPLoggerFactoryResolver.Instance"/> property.
+            </summary>
+        </member>
+        <member name="M:slf4net.Resolvers.NOPLoggerFactoryResolver.GetFactory">
+            <summary>
+            Determines a factory which cab create an
+            <see cref="T:slf4net.ILogger"/> instance based on a
+            request for a named logger.
+            </summary>
+            <returns>A factory which in turn is responsible for creating
+            a given <see cref="T:slf4net.ILogger"/> implementation.</returns>
+        </member>
+        <member name="P:slf4net.Resolvers.NOPLoggerFactoryResolver.Instance">
+            <summary>
+            Provides access to the singleton instance of
+            the class.
+            </summary>
+        </member>
+    </members>
+</doc>
