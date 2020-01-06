@@ -128,7 +128,7 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
                 }
             }
             // else try to get correlationId from properties for web operation messages
-            else if (WebOperationContext.Current != null || channel.Via.Scheme == "http" || channel.Via.Scheme == "https")
+            else if (WebOperationContext.Current != null || (channel != null && (channel.Via.Scheme == "http" || channel.Via.Scheme == "https")))
             {
                 if (request.Properties.ContainsKey(HttpRequestMessageProperty.Name))
                 {
@@ -147,7 +147,8 @@ namespace EF.Diagnostics.Profiling.ServiceModel.Dispatcher
             if (profilingSession != null)
             {
                 // set local address
-                profilingSession.Profiler.GetTimingSession().Data["localAddress"] = channel.LocalAddress.Uri.ToString();
+                if (channel != null)
+                    profilingSession.Profiler.GetTimingSession().Data["localAddress"] = channel.LocalAddress.Uri.ToString();
 
                 // set client IP address
                 if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
