@@ -28,6 +28,5 @@ _ReSharper*/
 .vs/
 
 # NuGet files
-packages/
 *.nupkg
-!NuGet.exe
+NuGet.exe
