@@ -52,7 +52,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
@@ -195,11 +194,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="log4net" Version="2.0.3" />
-    <PackageReference Include="EntityFramework" Version="6.1.3" />
-    <PackageReference Include="CommonServiceLocator" Version="1.3" />
     <PackageReference Include="Unity.Interception" Version="4.0.1" />
-    <PackageReference Include="slf4net.log4net" Version="0.1.32.1" />
+    <PackageReference Include="slf4net.log4net" Version="1.0.0-beta.*" />
   </ItemGroup>  
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>

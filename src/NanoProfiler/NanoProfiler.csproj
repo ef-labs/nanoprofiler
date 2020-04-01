@@ -90,7 +90,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="slf4net" Version="0.1.32.1" />
+    <PackageReference Include="slf4net" Version="1.0.0-beta.*" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

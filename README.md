@@ -7,7 +7,7 @@ NanoProfiler itself implements the core profiling feature and a simple implement
 
 NanoProfiler also provides a wonderful view-result Web UI supports view latest profiling results in a tree-timeline view (simply visit ~/nanoprofiler/view in your web application). 
 
-For more documentations, please check out wiki pages: https://github.com/englishtown/nanoprofiler/wiki
+For more documentations, please check out [wiki pages](https://github.com/ef-labs/nanoprofiler/wiki).
 
 How to compile the source code?
 -------------------------------
