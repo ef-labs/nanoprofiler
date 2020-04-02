@@ -1,0 +1,25 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Authors>EF Education First</Authors>
+    <Company>EF Education First</Company>
+    <Copyright>Copyright © EF Education First 2020</Copyright>
+    <Product>NanoProfiler</Product>
+    <Version>2.2</Version>
+    <AssemblyVersion>2.2</AssemblyVersion>
+    
+    <!-- Nuget package properties -->
+    <PackageProjectUrl>https://github.com/ef-labs/nanoprofiler</PackageProjectUrl>
+    <PackageIconUrl>https://media.ef.com/sitecore/__~/media/Universal/ef-logo/logo2.png</PackageIconUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+    <!-- Assembly signing -->
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)\NanoProfiler.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <!-- Placeholder targets -->
+  <Target Name="Test" />
+
+</Project>
