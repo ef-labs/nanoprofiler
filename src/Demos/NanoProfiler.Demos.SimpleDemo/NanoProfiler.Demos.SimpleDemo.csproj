@@ -1,71 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A7DC33A4-9531-4D2E-9379-C26153960BE9}</ProjectGuid>
-    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net45</TargetFramework>
     <RootNamespace>NanoProfiler.Demos.SimpleDemo</RootNamespace>
-    <AssemblyName>NanoProfiler.Demos.SimpleDemo</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
-    <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
-    <UseGlobalApplicationHostFile />
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
+
   <ItemGroup>
     <Content Include="App_Data\SimpleDemoDB.mdf" />
     <Content Include="App_Data\SimpleDemoDB_log.ldf">
@@ -81,50 +42,6 @@
     </None>
     <Content Include="WcfDemoService.svc" />
     <Content Include="Web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Code\Data\DemoDB.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DemoDB.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Code\Data\DemoDBDataContext.cs" />
-    <Compile Include="Code\Data\DemoDBDataService.cs" />
-    <Compile Include="Code\Data\DemoEFDbContext.cs" />
-    <Compile Include="Code\Models\DemoData.cs" />
-    <Compile Include="Code\Biz\DemoDBService.cs" />
-    <Compile Include="AsyncHandler.ashx.cs">
-      <DependentUpon>AsyncHandler.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="Unity\DeepProfilingExtension.cs" />
-    <Compile Include="Unity\DeepProfilingInterceptionBehavior.cs" />
-    <Compile Include="Unity\DeepProfilingInterceptionStrategy.cs" />
-    <Compile Include="Unity\IDeepProfilingFilter.cs" />
-    <Compile Include="Unity\PolicyInjectionProfilingCallHandler.cs" />
-    <Compile Include="Unity\ProfiledMethodAttribute.cs" />
-    <Compile Include="Unity\RegexDeepProfilingFilter.cs" />
-    <Compile Include="ViewProfilingLogsHandler.ashx.cs">
-      <DependentUpon>ViewProfilingLogsHandler.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="IWcfDemoService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\DemoService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="SyncHandler.ashx.cs">
-      <DependentUpon>SyncHandler.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="ViewProfilingLogsHandler2.ashx.cs">
-      <DependentUpon>ViewProfilingLogsHandler2.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="WcfDemoService.svc.cs">
-      <DependentUpon>WcfDemoService.svc</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="SyncHandler.ashx" />
@@ -149,11 +66,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Code\Data\DemoDB.dbml.layout">
       <DependentUpon>DemoDB.dbml</DependentUpon>
     </None>
@@ -164,6 +76,7 @@
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\DemoService\" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\NanoProfiler.EF\NanoProfiler.EF.csproj">
       <Project>{828859a5-dcee-4425-ab78-8d873b808c87}</Project>
@@ -194,43 +107,11 @@
       <Name>NanoProfiler.Web</Name>
     </ProjectReference>
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="log4net" Version="2.0.3" />
-    <PackageReference Include="EntityFramework" Version="6.1.3" />
-    <PackageReference Include="CommonServiceLocator" Version="1.3" />
     <PackageReference Include="Unity.Interception" Version="4.0.1" />
-    <PackageReference Include="slf4net.log4net" Version="0.1.32.1" />
-  </ItemGroup>  
-  <PropertyGroup>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-  </PropertyGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
-        <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>64511</DevelopmentServerPort>
-          <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:64511/</IISUrl>
-          <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>
-          </CustomServerUrl>
-          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
-        </WebProjectProperties>
-      </FlavorProperties>
-    </VisualStudio>
-  </ProjectExtensions>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v14.0\WebApplications\Microsoft.WebApplication.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+    <PackageReference Include="slf4net.log4net" Version="1.0.0-beta.*" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)\NanoProfiler.targets" />
 </Project>

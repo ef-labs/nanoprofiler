@@ -7,7 +7,7 @@ NanoProfiler itself implements the core profiling feature and a simple implement
 
 NanoProfiler also provides a wonderful view-result Web UI supports view latest profiling results in a tree-timeline view (simply visit ~/nanoprofiler/view in your web application). 
 
-For more documentations, please check out wiki pages: https://github.com/englishtown/nanoprofiler/wiki
+For more documentations, please check out [wiki pages](https://github.com/ef-labs/nanoprofiler/wiki).
 
 How to compile the source code?
 -------------------------------
@@ -15,7 +15,21 @@ Do the following steps before opening NanoProfiler2.sln in Visual Studio 2015 +
 
 - git clone
 - cd src
-- run .\build.ps1
+
+Build and test:
+
+```bash
+msbuild -t:clean,rebuild,test -restore
+```
+
+Build, test, and package:
+
+```bash
+version=2.2.0-beta.1
+assembly_version=2.2.0
+path=${PWD}/nuget
+msbuild -t:clean,rebuild,test,pack -restore -p:Configuration=Release,Version=${version},AssemblyVersion=${assembly_version},PackageOutputPath=${path}
+```
 
 License terms
 -------------
