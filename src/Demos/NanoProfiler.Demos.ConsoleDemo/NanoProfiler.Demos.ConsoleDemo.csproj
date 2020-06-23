@@ -41,7 +41,7 @@
     <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.0.1" />
     <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.1" />
     <PackageReference Include="Microsoft.Web.Infrastructure" Version="1.0.0" />
-    <PackageReference Include="slf4net.log4net" Version="1.0.0-beta.*" />
+    <PackageReference Include="slf4net.log4net" Version="1.0.*" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\NanoProfiler.targets" />

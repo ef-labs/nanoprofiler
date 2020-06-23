@@ -25,7 +25,7 @@ msbuild -t:clean,rebuild,test -restore
 Build, test, and package:
 
 ```bash
-version=2.2.0-beta.1
+version=2.2.0
 assembly_version=2.2.0
 path=${PWD}/nuget
 msbuild -t:clean,rebuild,test,pack -restore -p:Configuration=Release,Version=${version},AssemblyVersion=${assembly_version},PackageOutputPath=${path}

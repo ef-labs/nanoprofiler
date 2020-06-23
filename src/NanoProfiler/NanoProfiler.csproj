@@ -23,7 +23,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="slf4net" Version="1.0.0-beta.*" />
+    <PackageReference Include="slf4net" Version="1.0.*" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\NanoProfiler.targets" />

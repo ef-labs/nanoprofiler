@@ -110,7 +110,7 @@
 
   <ItemGroup>
     <PackageReference Include="Unity.Interception" Version="4.0.1" />
-    <PackageReference Include="slf4net.log4net" Version="1.0.0-beta.*" />
+    <PackageReference Include="slf4net.log4net" Version="1.0.*" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\NanoProfiler.targets" />
