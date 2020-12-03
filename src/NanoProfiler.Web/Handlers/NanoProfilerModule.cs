@@ -100,7 +100,7 @@ namespace EF.Diagnostics.Profiling.Web.Handlers
 
         private string GetCorrelationIdFromHeaders(HttpContext context)
         {
-            if (context.Request.Headers.AllKeys.Contains(ETCorrelationId))
+            if (context.Request.Headers.AllKeys.Contains(ETCorrelationId, StringComparer.OrdinalIgnoreCase))
             {
                 var correlationIds = context.Request.Headers.GetValues(ETCorrelationId);
                 if (correlationIds != null)
