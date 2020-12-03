@@ -105,12 +105,9 @@ namespace EF.Diagnostics.Profiling.Web.Import.Handlers
                     context.Response.ContentType = "application/json";
                     var result = ProfilingSession.CircularBuffer.FirstOrDefault(
                             r => r.Data != null && r.Data.ContainsKey(CorrelationId) && r.Data[CorrelationId] == exportCorrelationId);
-                    if (result != null)
-                    {
-                        context.Response.Write(ImportSerializer.SerializeSessions(new[] { result }));
-                        context.Response.End();
-                        return;
-                    }
+                    context.Response.Write(result != null ? ImportSerializer.SerializeSessions(new[] {result}) : "[]");
+                    context.Response.End();
+                    return;
                 }
             }
             else if (TryToImportDrillDownResult && path.IndexOf(ViewUrl, StringComparison.OrdinalIgnoreCase) >= 0)
